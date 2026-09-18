@@ -2,24 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-application Model;
+use Illuminate\Database\Eloquent\Model;
 
-class PenggunaSiswa extends Model
+class Pengguna extends Model
 {
-    use HasFactory;
-
-    protected $table = 'pengguna_siswa';
+    protected $table = 'penggunas';
     protected $primaryKey = 'nisn_pengguna';
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = ['nisn_pengguna', 'nama_lengkap', 'email', 'password', 'poin'];
+    protected $fillable = [
+        'nisn_pengguna',
+        'nama_lengkap',
+        'email',
+        'password',
+        'poin',
+    ];
 
-    protected $hidden = ['password'];
-
-    public function leaderboard()
-    {
-        return $this->hasMany(Leaderboard::class, 'nisn_pengguna', 'nisn_pengguna');
-    }
+    protected $hidden = [
+        'password',
+    ];
 }
