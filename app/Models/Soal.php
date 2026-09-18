@@ -6,8 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Soal extends Model
 {
+    protected $table = 'soals';
+
     protected $fillable = [
-        'materi_id',
+        'id_materi',
+        'nip',
         'tipe',
         'pertanyaan',
         'pilihan_a',
@@ -15,16 +18,15 @@ class Soal extends Model
         'pilihan_c',
         'pilihan_d',
         'jawaban_benar',
-        'created_by',
     ];
 
     public function materi()
     {
-        return $this->belongsTo(Materi::class, 'materi_id');
+        return $this->belongsTo(Materi::class, 'id_materi', 'id_materi');
     }
 
-    public function pembuat()
+    public function admin()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(Admin::class, 'nip', 'nip');
     }
 }
