@@ -12,7 +12,7 @@
 
         <div>
             <label class="block text-sm font-medium mb-1">NIP</label>
-            <input type="text" name="nip" value="{{ old('nip', $admin->nip) }}"
+            <input type="text" name="nip" value="{{ old('nip', $admin->nip) }}" maxlength="18" inputmode="numeric" pattern="[0-9]*"
                    class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring focus:ring-blue-200 focus:outline-none">
             @error('nip')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
         </div>

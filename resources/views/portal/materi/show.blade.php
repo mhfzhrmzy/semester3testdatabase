@@ -13,10 +13,30 @@
     <div class="mb-6">
         <h3 class="text-sm font-semibold mb-2">Modul Materi</h3>
         @if ($materi->upload_file)
-            <a href="{{ Storage::url($materi->upload_file) }}" target="_blank"
-               class="inline-block bg-gray-700 hover:bg-gray-800 text-white text-sm px-4 py-2 rounded-md">
-                📄 Download / Lihat File
-            </a>
+            @php
+                $downloadUrl = Storage::url($materi->upload_file);
+                $previewUrl = route('portal.materi.preview', $materi);
+            @endphp
+
+            <div class="mb-2 flex gap-2">
+                <a href="{{ $downloadUrl }}" target="_blank"
+                   class="inline-block bg-gray-700 hover:bg-gray-800 text-white text-sm px-4 py-2 rounded-md">
+                    📄 Download File Asli
+                </a>
+            </div>
+
+            {{-- Semua tipe file (PDF, PPTX, DOC, dll) ditampilkan lewat
+                 route preview -- kalau bukan PDF, dikonversi otomatis
+                 dulu di server (lihat PortalMateriController::preview). --}}
+            <iframe src="{{ $previewUrl }}"
+                    class="w-full rounded-md border border-gray-300"
+                    style="height: 80vh;"
+                    title="Preview {{ $materi->judul_materi }}">
+            </iframe>
+            <p class="text-xs text-gray-400 mt-1">
+                Kalau preview di atas tidak muncul (misalnya LibreOffice belum
+                terpasang di server), gunakan tombol Download di atas.
+            </p>
         @else
             <p class="text-sm text-gray-400 italic">Belum ada file modul untuk materi ini.</p>
         @endif

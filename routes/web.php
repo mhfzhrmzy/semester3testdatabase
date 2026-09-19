@@ -44,6 +44,7 @@ Route::prefix('admin')->name('admin.')->controller(AdminSoalController::class)->
 Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/materi', [PortalMateriController::class, 'index'])->name('materi.index');
     Route::get('/materi/{materi}', [PortalMateriController::class, 'show'])->name('materi.show');
+    Route::get('/materi/{materi}/preview', [PortalMateriController::class, 'preview'])->name('materi.preview');
 
     Route::get('/materi/{materi}/soal/{tipe}', [PortalSoalController::class, 'kerjakan'])->name('soal.kerjakan');
     Route::post('/materi/{materi}/soal/{tipe}', [PortalSoalController::class, 'submit'])->name('soal.submit');

@@ -10,7 +10,8 @@
             @csrf
             <div>
                 <label class="block text-sm font-medium mb-1">NIP</label>
-                <input type="text" name="nip" value="{{ old('nip') }}"
+                <input type="text" name="nip" value="{{ old('nip') }}" maxlength="18" inputmode="numeric" pattern="[0-9]*"
+                       placeholder="18 digit angka"
                        class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring focus:ring-blue-200 focus:outline-none">
                 @error('nip')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
             </div>
@@ -18,6 +19,7 @@
             <div>
                 <label class="block text-sm font-medium mb-1">Nama Lengkap</label>
                 <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}"
+                       placeholder="Hanya huruf"
                        class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring focus:ring-blue-200 focus:outline-none">
                 @error('nama_lengkap')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
             </div>

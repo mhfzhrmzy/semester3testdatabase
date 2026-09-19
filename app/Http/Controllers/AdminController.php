@@ -20,10 +20,13 @@ class AdminController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nip' => ['required', 'string', 'max:20', 'unique:admins,nip'],
-            'nama_lengkap' => ['required', 'string', 'max:255'],
+            'nip' => ['required', 'digits:18', 'unique:admins,nip'],
+            'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z ,.]+$/'],
             'password' => ['required', 'string', 'min:6'],
             'foto_profile' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+        ], [
+            'nip.digits' => 'NIP harus berupa angka dan tepat 18 digit.',
+            'nama_lengkap.regex' => 'Nama hanya boleh berisi huruf (spasi, koma, titik masih diperbolehkan).',
         ]);
 
         if ($request->hasFile('foto_profile')) {
@@ -49,14 +52,16 @@ class AdminController extends Controller
         // PENTING: Gunakan Rule::unique dengan ->ignore($admin->nip, 'nip')
         $validated = $request->validate([
             'nip' => [
-                'required', 
-                'string', 
-                'max:20', 
+                'required',
+                'digits:18',
                 Rule::unique('admins', 'nip')->ignore($admin->nip, 'nip')
             ],
-            'nama_lengkap' => ['required', 'string', 'max:255'],
+            'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z ,.]+$/'],
             'password' => ['nullable', 'string', 'min:6'],
             'foto_profile' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+        ], [
+            'nip.digits' => 'NIP harus berupa angka dan tepat 18 digit.',
+            'nama_lengkap.regex' => 'Nama hanya boleh berisi huruf (spasi, koma, titik masih diperbolehkan).',
         ]);
 
         if ($request->hasFile('foto_profile')) {

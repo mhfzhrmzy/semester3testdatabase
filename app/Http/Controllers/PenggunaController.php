@@ -18,10 +18,13 @@ class PenggunaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nisn_pengguna' => ['required', 'string', 'max:20', 'unique:penggunas,nisn_pengguna'],
-            'nama_lengkap' => ['required', 'string', 'max:255'],
+            'nisn_pengguna' => ['required', 'digits:10', 'unique:penggunas,nisn_pengguna'],
+            'nama_lengkap' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z ,.]+$/'],
             'email' => ['required', 'email', 'max:255', 'unique:penggunas,email'],
             'password' => ['required', 'string', 'min:6'],
+        ], [
+            'nisn_pengguna.digits' => 'NISN harus berupa angka dan tepat 10 digit.',
+            'nama_lengkap.regex' => 'Nama hanya boleh berisi huruf (spasi, koma, titik masih diperbolehkan).',
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
