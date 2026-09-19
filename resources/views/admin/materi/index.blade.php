@@ -1,43 +1,104 @@
 @extends('layouts.app')
-@section('title', 'Daftar Materi - Admin')
+
+@section('title', 'Daftar Materi')
 
 @section('content')
-    <h1>Daftar Materi</h1>
-    <a href="{{ route('admin.materi.create') }}" class="btn btn-primary">+ Tambah Materi</a>
+<div class="container mx-auto p-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Form Tambah Materi -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-bold mb-4">Tambah Materi</h2>
+            
+            @if(session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                    {{ session('success') }}
+                </div>
+            @endif
 
-    <table>
-        <tr>
-            <th>Judul</th>
-            <th>Deskripsi</th>
-            <th>File Modul</th>
-            <th>Soal</th>
-            <th>Aksi</th>
-        </tr>
-        @forelse($materis as $materi)
-        <tr>
-            <td>{{ $materi->judul }}</td>
-            <td>{{ Str::limit($materi->deskripsi, 60) }}</td>
-            <td>
-                @if($materi->file_path)
-                    <a href="{{ asset('storage/'.$materi->file_path) }}" target="_blank">{{ $materi->file_name }}</a>
-                @else
-                    <em>Belum ada file</em>
-                @endif
-            </td>
-            <td>
-                Pretest: {{ $materi->soalPretest()->count() }} |
-                Posttest: {{ $materi->soalPosttest()->count() }}
-            </td>
-            <td>
-                <a href="{{ route('admin.materi.edit', $materi) }}" class="btn btn-secondary">Edit</a>
-                <form class="inline" action="{{ route('admin.materi.destroy', $materi) }}" method="POST" onsubmit="return confirm('Yakin hapus materi ini?')">
-                    @csrf @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Hapus</button>
-                </form>
-            </td>
-        </tr>
-        @empty
-        <tr><td colspan="5">Belum ada materi.</td></tr>
-        @endforelse
-    </table>
+            @if(session('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            <form action="{{ route('materi.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Diampu Oleh (Admin/Guru)</label>
+                    <select name="admin_id" class="w-full border rounded px-3 py-2 text-gray-700">
+                        <option value="">-- Pilih Guru --</option>
+                        @foreach($admins ?? [] as $admin)
+                            <option value="{{ $admin->id }}">{{ $admin->nama_lengkap }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Judul Materi</label>
+                    <input type="text" name="judul_materi" class="w-full border rounded px-3 py-2 text-gray-700" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Isi Materi</label>
+                    <textarea name="isi_materi" rows="4" class="w-full border rounded px-3 py-2 text-gray-700"></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Upload File (PDF/Word/PPT)</label>
+                    <input type="file" name="upload_file" class="w-full text-sm text-gray-500">
+                </div>
+
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
+                    Simpan Materi
+                </button>
+            </form>
+        </div>
+
+        <!-- Tabel Daftar Materi -->
+        <div class="md:col-span-2 bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-bold mb-4">Daftar Materi</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-200">
+                    <thead>
+                        <tr class="bg-gray-100 border-b">
+                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Judul</th>
+                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Diampu Oleh</th>
+                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">File</th>
+                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($materis ?? $materi ?? [] as $item)
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="py-3 px-4">{{ $item->judul_materi ?? $item->judul }}</td>
+                                <td class="py-3 px-4">{{ $item->admin->nama_lengkap ?? '-' }}</td>
+                                <td class="py-3 px-4">
+                                    @if($item->upload_file || $item->file)
+                                        {{-- Mengirim variabel $item langsung agar Route Model Binding menemukan ID/Model --}}
+                                        <a href="{{ route('portal.materi.show', $item) }}" target="_blank" class="text-blue-600 hover:underline font-semibold">
+                                            Lihat File
+                                        </a>
+                                    @else
+                                        <span class="text-gray-400">Tidak ada file</span>
+                                    @endif
+                                </td>
+                                <td class="py-3 px-4">
+                                    <form action="{{ route('materi.destroy', $item) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus materi ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:underline">Hapus</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-gray-500">Belum ada data materi.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Portal;
 use App\Http\Controllers\Controller;
 use App\Models\Materi;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Process;
 use Symfony\Component\HttpFoundation\Response;
 
 class MateriController extends Controller
@@ -26,10 +25,6 @@ class MateriController extends Controller
 
     /**
      * Tampilkan modul materi sebagai PDF, walau file aslinya PPTX/DOC/DOCX.
-     * Kalau file aslinya sudah PDF, langsung ditampilkan.
-     * Kalau bukan, dikonversi dulu ke PDF pakai LibreOffice (soffice), lalu
-     * hasil konversinya di-cache supaya konversi cuma perlu terjadi sekali
-     * per file (bukan setiap kali dibuka).
      */
     public function preview(Materi $materi)
     {
@@ -40,7 +35,7 @@ class MateriController extends Controller
 
         $ext = strtolower(pathinfo($originalPath, PATHINFO_EXTENSION));
 
-        // Sudah PDF -> langsung tampilkan, tidak perlu konversi.
+        // Sudah PDF -> langsung tampilkan di browser/iframe
         if ($ext === 'pdf') {
             return response()->file($originalPath, [
                 'Content-Type' => 'application/pdf',
@@ -60,8 +55,7 @@ class MateriController extends Controller
         $baseName = pathinfo($originalPath, PATHINFO_FILENAME);
         $convertedPath = $cacheDir . DIRECTORY_SEPARATOR . $baseName . '.pdf';
 
-        // Konversi ulang cuma kalau file PDF hasil konversi belum ada,
-        // atau file aslinya lebih baru dari hasil konversi sebelumnya.
+        // Cek apakah perlu konversi ulang
         $needsConversion = ! file_exists($convertedPath)
             || filemtime($originalPath) > filemtime($convertedPath);
 
@@ -69,12 +63,10 @@ class MateriController extends Controller
             $converted = $this->convertToPdf($originalPath, $cacheDir);
 
             if (! $converted) {
-                // LibreOffice tidak ada / gagal -> jangan bikin halaman error,
-                // cukup suruh user download filenya langsung.
                 return response(
-                    'Preview otomatis belum tersedia untuk file ini (LibreOffice belum '
-                    . 'terpasang / gagal dijalankan di server). Silakan download file aslinya.',
-                    Response::HTTP_SERVICE_UNAVAILABLE
+                    '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:90vh;background:#f9fafb;color:#374151;text-align:center;"><div style="padding:20px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.1);"><h3>Preview PDF Belum Tersedia</h3><p style="font-size:14px;color:#6b7280;">Gagal mengonversi file ke PDF. Pastikan LibreOffice terpasang di komputer.<br>Silakan klik tombol <b>Download File Asli</b> di atas untuk membaca materi ini.</p></div></body></html>',
+                    Response::HTTP_OK,
+                    ['Content-Type' => 'text/html']
                 );
             }
         }
@@ -88,40 +80,46 @@ class MateriController extends Controller
     }
 
     /**
-     * Jalankan LibreOffice (soffice) secara headless untuk convert 1 file
-     * ke PDF. Path binary soffice bisa diatur lewat .env (LIBREOFFICE_PATH),
-     * default-nya asumsi "soffice" sudah ada di PATH sistem.
+     * Konversi file ke PDF menggunakan eksekusi CLI Native Windows/Linux
      */
     private function convertToPdf(string $sourcePath, string $outputDir): bool
     {
-        $sofficeBin = env('LIBREOFFICE_PATH', 'soffice');
+        $sofficeBin = env('LIBREOFFICE_PATH', 'C:/Program Files/LibreOffice/program/soffice.exe');
+        $sofficeBin = str_replace('/', DIRECTORY_SEPARATOR, trim($sofficeBin, '"\''));
 
-        // -env:UserInstallation dipakai supaya tiap konversi pakai folder
-        // profil sendiri (folder sementara), menghindari error "another
-        // instance of soffice is already running" kalau ada request lain
-        // yang jalan bersamaan.
+        if (! file_exists($sofficeBin)) {
+            Log::error('Executable LibreOffice tidak ditemukan di path: ' . $sofficeBin);
+            return false;
+        }
+
         $profileDir = storage_path('app/libreoffice-profile-' . uniqid());
+        $profileUrl = 'file:///' . str_replace('\\', '/', $profileDir);
 
-        $result = Process::timeout(90)->run([
+        // Menyiapkan string eksekusi command aman untuk Windows CLI
+        $command = sprintf(
+            '"%s" -env:UserInstallation="%s" --headless --norestore --convert-to pdf --outdir "%s" "%s"',
             $sofficeBin,
-            '--headless',
-            '--norestore',
-            '--convert-to', 'pdf',
-            '--outdir', $outputDir,
-            $sourcePath,
-            '-env:UserInstallation=file:///' . str_replace('\\', '/', $profileDir),
-        ]);
+            $profileUrl,
+            $outputDir,
+            $sourcePath
+        );
 
-        // Bersihkan folder profil sementara setelah selesai (kalau ada).
-        // Pakai penghapusan native PHP (bukan shell `rm`) supaya jalan
-        // di Windows maupun Linux/macOS.
+        // Eksekusi via shell exec
+        $output = [];
+        $returnCode = 0;
+        exec($command, $output, $returnCode);
+
+        // Bersihkan folder profil sementara
         $this->deleteDirectory($profileDir);
 
-        if (! $result->successful()) {
-            Log::warning('Konversi LibreOffice gagal', [
-                'file' => $sourcePath,
-                'exit_code' => $result->exitCode(),
-                'error' => $result->errorOutput(),
+        $baseName = pathinfo($sourcePath, PATHINFO_FILENAME);
+        $expectedPdf = $outputDir . DIRECTORY_SEPARATOR . $baseName . '.pdf';
+
+        if (! file_exists($expectedPdf)) {
+            Log::warning('Konversi LibreOffice gagal atau file PDF tidak terbentuk', [
+                'command' => $command,
+                'exit_code' => $returnCode,
+                'output' => implode("\n", $output),
             ]);
 
             return false;
@@ -130,11 +128,6 @@ class MateriController extends Controller
         return true;
     }
 
-    /**
-     * Hapus folder beserta isinya secara rekursif, pakai fungsi PHP native
-     * (bukan shell command) supaya berfungsi baik di Windows maupun
-     * Linux/macOS.
-     */
     private function deleteDirectory(string $dir): void
     {
         if (! is_dir($dir)) {
