@@ -26,9 +26,12 @@ Route::controller(PenggunaController::class)->group(function () {
     Route::delete('/siswa/{siswa}', 'destroy')->name('siswa.destroy');
 });
 
+// Route Kelola Materi (Admin/Guru)
 Route::controller(MateriController::class)->group(function () {
     Route::get('/materi', 'index')->name('materi.index');
     Route::post('/materi', 'store')->name('materi.store');
+    Route::get('/materi/{materi}/edit', 'edit')->name('materi.edit');
+    Route::put('/materi/{materi}', 'update')->name('materi.update');
     Route::delete('/materi/{materi}', 'destroy')->name('materi.destroy');
 });
 

@@ -74,7 +74,6 @@
                                 <td class="py-3 px-4">{{ $item->admin->nama_lengkap ?? '-' }}</td>
                                 <td class="py-3 px-4">
                                     @if($item->upload_file || $item->file)
-                                        {{-- Mengirim variabel $item langsung --}}
                                         <a href="{{ route('portal.materi.show', $item) }}" target="_blank" class="text-blue-600 hover:underline font-semibold">
                                             Lihat File
                                         </a>
@@ -82,11 +81,19 @@
                                         <span class="text-gray-400">Tidak ada file</span>
                                     @endif
                                 </td>
-                                <td class="py-3 px-4">
+                                <td class="py-3 px-4 flex items-center gap-3">
+                                    {{-- Tombol Edit Materi --}}
+                                    <a href="{{ route('materi.edit', $item) }}" class="text-amber-600 hover:text-amber-700 font-semibold text-sm">
+                                        Edit
+                                    </a>
+
+                                    {{-- Form Hapus Materi --}}
                                     <form action="{{ route('materi.destroy', $item) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus materi ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:underline">Hapus</button>
+                                        <button type="submit" class="text-red-600 hover:text-red-700 font-semibold text-sm">
+                                            Hapus
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
