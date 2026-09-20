@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdminGuru;
 use App\Models\Materi;
-use App\Models\Admin;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class MateriController extends Controller
@@ -12,10 +15,10 @@ class MateriController extends Controller
     /**
      * Menampilkan daftar materi di halaman Admin/Guru
      */
-    public function index()
+    public function index(): View
     {
-        $materis = Materi::with('admin')->latest()->get();
-        $admins  = Admin::orderBy('nama_lengkap', 'asc')->get();
+        $materis = Materi::with('adminGuru')->latest()->get();
+        $admins  = AdminGuru::orderBy('nama_lengkap', 'asc')->get();
 
         return view('materi.index', compact('materis', 'admins'));
     }
@@ -23,11 +26,11 @@ class MateriController extends Controller
     /**
      * Menyimpan materi baru
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'judul_materi' => 'required|string|max:255',
-            'admin_id'     => 'nullable|exists:admins,id',
+            'nip'          => 'nullable|exists:admin_guru,nip',
             'isi_materi'   => 'nullable|string',
             'upload_file'  => 'nullable|mimes:pdf,pptx,ppt,doc,docx|max:25600',
         ]);
@@ -37,9 +40,11 @@ class MateriController extends Controller
             $filePath = $request->file('upload_file')->store('materi', 'public');
         }
 
+        $nip = $request->input('nip') ?: Auth::guard('admin')->id();
+
         Materi::create([
             'judul_materi' => $request->judul_materi,
-            'admin_id'     => $request->admin_id,
+            'nip'          => $nip,
             'isi_materi'   => $request->isi_materi,
             'upload_file'  => $filePath,
         ]);
@@ -50,9 +55,9 @@ class MateriController extends Controller
     /**
      * Menampilkan form edit materi
      */
-    public function edit(Materi $materi)
+    public function edit(Materi $materi): View
     {
-        $admins = Admin::orderBy('nama_lengkap', 'asc')->get();
+        $admins = AdminGuru::orderBy('nama_lengkap', 'asc')->get();
 
         return view('materi.edit', compact('materi', 'admins'));
     }
@@ -60,18 +65,18 @@ class MateriController extends Controller
     /**
      * Memperbarui data materi
      */
-    public function update(Request $request, Materi $materi)
+    public function update(Request $request, Materi $materi): RedirectResponse
     {
         $request->validate([
             'judul_materi' => 'required|string|max:255',
-            'admin_id'     => 'nullable|exists:admins,id',
+            'nip'          => 'nullable|exists:admin_guru,nip',
             'isi_materi'   => 'nullable|string',
             'upload_file'  => 'nullable|mimes:pdf,pptx,ppt,doc,docx|max:25600',
         ]);
 
         $data = [
             'judul_materi' => $request->judul_materi,
-            'admin_id'     => $request->admin_id,
+            'nip'          => $request->input('nip') ?: $materi->nip,
             'isi_materi'   => $request->isi_materi,
         ];
 
@@ -94,7 +99,7 @@ class MateriController extends Controller
     /**
      * Menghapus materi
      */
-    public function destroy(Materi $materi)
+    public function destroy(Materi $materi): RedirectResponse
     {
         if ($materi->upload_file && Storage::disk('public')->exists($materi->upload_file)) {
             Storage::disk('public')->delete($materi->upload_file);

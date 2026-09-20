@@ -12,13 +12,21 @@ class PenggunaSiswa extends Authenticatable
     protected $table = 'pengguna_siswa';
     protected $primaryKey = 'nisn';
     public $incrementing = false;
-    protected $keyType = 'int';
+    protected $keyType = 'string';
 
     protected $fillable = [
         'nisn', 'nama_lengkap', 'email', 'password', 'poin',
     ];
 
     protected $hidden = ['password', 'remember_token'];
+
+    protected function casts(): array
+    {
+        return [
+            'nisn' => 'string',
+            'password' => 'hashed',
+        ];
+    }
 
     public function leaderboard()
     {

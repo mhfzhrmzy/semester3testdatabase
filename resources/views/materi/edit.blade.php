@@ -32,10 +32,10 @@
 
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2">Diampu Oleh (Admin/Guru)</label>
-                <select name="admin_id" class="w-full border rounded px-3 py-2 text-gray-700">
+                <select name="nip" class="w-full border rounded px-3 py-2 text-gray-700">
                     <option value="">-- Pilih Guru --</option>
                     @foreach($admins as $admin)
-                        <option value="{{ $admin->id }}" {{ old('admin_id', $materi->admin_id) == $admin->id ? 'selected' : '' }}>
+                        <option value="{{ $admin->nip }}" {{ old('nip', $materi->nip) == $admin->nip ? 'selected' : '' }}>
                             {{ $admin->nama_lengkap }}
                         </option>
                     @endforeach

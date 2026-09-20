@@ -11,14 +11,22 @@ class AdminGuru extends Authenticatable
 
     protected $table = 'admin_guru';
     protected $primaryKey = 'nip';
-    public $incrementing = false;   // nip diisi manual, bukan auto-increment
-    protected $keyType = 'int';     // tetap integer (bigint unsigned), bukan string
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'nip', 'nama_lengkap', 'email', 'password', 'role', 'foto_profile',
     ];
 
     protected $hidden = ['password', 'remember_token'];
+
+    protected function casts(): array
+    {
+        return [
+            'nip' => 'string',
+            'password' => 'hashed',
+        ];
+    }
 
     public function isSuperadmin(): bool
     {

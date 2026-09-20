@@ -25,10 +25,10 @@
                 @csrf
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Diampu Oleh (Admin/Guru)</label>
-                    <select name="admin_id" class="w-full border rounded px-3 py-2 text-gray-700">
+                    <select name="nip" class="w-full border rounded px-3 py-2 text-gray-700">
                         <option value="">-- Pilih Guru --</option>
                         @foreach($admins ?? [] as $admin)
-                            <option value="{{ $admin->id }}">{{ $admin->nama_lengkap }}</option>
+                            <option value="{{ $admin->nip }}">{{ $admin->nama_lengkap }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -71,7 +71,7 @@
                         @forelse($materis ?? $materi ?? [] as $item)
                             <tr class="border-b hover:bg-gray-50">
                                 <td class="py-3 px-4">{{ $item->judul_materi ?? $item->judul }}</td>
-                                <td class="py-3 px-4">{{ $item->admin->nama_lengkap ?? '-' }}</td>
+                                <td class="py-3 px-4">{{ $item->adminGuru->nama_lengkap ?? '-' }}</td>
                                 <td class="py-3 px-4">
                                     @if($item->upload_file || $item->file)
                                         <a href="{{ route('portal.materi.show', $item) }}" target="_blank" class="text-blue-600 hover:underline font-semibold">
