@@ -31,15 +31,9 @@
             @method('PUT')
 
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Diampu Oleh (Admin/Guru)</label>
-                <select name="nip" class="w-full border rounded px-3 py-2 text-gray-700">
-                    <option value="">-- Pilih Guru --</option>
-                    @foreach($admins as $admin)
-                        <option value="{{ $admin->nip }}" {{ old('nip', $materi->nip) == $admin->nip ? 'selected' : '' }}>
-                            {{ $admin->nama_lengkap }}
-                        </option>
-                    @endforeach
-                </select>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Diampu Oleh (Guru)</label>
+                <input type="text" value="{{ $materi->adminGuru->nama_lengkap ?? auth('admin')->user()->nama_lengkap }}" readonly class="w-full border rounded px-3 py-2 text-gray-600 bg-gray-100 cursor-not-allowed">
+                <input type="hidden" name="nip" value="{{ $materi->nip ?? auth('admin')->id() }}">
             </div>
 
             <div class="mb-4">

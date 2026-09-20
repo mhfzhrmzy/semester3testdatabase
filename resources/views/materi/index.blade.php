@@ -24,13 +24,9 @@
             <form action="{{ route('materi.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Diampu Oleh (Admin/Guru)</label>
-                    <select name="nip" class="w-full border rounded px-3 py-2 text-gray-700">
-                        <option value="">-- Pilih Guru --</option>
-                        @foreach($admins ?? [] as $admin)
-                            <option value="{{ $admin->nip }}">{{ $admin->nama_lengkap }}</option>
-                        @endforeach
-                    </select>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Diampu Oleh (Guru)</label>
+                    <input type="text" value="{{ auth('admin')->user()->nama_lengkap ?? 'Guru Terautentikasi' }}" readonly class="w-full border rounded px-3 py-2 text-gray-600 bg-gray-100 cursor-not-allowed">
+                    <input type="hidden" name="nip" value="{{ auth('admin')->id() }}">
                 </div>
 
                 <div class="mb-4">
@@ -74,7 +70,7 @@
                                 <td class="py-3 px-4">{{ $item->adminGuru->nama_lengkap ?? '-' }}</td>
                                 <td class="py-3 px-4">
                                     @if($item->upload_file || $item->file)
-                                        <a href="{{ route('portal.materi.show', $item) }}" target="_blank" class="text-blue-600 hover:underline font-semibold">
+                                        <a href="{{ route('materi.show', $item) }}" target="_blank" class="text-blue-600 hover:underline font-semibold">
                                             Lihat File
                                         </a>
                                     @else

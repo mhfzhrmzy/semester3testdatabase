@@ -10,7 +10,14 @@ class Soal extends Model
     protected $primaryKey = 'id_soal';
 
     protected $fillable = [
-        'id_quiz', 'pertanyaan', 'pilihan_a', 'pilihan_b', 'pilihan_c', 'pilihan_d', 'jawaban_benar',
+        'id_quiz',
+        'pertanyaan',
+        'pilihan_a',
+        'pilihan_b',
+        'pilihan_c',
+        'pilihan_d',
+        'jawaban_benar',
+        'timer_per_soal',
     ];
 
     public function quiz()

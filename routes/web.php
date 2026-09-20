@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\AdminRegisterController;
 use App\Http\Controllers\Auth\SiswaLoginController;
 use App\Http\Controllers\Auth\SiswaRegisterController;
+use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\MateriController;
 use App\Http\Controllers\PenggunaSiswaController;
 use App\Http\Controllers\Portal\MateriController as PortalMateriController;
@@ -28,6 +29,8 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
+Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
+
 Route::get('/login/guru', [AdminLoginController::class, 'create'])->name('admin.login');
 Route::post('/login/guru', [AdminLoginController::class, 'store'])->name('admin.login.attempt');
 Route::get('/register/guru', [AdminRegisterController::class, 'create'])->name('admin.register');
@@ -45,6 +48,9 @@ Route::middleware('auth:admin')->group(function () {
     Route::controller(MateriController::class)->group(function () {
         Route::get('/materi', 'index')->name('materi.index');
         Route::post('/materi', 'store')->name('materi.store');
+        Route::get('/materi/{materi}', 'show')->name('materi.show');
+        Route::get('/materi/{materi}/edit', 'edit')->name('materi.edit');
+        Route::put('/materi/{materi}', 'update')->name('materi.update');
         Route::delete('/materi/{materi}', 'destroy')->name('materi.destroy');
     });
 
@@ -57,6 +63,8 @@ Route::middleware('auth:admin')->group(function () {
     Route::prefix('admin')->name('admin.')->controller(AdminSoalController::class)->group(function () {
         Route::get('/quiz/{quiz}/soal', 'index')->name('soal.index');
         Route::post('/quiz/{quiz}/soal', 'store')->name('soal.store');
+        Route::post('/quiz/{quiz}/soal/import', 'importCsv')->name('soal.import');
+        Route::get('/soal/template', 'downloadTemplate')->name('soal.template');
         Route::get('/soal/{soal}/edit', 'edit')->name('soal.edit');
         Route::put('/soal/{soal}', 'update')->name('soal.update');
         Route::delete('/soal/{soal}', 'destroy')->name('soal.destroy');

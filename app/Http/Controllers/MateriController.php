@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class MateriController extends Controller
 {
@@ -50,6 +51,18 @@ class MateriController extends Controller
         ]);
 
         return redirect()->route('materi.index')->with('success', 'Materi berhasil ditambahkan!');
+    }
+
+    /**
+     * Menampilkan/mengunduh file materi langsung untuk Admin/Guru
+     */
+    public function show(Materi $materi): BinaryFileResponse|RedirectResponse
+    {
+        if ($materi->upload_file && Storage::disk('public')->exists($materi->upload_file)) {
+            return response()->file(Storage::disk('public')->path($materi->upload_file));
+        }
+
+        return redirect()->route('materi.index')->with('error', 'File materi tidak ditemukan.');
     }
 
     /**
