@@ -11,10 +11,10 @@
             @csrf
             <div>
                 <label class="block text-sm font-medium mb-1">NISN</label>
-                <input type="text" name="nisn_pengguna" value="{{ old('nisn_pengguna') }}" maxlength="10" inputmode="numeric" pattern="[0-9]*"
+                <input type="text" name="nisn" value="{{ old('nisn') }}" maxlength="10" inputmode="numeric" pattern="[0-9]*"
                        placeholder="10 digit angka"
                        class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring focus:ring-blue-200 focus:outline-none">
-                @error('nisn_pengguna')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                @error('nisn')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
             </div>
 
             <div>
@@ -62,7 +62,7 @@
                 <tbody>
                     @forelse ($siswas as $siswa)
                         <tr class="border-b">
-                            <td class="px-3 py-2">{{ $siswa->nisn_pengguna }}</td>
+                            <td class="px-3 py-2">{{ $siswa->nisn }}</td>
                             <td class="px-3 py-2">{{ $siswa->nama_lengkap }}</td>
                             <td class="px-3 py-2">{{ $siswa->email }}</td>
                             <td class="px-3 py-2">{{ $siswa->poin }}</td>

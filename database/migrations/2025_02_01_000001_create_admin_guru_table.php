@@ -8,14 +8,13 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
+        Schema::create('admin_guru', function (Blueprint $table) {
+            $table->unsignedBigInteger('nip')->primary(); // 18 digit, diisi manual (bukan auto-increment)
+            $table->string('nama_lengkap', 60);
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            // role membedakan admin (guru) dan siswa (pengguna)
-            $table->enum('role', ['admin', 'siswa'])->default('siswa');
+            $table->enum('role', ['guru', 'superadmin'])->default('guru');
+            $table->string('foto_profile')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
@@ -23,6 +22,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('admin_guru');
     }
 };

@@ -2,24 +2,26 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class Pengguna extends Model
+class PenggunaSiswa extends Authenticatable
 {
-    protected $table = 'penggunas';
-    protected $primaryKey = 'nisn_pengguna';
+    use Notifiable;
+
+    protected $table = 'pengguna_siswa';
+    protected $primaryKey = 'nisn';
     public $incrementing = false;
-    protected $keyType = 'string';
+    protected $keyType = 'int';
 
     protected $fillable = [
-        'nisn_pengguna',
-        'nama_lengkap',
-        'email',
-        'password',
-        'poin',
+        'nisn', 'nama_lengkap', 'email', 'password', 'poin',
     ];
 
-    protected $hidden = [
-        'password',
-    ];
+    protected $hidden = ['password', 'remember_token'];
+
+    public function leaderboard()
+    {
+        return $this->hasMany(Leaderboard::class, 'nisn', 'nisn');
+    }
 }

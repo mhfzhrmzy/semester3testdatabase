@@ -38,11 +38,12 @@ return [
     */
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+        'web' => ['driver' => 'session', 'provider' => 'users'],
+
+        'admin' => ['driver' => 'session', 'provider' => 'admin_guru'],
+        'siswa' => ['driver' => 'session', 'provider' => 'pengguna_siswa'],
     ],
+
 
     /*
     |--------------------------------------------------------------------------
@@ -62,17 +63,16 @@ return [
     */
 
     'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', User::class),
-        ],
+        'users' => ['driver' => 'eloquent', 'model' => env('AUTH_MODEL', App\Models\User::class)],
+
+        'admin_guru' => ['driver' => 'eloquent', 'model' => App\Models\AdminGuru::class],
+        'pengguna_siswa' => ['driver' => 'eloquent', 'model' => App\Models\PenggunaSiswa::class],
+    ],
 
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
-    ],
-
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords

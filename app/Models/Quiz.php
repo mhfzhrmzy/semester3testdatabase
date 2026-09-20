@@ -2,24 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Quiz extends Model
 {
-    use HasFactory;
-
     protected $table = 'quiz';
     protected $primaryKey = 'id_quiz';
-    public $incrementing = false;
-    protected $keyType = 'string';
 
-    protected $fillable = [
-        'id_quiz', 'nip', 'id_materi', 'tipe_test',
-        'poin', 'timer', 'tanggal', 'kunci_jawaban'
+    protected $fillable = ['nip', 'id_materi', 'tipe_test', 'poin', 'timer', 'tanggal'];
+
+    protected $casts = [
+        'tanggal' => 'date',
     ];
 
-    public function guru()
+    public function adminGuru()
     {
         return $this->belongsTo(AdminGuru::class, 'nip', 'nip');
     }
@@ -29,8 +25,13 @@ class Quiz extends Model
         return $this->belongsTo(Materi::class, 'id_materi', 'id_materi');
     }
 
+    public function soal()
+    {
+        return $this->hasMany(Soal::class, 'id_quiz', 'id_quiz');
+    }
+
     public function leaderboard()
     {
         return $this->hasMany(Leaderboard::class, 'id_quiz', 'id_quiz');
     }
-}
+}   

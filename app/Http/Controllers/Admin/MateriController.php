@@ -91,8 +91,10 @@ class MateriController extends Controller
 
             // 2. Simpan nama file PDF ke Database
             Materi::create([
-                'judul' => $request->judul,
-                'file'  => $finalFileName,
+                'judul' => $request->judul_materi,
+                'admin_id' => $request->admin_id,
+                'deskripsi' => $request->deskripsi,
+                'file_path'  => $finalFileName,
             ]);
 
             return redirect()->back()->with('success', 'Materi berhasil diunggah dan otomatis dikonversi ke PDF!');

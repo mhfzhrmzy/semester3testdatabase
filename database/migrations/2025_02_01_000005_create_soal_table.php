@@ -8,11 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('soals', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('id_materi')->constrained('materis', 'id_materi')->onDelete('cascade');
-            $table->string('nip', 20); // otomatis ikut NIP guru pengelola materi
-            $table->enum('tipe', ['pretest', 'posttest']);
+        Schema::create('soal', function (Blueprint $table) {
+            $table->id('id_soal');
+            $table->unsignedBigInteger('id_quiz'); // FK -> quiz.id_quiz
             $table->text('pertanyaan');
             $table->string('pilihan_a', 500);
             $table->string('pilihan_b', 500);
@@ -21,12 +19,12 @@ return new class extends Migration
             $table->enum('jawaban_benar', ['a', 'b', 'c', 'd']);
             $table->timestamps();
 
-            $table->foreign('nip')->references('nip')->on('admins')->onDelete('cascade');
+            $table->foreign('id_quiz')->references('id_quiz')->on('quiz')->onDelete('cascade');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('soals');
+        Schema::dropIfExists('soal');
     }
 };

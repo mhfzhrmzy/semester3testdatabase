@@ -8,18 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('penggunas', function (Blueprint $table) {
-            $table->string('nisn_pengguna', 20)->primary(); // PK sesuai ERD
-            $table->string('nama_lengkap');
+        Schema::create('pengguna_siswa', function (Blueprint $table) {
+            $table->unsignedBigInteger('nisn')->primary(); // 10 digit, diisi manual
+            $table->string('nama_lengkap', 60);
             $table->string('email')->unique();
             $table->string('password');
             $table->unsignedInteger('poin')->default(0);
+            $table->rememberToken();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('penggunas');
+        Schema::dropIfExists('pengguna_siswa');
     }
 };

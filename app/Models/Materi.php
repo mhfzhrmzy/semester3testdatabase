@@ -6,33 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Materi extends Model
 {
-    protected $table = 'materis';
+    protected $table = 'materi';
     protected $primaryKey = 'id_materi';
 
-    protected $fillable = [
-        'nip',
-        'judul_materi',
-        'isi_materi',
-        'upload_file',
-    ];
+    protected $fillable = ['nip', 'judul_materi', 'isi_materi', 'upload_file'];
 
-    public function admin()
+    public function adminGuru()
     {
-        return $this->belongsTo(Admin::class, 'nip', 'nip');
+        return $this->belongsTo(AdminGuru::class, 'nip', 'nip');
     }
 
-    public function soals()
+    public function quiz()
     {
-        return $this->hasMany(Soal::class, 'id_materi', 'id_materi');
-    }
-
-    public function soalPretest()
-    {
-        return $this->soals()->where('tipe', 'pretest');
-    }
-
-    public function soalPosttest()
-    {
-        return $this->soals()->where('tipe', 'posttest');
+        return $this->hasMany(Quiz::class, 'id_materi', 'id_materi');
     }
 }

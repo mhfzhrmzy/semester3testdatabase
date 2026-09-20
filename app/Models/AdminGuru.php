@@ -2,21 +2,28 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class AdminGuru extends Model
+class AdminGuru extends Authenticatable
 {
-    use HasFactory;
+    use Notifiable;
 
     protected $table = 'admin_guru';
     protected $primaryKey = 'nip';
-    public $incrementing = false;
-    protected $keyType = 'string';
+    public $incrementing = false;   // nip diisi manual, bukan auto-increment
+    protected $keyType = 'int';     // tetap integer (bigint unsigned), bukan string
 
-    protected $fillable = ['nip', 'nama_lengkap', 'password', 'foto_profile'];
+    protected $fillable = [
+        'nip', 'nama_lengkap', 'email', 'password', 'role', 'foto_profile',
+    ];
 
-    protected $hidden = ['password'];
+    protected $hidden = ['password', 'remember_token'];
+
+    public function isSuperadmin(): bool
+    {
+        return $this->role === 'superadmin';
+    }
 
     public function materi()
     {
