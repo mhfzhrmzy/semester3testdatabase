@@ -93,6 +93,7 @@ Route::middleware('auth:siswa')->prefix('portal')->name('portal.')->group(functi
     Route::get('/materi', [PortalMateriController::class, 'index'])->name('materi.index');
     Route::get('/materi/{materi}', [PortalMateriController::class, 'show'])->name('materi.show');
 
+    Route::get('/materi/{materi}/quiz', [PortalQuizController::class, 'index'])->name('quiz.index');
     Route::get('/quiz/{quiz}', [PortalQuizController::class, 'kerjakan'])->name('quiz.kerjakan');
     Route::post('/quiz/{quiz}', [PortalQuizController::class, 'submit'])->name('quiz.submit');
 });

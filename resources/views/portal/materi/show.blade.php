@@ -43,17 +43,25 @@
     </div>
 
     <div>
-        <h3 class="text-sm font-semibold mb-2">Uji Pemahaman</h3>
-        <div class="flex gap-3">
-            <a href="{{ route('portal.soal.kerjakan', [$materi, 'pretest']) }}"
-               class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-md">
-                Kerjakan Pretest ({{ $materi->soalPretest()->count() }} soal)
-            </a>
-            <a href="{{ route('portal.soal.kerjakan', [$materi, 'posttest']) }}"
-               class="bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium px-4 py-2 rounded-md">
-                Kerjakan Posttest ({{ $materi->soalPosttest()->count() }} soal)
-            </a>
-        </div>
+        <h3 class="text-sm font-semibold mb-3">Uji Pemahaman</h3>
+        @php
+            $pretestCount  = $materi->quiz->where('tipe_test', 'pretest')->count();
+            $posttestCount = $materi->quiz->where('tipe_test', 'posttest')->count();
+            $totalQuiz     = $materi->quiz->count();
+        @endphp
+        @if ($totalQuiz > 0)
+            <div class="flex flex-wrap gap-3 items-center">
+                <a href="{{ route('portal.quiz.index', $materi) }}"
+                   class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg shadow transition duration-150">
+                    📝 Lihat Semua Quiz
+                </a>
+                <span class="text-xs text-gray-500">
+                    {{ $pretestCount }} Pre-Test · {{ $posttestCount }} Post-Test tersedia
+                </span>
+            </div>
+        @else
+            <p class="text-sm text-gray-400 italic">Belum ada quiz untuk materi ini.</p>
+        @endif
     </div>
 </div>
 @endsection
