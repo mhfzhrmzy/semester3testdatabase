@@ -12,6 +12,8 @@ use App\Http\Controllers\MateriController;
 use App\Http\Controllers\PenggunaSiswaController;
 use App\Http\Controllers\Portal\MateriController as PortalMateriController;
 use App\Http\Controllers\Portal\QuizController as PortalQuizController;
+use App\Http\Controllers\SertifikatController;
+use App\Http\Controllers\Siswa\SertifikatSiswaController;
 use App\Http\Controllers\SuperadminController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,18 +33,21 @@ Route::get('/', function () {
 
 Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
 
+// Autentikasi Guru / Admin
 Route::get('/login/guru', [AdminLoginController::class, 'create'])->name('admin.login');
 Route::post('/login/guru', [AdminLoginController::class, 'store'])->name('admin.login.attempt');
 Route::get('/register/guru', [AdminRegisterController::class, 'create'])->name('admin.register');
 Route::post('/register/guru', [AdminRegisterController::class, 'store'])->name('admin.register.attempt');
 Route::post('/logout/guru', [AdminLoginController::class, 'destroy'])->name('admin.logout');
 
+// Autentikasi Siswa
 Route::get('/login/siswa', [SiswaLoginController::class, 'create'])->name('siswa.login');
 Route::post('/login/siswa', [SiswaLoginController::class, 'store'])->name('siswa.login.attempt');
 Route::get('/register/siswa', [SiswaRegisterController::class, 'create'])->name('siswa.register');
 Route::post('/register/siswa', [SiswaRegisterController::class, 'store'])->name('siswa.register.attempt');
 Route::post('/logout/siswa', [SiswaLoginController::class, 'destroy'])->name('siswa.logout');
 
+// Area Guru / Admin
 Route::middleware('auth:admin')->group(function () {
 
     Route::controller(MateriController::class)->group(function () {
@@ -54,20 +59,30 @@ Route::middleware('auth:admin')->group(function () {
         Route::delete('/materi/{materi}', 'destroy')->name('materi.destroy');
     });
 
-    Route::prefix('admin')->name('admin.')->controller(AdminQuizController::class)->group(function () {
-        Route::get('/quiz', 'index')->name('quiz.index');
-        Route::post('/quiz', 'store')->name('quiz.store');
-        Route::delete('/quiz/{quiz}', 'destroy')->name('quiz.destroy');
+    // Manajemen Sertifikat oleh Guru
+    Route::controller(SertifikatController::class)->group(function () {
+        Route::get('/sertifikat', 'index')->name('sertifikat.index');
+        Route::get('/sertifikat/create', 'create')->name('sertifikat.create');
+        Route::post('/sertifikat', 'store')->name('sertifikat.store');
+        Route::delete('/sertifikat/{sertifikat}', 'destroy')->name('sertifikat.destroy');
     });
 
-    Route::prefix('admin')->name('admin.')->controller(AdminSoalController::class)->group(function () {
-        Route::get('/quiz/{quiz}/soal', 'index')->name('soal.index');
-        Route::post('/quiz/{quiz}/soal', 'store')->name('soal.store');
-        Route::post('/quiz/{quiz}/soal/import', 'importCsv')->name('soal.import');
-        Route::get('/soal/template', 'downloadTemplate')->name('soal.template');
-        Route::get('/soal/{soal}/edit', 'edit')->name('soal.edit');
-        Route::put('/soal/{soal}', 'update')->name('soal.update');
-        Route::delete('/soal/{soal}', 'destroy')->name('soal.destroy');
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::controller(AdminQuizController::class)->group(function () {
+            Route::get('/quiz', 'index')->name('quiz.index');
+            Route::post('/quiz', 'store')->name('quiz.store');
+            Route::delete('/quiz/{quiz}', 'destroy')->name('quiz.destroy');
+        });
+
+        Route::controller(AdminSoalController::class)->group(function () {
+            Route::get('/quiz/{quiz}/soal', 'index')->name('soal.index');
+            Route::post('/quiz/{quiz}/soal', 'store')->name('soal.store');
+            Route::post('/quiz/{quiz}/soal/import', 'importCsv')->name('soal.import');
+            Route::get('/soal/template', 'downloadTemplate')->name('soal.template');
+            Route::get('/soal/{soal}/edit', 'edit')->name('soal.edit');
+            Route::put('/soal/{soal}', 'update')->name('soal.update');
+            Route::delete('/soal/{soal}', 'destroy')->name('soal.destroy');
+        });
     });
 
     Route::middleware('superadmin')->group(function () {
@@ -89,11 +104,24 @@ Route::middleware('auth:admin')->group(function () {
     });
 });
 
-Route::middleware('auth:siswa')->prefix('portal')->name('portal.')->group(function () {
-    Route::get('/materi', [PortalMateriController::class, 'index'])->name('materi.index');
-    Route::get('/materi/{materi}', [PortalMateriController::class, 'show'])->name('materi.show');
+// Area Siswa
+Route::middleware('auth:siswa')->group(function () {
 
-    Route::get('/materi/{materi}/quiz', [PortalQuizController::class, 'index'])->name('quiz.index');
-    Route::get('/quiz/{quiz}', [PortalQuizController::class, 'kerjakan'])->name('quiz.kerjakan');
-    Route::post('/quiz/{quiz}', [PortalQuizController::class, 'submit'])->name('quiz.submit');
+    // Materi & Quiz Siswa
+    Route::prefix('portal')->name('portal.')->group(function () {
+        Route::get('/materi', [PortalMateriController::class, 'index'])->name('materi.index');
+        Route::get('/materi/{materi}', [PortalMateriController::class, 'show'])->name('materi.show');
+
+        Route::get('/materi/{materi}/quiz', [PortalQuizController::class, 'index'])->name('quiz.index');
+        Route::get('/quiz/{quiz}', [PortalQuizController::class, 'kerjakan'])->name('quiz.kerjakan');
+        Route::post('/quiz/{quiz}', [PortalQuizController::class, 'submit'])->name('quiz.submit');
+    });
+
+    // Sertifikat Siswa (Memakai folder Siswa)
+    Route::prefix('siswa')->name('siswa.')->controller(SertifikatSiswaController::class)->group(function () {
+        Route::get('/sertifikat', 'index')->name('sertifikat.index');
+        Route::get('/sertifikat/create', 'create')->name('sertifikat.create');
+        Route::post('/sertifikat', 'store')->name('sertifikat.store');
+        Route::delete('/sertifikat/{sertifikat}', 'destroy')->name('sertifikat.destroy');
+    });
 });

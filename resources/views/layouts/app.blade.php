@@ -22,6 +22,10 @@
                        class="hover:text-gray-300 {{ request()->routeIs('admin.quiz.*') || request()->routeIs('admin.soal.*') ? 'text-blue-400 font-semibold' : '' }}">
                         Quiz &amp; Soal
                     </a>
+                    <a href="{{ route('sertifikat.index') }}"
+                       class="hover:text-gray-300 {{ request()->routeIs('sertifikat.*') ? 'text-blue-400 font-semibold' : '' }}">
+                        Sertifikat
+                    </a>
                     <a href="{{ route('leaderboard.index') }}"
                        class="hover:text-gray-300 {{ request()->routeIs('leaderboard.*') ? 'text-amber-400 font-semibold' : '' }}">
                         Leaderboard
@@ -55,7 +59,11 @@
                     </a>
                     <a href="{{ route('leaderboard.index') }}"
                        class="hover:text-gray-300 {{ request()->routeIs('leaderboard.*') ? 'text-amber-400 font-semibold' : '' }}">
-                        🏆 Leaderboard
+                        Leaderboard
+                    </a>
+                    <a href="{{ route('siswa.sertifikat.index') }}"
+                       class="hover:text-gray-300 {{ request()->routeIs('siswa.sertifikat.*') ? 'text-blue-400 font-semibold' : '' }}">
+                        Sertifikat
                     </a>
                     <span class="text-gray-500">|</span>
                     <span class="text-gray-300">{{ auth('siswa')->user()->nama_lengkap }}</span>
