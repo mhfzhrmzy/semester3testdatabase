@@ -32,15 +32,18 @@
             </div>
             <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Poin / Soal</label>
-                <input type="number" name="poin" value="10" min="1" required placeholder="Contoh: 10" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
+                <input type="number" name="poin" value="10" min="1" max="100" required placeholder="Contoh: 10" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
+                <p class="text-xs text-gray-400 mt-1">Maks. 100 poin</p>
             </div>
             <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Timer Total (Menit)</label>
-                <input type="number" name="timer" value="30" min="1" required placeholder="Contoh: 30" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
+                <input type="number" name="timer" value="30" min="1" max="120" required placeholder="Contoh: 30" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
+                <p class="text-xs text-gray-400 mt-1">Maks. 120 menit</p>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Tanggal (Otomatis)</label>
-                <input type="date" name="tanggal" value="{{ date('Y-m-d') }}" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-semibold bg-white">
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Tanggal Dibuat</label>
+                <input type="date" value="{{ date('Y-m-d') }}" readonly class="w-full rounded-md border border-gray-200 px-3 py-2 text-sm font-semibold bg-gray-100 text-gray-500 cursor-not-allowed">
+                <p class="text-xs text-gray-400 mt-1">Otomatis, tidak dapat diubah</p>
             </div>
             <button type="submit" class="md:col-span-5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-md transition duration-150">
                 Simpan &amp; Buat Quiz

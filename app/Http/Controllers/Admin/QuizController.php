@@ -24,12 +24,12 @@ class QuizController extends Controller
         $validated = $request->validate([
             'id_materi' => ['required', 'exists:materi,id_materi'],
             'tipe_test' => ['required', 'in:pretest,posttest'],
-            'poin' => ['required', 'integer', 'min:1'],
-            'timer' => ['required', 'integer', 'min:1'],
-            'tanggal' => ['nullable', 'date'],
+            'poin' => ['required', 'integer', 'min:1', 'max:100'],
+            'timer' => ['required', 'integer', 'min:1', 'max:120'],
         ]);
 
-        $validated['tanggal'] = $validated['tanggal'] ?? now()->toDateString();
+        // Tanggal selalu otomatis dari server, tidak dari input pengguna
+        $validated['tanggal'] = now()->toDateString();
         $validated['nip'] = auth('admin')->id();
 
         Quiz::create($validated);
