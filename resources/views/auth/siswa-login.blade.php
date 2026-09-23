@@ -1,25 +1,94 @@
 @extends('layouts.app')
 @section('title', 'Login Siswa')
 @section('content')
-<div class="max-w-sm mx-auto bg-white rounded-lg shadow p-6">
-    <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-3">Login Siswa</h2>
-    <form action="{{ route('siswa.login.attempt') }}" method="POST" class="space-y-4">
-        @csrf
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">NISN (10 Digit)</label>
-            <input type="text" name="nisn" value="{{ old('nisn') }}" maxlength="10" placeholder="Masukkan NISN" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
-            @error('nisn')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+<div class="min-h-screen w-full flex flex-col md:flex-row bg-[#0A2342] relative overflow-hidden font-sans">
+
+    <!-- LEFT AREA: Deep Blue Branding & Title Section -->
+    <div class="hidden md:flex md:w-[52%] lg:w-[56%] min-h-screen bg-gradient-to-br from-[#0B2A4C] via-[#0A2342] to-[#071930] flex-col justify-center px-12 lg:px-20 text-white relative">
+        <div class="max-w-xl relative z-10">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="text-xs font-semibold uppercase tracking-widest text-slate-300">PORTAL SISWA</span>
+            </div>
+            <h1 class="text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight font-sans">
+                e-Learning TIK SMKN 2 Jember
+            </h1>
         </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input type="password" name="password" placeholder="Masukkan Password" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
-            @error('password')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-        </div>
-        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium py-2.5 rounded-md transition duration-150">Login Siswa</button>
-    </form>
-    <div class="mt-4 pt-4 border-t space-y-2 text-xs text-center text-gray-600">
-        <p>Belum memiliki akun siswa? <a href="{{ route('siswa.register') }}" class="text-amber-600 hover:underline font-semibold">Registrasi Siswa</a></p>
-        <p>Login sebagai Guru? <a href="{{ route('admin.login') }}" class="text-blue-600 hover:underline font-semibold">Login Guru</a></p>
     </div>
+
+    <!-- RIGHT AREA: White Curved Form Container -->
+    <div class="relative w-full md:w-[48%] lg:w-[44%] min-h-screen flex items-center z-10">
+        <!-- Secondary Stacked Blue Backdrop Layer -->
+        <div class="hidden md:block absolute top-0 bottom-0 right-0 left-[-14px] bg-[#1A3A66] rounded-l-[3.5rem] shadow-xl pointer-events-none"></div>
+
+        <!-- Primary White Card -->
+        <div class="w-full h-full min-h-screen bg-white rounded-l-none md:rounded-l-[3.2rem] shadow-2xl px-6 sm:px-12 lg:px-16 py-12 flex flex-col justify-between relative z-10">
+
+            <!-- Main Form Section -->
+            <div class="my-auto py-8">
+                <!-- Title -->
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Login</h2>
+                    <p class="text-xs text-slate-500 mt-1">Masuk ke Portal Siswa SMKN 2 Jember</p>
+                </div>
+
+                <!-- Role Selector Buttons -->
+                <div class="p-1 bg-slate-100 rounded-2xl flex gap-1 mb-6 border border-slate-200/80">
+                    <a href="{{ route('siswa.login') }}" class="flex-1 py-2.5 px-3 text-xs font-semibold rounded-xl text-center transition bg-white text-[#3B5284] shadow-sm border border-slate-200">
+                        Siswa (NISN)
+                    </a>
+                    <a href="{{ route('admin.login') }}" class="flex-1 py-2.5 px-3 text-xs font-semibold rounded-xl text-center transition text-slate-600 hover:text-slate-900">
+                        Guru / Pendidik
+                    </a>
+                </div>
+
+                <!-- Alerts -->
+                @if (session('success'))
+                    <div class="mb-4 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="mb-4 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs space-y-1">
+                        @foreach ($errors->all() as $error)
+                            <p class="font-medium">• {{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
+
+                <!-- Form -->
+                <form action="{{ route('siswa.login.attempt') }}" method="POST" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1.5">Nomor Induk Siswa Nasional (NISN)</label>
+                        <input type="text" name="nisn" value="{{ old('nisn') }}" maxlength="10" placeholder="Masukkan 10 digit NISN Anda"
+                            class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#3B5284] focus:border-[#3B5284] outline-none transition text-slate-800 placeholder-slate-400" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1.5">Kata Sandi</label>
+                        <input type="password" name="password" placeholder="Masukkan Kata Sandi"
+                            class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#3B5284] focus:border-[#3B5284] outline-none transition text-slate-800 placeholder-slate-400" required>
+                    </div>
+
+                    <button type="submit" class="w-full mt-2 bg-[#0A2342] hover:bg-[#061529] active:scale-[0.99] text-white font-semibold py-3.5 px-4 rounded-xl shadow-md transition text-sm cursor-pointer">
+                        Login
+                    </button>
+                </form>
+
+                <!-- Redirect link -->
+                <div class="mt-6 text-center text-xs text-slate-500">
+                    Belum memiliki akun siswa? <a href="{{ route('siswa.register') }}" class="text-[#3B5284] hover:underline font-bold">Daftar Akun Siswa</a>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-xs text-slate-400 border-t border-slate-100 pt-4 flex justify-between items-center">
+                <span>&copy; 2026 SMKN 2 Jember</span>
+                <a href="{{ route('home') }}" class="text-slate-500 hover:text-slate-800 font-medium">Halaman Utama</a>
+            </div>
+        </div>
+    </div>
+
 </div>
 @endsection

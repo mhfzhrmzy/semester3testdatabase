@@ -1,43 +1,119 @@
 @extends('layouts.app')
 @section('title', 'Registrasi Guru')
 @section('content')
-<div class="max-w-md mx-auto bg-white rounded-lg shadow p-6">
-    <h2 class="text-xl font-semibold mb-6 text-gray-800 border-b pb-3">Registrasi Guru Baru</h2>
-    <form action="{{ route('admin.register.attempt') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-        @csrf
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">NIP (18 Digit)</label>
-            <input type="text" name="nip" value="{{ old('nip') }}" placeholder="Contoh: 198501012010011001" maxlength="18" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            @error('nip')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+<div class="min-h-screen w-full flex flex-col md:flex-row bg-[#0A2342] relative overflow-hidden font-sans">
+
+    <!-- LEFT AREA: Deep Blue Branding & Title Section -->
+    <div class="hidden md:flex md:w-[52%] lg:w-[56%] min-h-screen bg-gradient-to-br from-[#0B2A4C] via-[#0A2342] to-[#071930] flex-col justify-center px-12 lg:px-20 text-white relative">
+        <div class="max-w-xl relative z-10">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="text-xs font-semibold uppercase tracking-widest text-slate-300">REGISTRASI GURU</span>
+            </div>
+            <h1 class="text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight font-sans">
+                e-Learning TIK SMKN 2 Jember
+            </h1>
         </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-            <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" placeholder="Nama lengkap tanpa gelar atau dengan gelar" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            @error('nama_lengkap')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input type="email" name="email" value="{{ old('email') }}" placeholder="guru@sekolah.sch.id" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            @error('email')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input type="password" name="password" placeholder="Minimal 6 karakter" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            @error('password')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password</label>
-            <input type="password" name="password_confirmation" placeholder="Ulangi password" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Foto Profile (Opsional)</label>
-            <input type="file" name="foto_profile" accept="image/png,image/jpeg,image/jpg" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-            @error('foto_profile')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-        </div>
-        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2.5 rounded-md transition duration-150">Daftar Guru</button>
-    </form>
-    <div class="mt-4 pt-4 border-t text-center text-xs text-gray-600">
-        Sudah memiliki akun? <a href="{{ route('admin.login') }}" class="text-blue-600 hover:underline font-semibold">Login di sini</a>
     </div>
+
+    <!-- RIGHT AREA: White Curved Form Container -->
+    <div class="relative w-full md:w-[48%] lg:w-[44%] min-h-screen flex items-center z-10">
+        <!-- Secondary Stacked Blue Backdrop Layer -->
+        <div class="hidden md:block absolute top-0 bottom-0 right-0 left-[-14px] bg-[#1A3A66] rounded-l-[3.5rem] shadow-xl pointer-events-none"></div>
+
+        <!-- Primary White Card -->
+        <div class="w-full h-full min-h-screen bg-white rounded-l-none md:rounded-l-[3.2rem] shadow-2xl px-6 sm:px-12 lg:px-16 py-8 flex flex-col justify-between relative z-10 my-auto">
+
+            <!-- Main Form Section -->
+            <div class="my-auto py-4">
+                <!-- Title -->
+                <div class="text-center mb-5">
+                    <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Daftar Akun Guru</h2>
+                    <p class="text-xs text-slate-500 mt-1">Buat akun tenaga pendidik di e-Learning TIK</p>
+                </div>
+
+                <!-- Role Selector Buttons -->
+                <div class="p-1 bg-slate-100 rounded-2xl flex gap-1 mb-4 border border-slate-200/80">
+                    <a href="{{ route('siswa.register') }}" class="flex-1 py-2 px-3 text-xs font-semibold rounded-xl text-center transition text-slate-600 hover:text-slate-900">
+                        Siswa (NISN)
+                    </a>
+                    <a href="{{ route('admin.register') }}" class="flex-1 py-2 px-3 text-xs font-semibold rounded-xl text-center transition bg-white text-[#3B5284] shadow-sm border border-slate-200">
+                        Guru / Pendidik
+                    </a>
+                </div>
+
+                <!-- Alerts -->
+                @if (session('success'))
+                    <div class="mb-3 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="mb-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs space-y-1">
+                        @foreach ($errors->all() as $error)
+                            <p class="font-medium">• {{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
+
+                <!-- Form -->
+                <form action="{{ route('admin.register.attempt') }}" method="POST" enctype="multipart/form-data" class="space-y-2.5">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">NIP (18 Digit)</label>
+                        <input type="text" name="nip" value="{{ old('nip') }}" maxlength="18" placeholder="Contoh: 198501012010011001"
+                            class="w-full px-3.5 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#3B5284] focus:border-[#3B5284] outline-none transition text-slate-800 placeholder-slate-400" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Nama Lengkap</label>
+                        <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" placeholder="Contoh: Drs. Budi Santoso, M.Pd"
+                            class="w-full px-3.5 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#3B5284] focus:border-[#3B5284] outline-none transition text-slate-800 placeholder-slate-400" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Email Resmi / Pribadi</label>
+                        <input type="email" name="email" value="{{ old('email') }}" placeholder="guru@smkn2jember.sch.id"
+                            class="w-full px-3.5 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#3B5284] focus:border-[#3B5284] outline-none transition text-slate-800 placeholder-slate-400" required>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">Kata Sandi</label>
+                            <input type="password" name="password" placeholder="Min. 6 karakter"
+                                class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#3B5284] focus:border-[#3B5284] outline-none transition text-slate-800 placeholder-slate-400" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">Konfirmasi Sandi</label>
+                            <input type="password" name="password_confirmation" placeholder="Ulangi sandi"
+                                class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#3B5284] focus:border-[#3B5284] outline-none transition text-slate-800 placeholder-slate-400" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Foto Profil (Opsional)</label>
+                        <input type="file" name="foto_profile" accept="image/png,image/jpeg,image/jpg"
+                            class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 border border-slate-200 rounded-xl p-1 bg-slate-50">
+                    </div>
+
+                    <button type="submit" class="w-full mt-2 bg-[#0A2342] hover:bg-[#061529] active:scale-[0.99] text-white font-semibold py-3.5 px-4 rounded-xl shadow-md transition text-sm cursor-pointer">
+                        Daftar Akun Baru
+                    </button>
+                </form>
+
+                <!-- Redirect link -->
+                <div class="mt-4 text-center text-xs text-slate-500">
+                    Sudah memiliki akun terdaftar? <a href="{{ route('admin.login') }}" class="text-[#3B5284] hover:underline font-bold">Login Sekarang</a>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-xs text-slate-400 border-t border-slate-100 pt-3 flex justify-between items-center">
+                <span>&copy; 2026 SMKN 2 JEMBER</span>
+                <a href="{{ route('home') }}" class="text-slate-500 hover:text-slate-800 font-medium">Halaman Utama</a>
+            </div>
+        </div>
+    </div>
+
 </div>
 @endsection
