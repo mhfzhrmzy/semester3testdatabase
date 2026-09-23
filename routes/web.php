@@ -111,6 +111,7 @@ Route::middleware('auth:siswa')->group(function () {
     Route::prefix('portal')->name('portal.')->group(function () {
         Route::get('/materi', [PortalMateriController::class, 'index'])->name('materi.index');
         Route::get('/materi/{materi}', [PortalMateriController::class, 'show'])->name('materi.show');
+        Route::get('/materi/{materi}/file', [PortalMateriController::class, 'serveFile'])->name('materi.file');
 
         Route::get('/materi/{materi}/quiz', [PortalQuizController::class, 'index'])->name('quiz.index');
         Route::get('/quiz/{quiz}', [PortalQuizController::class, 'kerjakan'])->name('quiz.kerjakan');

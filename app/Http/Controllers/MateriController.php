@@ -19,7 +19,7 @@ class MateriController extends Controller
     public function index(): View
     {
         $materis = Materi::with('adminGuru')->latest()->get();
-        $admins  = AdminGuru::orderBy('nama_lengkap', 'asc')->get();
+        $admins = AdminGuru::orderBy('nama_lengkap', 'asc')->get();
 
         return view('materi.index', compact('materis', 'admins'));
     }
@@ -31,9 +31,13 @@ class MateriController extends Controller
     {
         $request->validate([
             'judul_materi' => 'required|string|max:255',
-            'nip'          => 'nullable|exists:admin_guru,nip',
-            'isi_materi'   => 'nullable|string',
-            'upload_file'  => 'nullable|mimes:pdf,pptx,ppt,doc,docx|max:25600',
+            'nip' => 'nullable|exists:admin_guru,nip',
+            'isi_materi' => 'nullable|string',
+            'upload_file' => 'required|mimes:pdf,pptx,ppt,doc,docx|max:25600',
+        ], [
+            'upload_file.required' => 'File modul materi wajib diupload.',
+            'upload_file.mimes' => 'Format file harus PDF, PPT, PPTX, DOC, atau DOCX.',
+            'upload_file.max' => 'Ukuran file tidak boleh lebih dari 25 MB.',
         ]);
 
         $filePath = null;
@@ -45,9 +49,9 @@ class MateriController extends Controller
 
         Materi::create([
             'judul_materi' => $request->judul_materi,
-            'nip'          => $nip,
-            'isi_materi'   => $request->isi_materi,
-            'upload_file'  => $filePath,
+            'nip' => $nip,
+            'isi_materi' => $request->isi_materi ?? '',
+            'upload_file' => $filePath,
         ]);
 
         return redirect()->route('materi.index')->with('success', 'Materi berhasil ditambahkan!');
@@ -82,15 +86,15 @@ class MateriController extends Controller
     {
         $request->validate([
             'judul_materi' => 'required|string|max:255',
-            'nip'          => 'nullable|exists:admin_guru,nip',
-            'isi_materi'   => 'nullable|string',
-            'upload_file'  => 'nullable|mimes:pdf,pptx,ppt,doc,docx|max:25600',
+            'nip' => 'nullable|exists:admin_guru,nip',
+            'isi_materi' => 'nullable|string',
+            'upload_file' => 'nullable|mimes:pdf,pptx,ppt,doc,docx|max:25600',
         ]);
 
         $data = [
             'judul_materi' => $request->judul_materi,
-            'nip'          => $request->input('nip') ?: $materi->nip,
-            'isi_materi'   => $request->isi_materi,
+            'nip' => $request->input('nip') ?: $materi->nip,
+            'isi_materi' => $request->isi_materi ?? '',
         ];
 
         // Jika mengunggah file baru

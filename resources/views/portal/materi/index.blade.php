@@ -12,13 +12,12 @@
         </div>
         <a href="{{ route('leaderboard.index') }}"
            class="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-amber-700 bg-amber-50 border border-amber-200 hover:bg-amber-100 px-3 py-1.5 rounded-lg transition">
-            🏆 Leaderboard
+             Leaderboard
         </a>
     </div>
 
     @if ($materis->isEmpty())
         <div class="bg-white rounded-2xl border border-gray-200 p-12 text-center">
-            <div class="text-4xl mb-3">📚</div>
             <h3 class="text-lg font-semibold text-gray-700 mb-1">Belum Ada Materi</h3>
             <p class="text-sm text-gray-400">Guru belum menambahkan materi. Coba lagi nanti.</p>
         </div>
@@ -46,7 +45,7 @@
                             <div class="flex flex-wrap gap-1.5 mb-4">
                                 @if ($pretestCount > 0)
                                     <span class="px-2 py-0.5 text-xs font-semibold bg-amber-100 text-amber-700 rounded-full">
-                                        🧪 {{ $pretestCount }} Pre-Test
+                                         {{ $pretestCount }} Pre-Test
                                     </span>
                                 @endif
                                 @if ($posttestCount > 0)

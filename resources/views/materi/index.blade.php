@@ -21,6 +21,17 @@
                 </div>
             @endif
 
+            @if($errors->any())
+                <div class="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded mb-4">
+                    <p class="font-semibold text-sm mb-1">Gagal menyimpan materi:</p>
+                    <ul class="list-disc list-inside text-sm space-y-0.5">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form action="{{ route('materi.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-4">
@@ -40,8 +51,16 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Upload File (PDF/Word/PPT)</label>
-                    <input type="file" name="upload_file" class="w-full text-sm text-gray-500">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">
+                        Upload File Modul
+                        <span class="text-red-500 ml-0.5">*</span>
+                        <span class="text-gray-400 font-normal text-xs ml-1">(PDF, PPT, PPTX, DOC, DOCX — maks. 25 MB)</span>
+                    </label>
+                    <input type="file" name="upload_file" accept=".pdf,.ppt,.pptx,.doc,.docx"
+                           class="w-full text-sm text-gray-500 border rounded px-2 py-1.5 {{ $errors->has('upload_file') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}">
+                    @error('upload_file')
+                        <p class="text-red-600 text-xs mt-1 font-medium">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
