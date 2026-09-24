@@ -20,25 +20,23 @@
     <form action="{{ route('sertifikat.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
         @csrf
 
-        {{-- Pilihan Siswa Penerima --}}
+        {{-- NISN dikirim sebagai hidden field, sudah dipilih dari halaman sebelumnya --}}
+        <input type="hidden" name="nisn" value="{{ $siswa->nisn }}">
+
+        {{-- Info Siswa Penerima (read-only, otomatis dari pilihan sebelumnya) --}}
         <div>
-            <label for="nisn" class="block text-sm font-semibold text-gray-700 mb-1">
-                Siswa Penerima <span class="text-red-500">*</span>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">
+                Siswa Penerima
             </label>
-            <select 
-                name="nisn" 
-                id="nisn" 
-                style="border: 1px solid #cbd5e1;"
-                class="w-full px-3.5 py-2.5 bg-gray-50 rounded-lg text-sm text-gray-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-            >
-                <option value="">-- Pilih Siswa Penerima --</option>
-                @foreach ($siswa as $s)
-                    <option value="{{ $s->nisn }}" {{ (old('nisn', $selectedNisn ?? '') == $s->nisn) ? 'selected' : '' }}>
-                        {{ $s->nama_lengkap }} (NISN: {{ $s->nisn }})
-                    </option>
-                @endforeach
-            </select>
+            <div class="w-full px-3.5 py-2.5 bg-gray-100 rounded-lg text-sm text-gray-800 border border-gray-200 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                    <span class="text-blue-600 font-bold text-xs">{{ strtoupper(substr($siswa->nama_lengkap, 0, 1)) }}</span>
+                </div>
+                <div>
+                    <p class="font-semibold text-gray-900">{{ $siswa->nama_lengkap }}</p>
+                    <p class="text-xs text-gray-500">NISN: {{ $siswa->nisn }}</p>
+                </div>
+            </div>
         </div>
 
         {{-- Judul Sertifikat --}}
@@ -46,9 +44,9 @@
             <label for="judul_sertifikat" class="block text-sm font-semibold text-gray-700 mb-1">
                 Judul Sertifikat <span class="text-red-500">*</span>
             </label>
-            <input 
-                type="text" 
-                name="judul_sertifikat" 
+            <input
+                type="text"
+                name="judul_sertifikat"
                 id="judul_sertifikat"
                 value="{{ old('judul_sertifikat') }}"
                 placeholder="Contoh: Sertifikat Penyelesaian Pembelajaran"
@@ -64,9 +62,9 @@
                 <label for="penerbit" class="block text-sm font-semibold text-gray-700 mb-1">
                     Instansi Penerbit
                 </label>
-                <input 
-                    type="text" 
-                    name="penerbit" 
+                <input
+                    type="text"
+                    name="penerbit"
                     id="penerbit"
                     value="{{ old('penerbit', 'SMKN 2 Jember') }}"
                     style="border: 1px solid #cbd5e1;"
@@ -75,16 +73,18 @@
             </div>
 
             <div>
-                <label for="tanggal_terbit" class="block text-sm font-semibold text-gray-700 mb-1">
-                    Tanggal Terbit
+                <label class="block text-sm font-semibold text-gray-700 mb-1">
+                    Tanggal Input
                 </label>
-                <input 
-                    type="date" 
-                    name="tanggal_terbit" 
-                    id="tanggal_terbit"
-                    value="{{ old('tanggal_terbit', date('Y-m-d')) }}"
+                {{-- Hanya tampilan, tanggal ditetapkan server-side dengan now() --}}
+                <input
+                    type="text"
+                    value="{{ now()->translatedFormat('d F Y') }}"
+                    readonly
+                    disabled
                     style="border: 1px solid #cbd5e1;"
-                    class="w-full px-3.5 py-2.5 bg-gray-50 rounded-lg text-sm text-gray-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3.5 py-2.5 bg-gray-100 rounded-lg text-sm text-gray-500 cursor-not-allowed select-none"
+                    title="Tanggal diisi otomatis oleh sistem"
                 >
             </div>
         </div>
@@ -94,9 +94,9 @@
             <label for="deskripsi" class="block text-sm font-semibold text-gray-700 mb-1">
                 Deskripsi / Catatan (Opsional)
             </label>
-            <textarea 
-                name="deskripsi" 
-                id="deskripsi" 
+            <textarea
+                name="deskripsi"
+                id="deskripsi"
                 rows="3"
                 placeholder="Catatan prestasi atau rincian pencapaian siswa..."
                 style="border: 1px solid #cbd5e1;"
@@ -109,9 +109,9 @@
             <label for="file_sertifikat" class="block text-sm font-semibold text-gray-700 mb-1">
                 Berkas Sertifikat <span class="text-red-500">*</span>
             </label>
-            <input 
-                type="file" 
-                name="file_sertifikat" 
+            <input
+                type="file"
+                name="file_sertifikat"
                 id="file_sertifikat"
                 accept=".pdf,.jpg,.jpeg,.png"
                 style="border: 1px solid #cbd5e1;"
@@ -123,14 +123,14 @@
 
         {{-- Tombol Submit --}}
         <div class="pt-4 flex items-center justify-end space-x-3 border-t border-gray-200">
-            <a 
-                href="{{ route('sertifikat.index') }}" 
+            <a
+                href="{{ route('sertifikat.index') }}"
                 class="px-4 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-100 transition"
             >
                 Batal
             </a>
-            <button 
-                type="submit" 
+            <button
+                type="submit"
                 class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-sm transition"
             >
                 Terbitkan Sertifikat

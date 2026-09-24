@@ -10,6 +10,7 @@ class Sertifikat extends Model
     use HasFactory;
 
     protected $table = 'sertifikat';
+
     protected $primaryKey = 'id_sertifikat';
 
     protected $fillable = [
@@ -21,6 +22,7 @@ class Sertifikat extends Model
         'tanggal_terbit',
         'deskripsi',
         'file_sertifikat',
+        'file_hash',
         'tipe_sertifikat',
     ];
 

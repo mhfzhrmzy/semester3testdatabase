@@ -7,6 +7,18 @@
         <p class="text-sm text-gray-500 mt-1">Pilih siswa yang akan diberikan sertifikat penghargaan atau kelulusan.</p>
     </div>
 
+    @if (session('error'))
+        <div class="p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="p-4 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
+            {{ session('success') }}
+        </div>
+    @endif
+
     {{-- Form Pilih Siswa Target --}}
     <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
         <form action="{{ route('sertifikat.create') }}" method="GET" class="flex flex-col sm:flex-row items-center gap-4">
