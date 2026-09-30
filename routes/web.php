@@ -89,6 +89,7 @@ Route::middleware('auth:admin')->group(function () {
         Route::controller(AdminGuruController::class)->group(function () {
             Route::get('/admin', 'index')->name('admin.index');
             Route::post('/admin', 'store')->name('admin.store');
+            Route::get('/admin/{guru}/edit', 'edit')->name('admin.edit');
             Route::put('/admin/{guru}', 'update')->name('admin.update');
             Route::delete('/admin/{guru}', 'destroy')->name('admin.destroy');
         });
@@ -96,6 +97,7 @@ Route::middleware('auth:admin')->group(function () {
         Route::controller(PenggunaSiswaController::class)->group(function () {
             Route::get('/siswa', 'index')->name('siswa.index');
             Route::post('/siswa', 'store')->name('siswa.store');
+            Route::get('/siswa/{siswa}/edit', 'edit')->name('siswa.edit');
             Route::put('/siswa/{siswa}', 'update')->name('siswa.update');
             Route::delete('/siswa/{siswa}', 'destroy')->name('siswa.destroy');
         });
