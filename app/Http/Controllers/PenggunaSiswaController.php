@@ -16,6 +16,11 @@ class PenggunaSiswaController extends Controller
         return view('siswa.index', compact('siswas'));
     }
 
+    public function edit(PenggunaSiswa $siswa)
+    {
+        return view('siswa.edit', compact('siswa'));
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -33,7 +38,10 @@ class PenggunaSiswaController extends Controller
 
         PenggunaSiswa::create($validated);
 
-        return redirect()->route('siswa.index')->with('success', 'Akun siswa berhasil ditambahkan.');
+        $redirectRoute = $request->input('from') === 'superadmin' ? 'superadmin.index' : 'siswa.index';
+        $redirectParameters = $request->input('from') === 'superadmin' ? ['menu' => 'siswa'] : [];
+
+        return redirect()->route($redirectRoute, $redirectParameters)->with('success', 'Akun siswa berhasil ditambahkan.');
     }
 
     public function update(Request $request, PenggunaSiswa $siswa)
@@ -54,13 +62,19 @@ class PenggunaSiswaController extends Controller
 
         $siswa->update($validated);
 
-        return redirect()->route('siswa.index')->with('success', 'Akun siswa berhasil diperbarui.');
+        $redirectRoute = $request->input('from') === 'superadmin' ? 'superadmin.index' : 'siswa.index';
+        $redirectParameters = $request->input('from') === 'superadmin' ? ['menu' => 'siswa'] : [];
+
+        return redirect()->route($redirectRoute, $redirectParameters)->with('success', 'Akun siswa berhasil diperbarui.');
     }
 
     public function destroy(PenggunaSiswa $siswa)
     {
         $siswa->delete();
 
-        return redirect()->route('siswa.index')->with('success', 'Akun siswa berhasil dihapus.');
+        $redirectRoute = request()->input('from') === 'superadmin' ? 'superadmin.index' : 'siswa.index';
+        $redirectParameters = request()->input('from') === 'superadmin' ? ['menu' => 'siswa'] : [];
+
+        return redirect()->route($redirectRoute, $redirectParameters)->with('success', 'Akun siswa berhasil dihapus.');
     }
 }

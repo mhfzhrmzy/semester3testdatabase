@@ -60,7 +60,7 @@
 
                     <div>
                         <label class="block text-xs font-medium text-slate-600 mb-1">Nama Lengkap</label>
-                        <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" placeholder="Contoh: Drs. Budi Santoso, M.Pd"
+                        <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" placeholder="Contoh:  Seto Santoso, M.Pd"
                             class="w-full px-3.5 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 focus:bg-white focus:ring-2 focus:ring-[#3B5284] focus:border-[#3B5284] outline-none transition text-slate-800 placeholder-slate-400" required>
                     </div>
 

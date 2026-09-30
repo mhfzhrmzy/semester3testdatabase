@@ -17,6 +17,11 @@ class AdminGuruController extends Controller
         return view('admin.index', compact('gurus'));
     }
 
+    public function edit(AdminGuru $guru)
+    {
+        return view('admin.edit', ['admin' => $guru]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -39,7 +44,10 @@ class AdminGuruController extends Controller
 
         AdminGuru::create($validated);
 
-        return redirect()->route('admin.index')->with('success', 'Akun guru berhasil ditambahkan.');
+        $redirectRoute = $request->input('from') === 'superadmin' ? 'superadmin.index' : 'admin.index';
+        $redirectParameters = $request->input('from') === 'superadmin' ? ['menu' => 'guru'] : [];
+
+        return redirect()->route($redirectRoute, $redirectParameters)->with('success', 'Akun guru berhasil ditambahkan.');
     }
 
     public function update(Request $request, AdminGuru $guru)
@@ -70,7 +78,10 @@ class AdminGuruController extends Controller
 
         $guru->update($validated);
 
-        return redirect()->route('admin.index')->with('success', 'Akun guru berhasil diperbarui.');
+        $redirectRoute = $request->input('from') === 'superadmin' ? 'superadmin.index' : 'admin.index';
+        $redirectParameters = $request->input('from') === 'superadmin' ? ['menu' => 'guru'] : [];
+
+        return redirect()->route($redirectRoute, $redirectParameters)->with('success', 'Akun guru berhasil diperbarui.');
     }
 
     public function destroy(AdminGuru $guru)
@@ -81,6 +92,9 @@ class AdminGuruController extends Controller
 
         $guru->delete();
 
-        return redirect()->route('admin.index')->with('success', 'Akun guru berhasil dihapus.');
+        $redirectRoute = request()->input('from') === 'superadmin' ? 'superadmin.index' : 'admin.index';
+        $redirectParameters = request()->input('from') === 'superadmin' ? ['menu' => 'guru'] : [];
+
+        return redirect()->route($redirectRoute, $redirectParameters)->with('success', 'Akun guru berhasil dihapus.');
     }
 }
