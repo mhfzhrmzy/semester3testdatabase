@@ -23,14 +23,25 @@ class PenggunaSiswaController extends Controller
 
     public function store(Request $request)
     {
+        $jurusanList = [
+            'Teknik Alat Berat', 'Teknik Kendaraan Ringan', 'Teknik Sepeda Motor',
+            'Teknik Pemesinan', 'Teknik Instalasi Listrik', 'Teknik Pembangkit Listrik',
+            'Teknik Mekatronika', 'Teknik Audio Video', 'Teknik Komputer & Jaringan',
+            'Teknik Konstruksi & Perumahan', 'Desain Permodelan & Informasi Bangunan',
+            'Desain Komunikasi Visual',
+        ];
+
         $validated = $request->validate([
             'nisn' => ['required', 'digits:10', 'unique:pengguna_siswa,nisn'],
             'nama_lengkap' => ['required', 'string', 'max:60', 'regex:/^[a-zA-Z\s]+$/'],
-            'email' => ['required', 'email', 'max:255', 'unique:pengguna_siswa,email'],
+            'kelas' => ['required', 'in:10,11,12'],
+            'jurusan' => ['required', 'in:'.implode(',', $jurusanList)],
             'password' => ['required', 'string', 'min:6'],
         ], [
             'nisn.digits' => 'NISN wajib tepat 10 digit angka.',
             'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
+            'kelas.required' => 'Kelas wajib dipilih.',
+            'jurusan.required' => 'Jurusan wajib dipilih.',
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
@@ -46,14 +57,25 @@ class PenggunaSiswaController extends Controller
 
     public function update(Request $request, PenggunaSiswa $siswa)
     {
+        $jurusanList = [
+            'Teknik Alat Berat', 'Teknik Kendaraan Ringan', 'Teknik Sepeda Motor',
+            'Teknik Pemesinan', 'Teknik Instalasi Listrik', 'Teknik Pembangkit Listrik',
+            'Teknik Mekatronika', 'Teknik Audio Video', 'Teknik Komputer & Jaringan',
+            'Teknik Konstruksi & Perumahan', 'Desain Permodelan & Informasi Bangunan',
+            'Desain Komunikasi Visual',
+        ];
+
         $validated = $request->validate([
             'nisn' => ['required', 'digits:10', Rule::unique('pengguna_siswa', 'nisn')->ignore($siswa->nisn, 'nisn')],
             'nama_lengkap' => ['required', 'string', 'max:60', 'regex:/^[a-zA-Z\s]+$/'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('pengguna_siswa', 'email')->ignore($siswa->nisn, 'nisn')],
+            'kelas' => ['required', 'in:10,11,12'],
+            'jurusan' => ['required', 'in:'.implode(',', $jurusanList)],
             'password' => ['nullable', 'string', 'min:6'],
         ], [
             'nisn.digits' => 'NISN wajib tepat 10 digit angka.',
             'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
+            'kelas.required' => 'Kelas wajib dipilih.',
+            'jurusan.required' => 'Jurusan wajib dipilih.',
         ]);
 
         $validated['password'] = $request->filled('password')

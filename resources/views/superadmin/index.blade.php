@@ -106,11 +106,11 @@
                 <div class="flex items-center gap-3 pl-3 border-l border-slate-200">
                     <div class="text-right hidden sm:block">
                         <span class="text-xs font-bold text-slate-800 block leading-tight">
-                            {{ auth('admin')->user()->nama_lengkap ?? 'Administrator Utama' }}
+                            {{ auth('superadmin')->user()->nama_lengkap ?? 'Administrator Utama' }}
                         </span>
                     </div>
                     <div class="w-9 h-9 rounded-full bg-[#4a101d] text-white flex items-center justify-center font-bold text-xs shadow-md shadow-amber-950/20 ring-2 ring-[#4a101d]/20 shrink-0">
-                        {{ strtoupper(substr(auth('admin')->user()->nama_lengkap ?? 'AU', 0, 2)) }}
+                        {{ strtoupper(substr(auth('superadmin')->user()->nama_lengkap ?? 'SA', 0, 2)) }}
                     </div>
                 </div>
             </div>
@@ -259,6 +259,9 @@
                                                 <td class="px-3 py-2 font-bold text-slate-900">{{ $guru->nama_lengkap }}</td>
                                                 <td class="px-3 py-2">
                                                     <div class="flex items-center justify-end gap-2">
+                                                        <button type="button"
+                                                                onclick="openEditGuruModal('{{ $guru->nip }}', '{{ addslashes($guru->nama_lengkap) }}')"
+                                                                class="text-amber-600 font-bold hover:underline cursor-pointer">Edit</button>
                                                         <form action="{{ route('admin.destroy', $guru) }}" method="POST" onsubmit="return confirm('Hapus akun guru ini?')">
                                                             @csrf @method('DELETE')
                                                             <input type="hidden" name="from" value="superadmin">
@@ -312,6 +315,9 @@
                                                 <td class="px-3 py-2 font-bold text-slate-900">{{ $siswa->nama_lengkap }}</td>
                                                 <td class="px-3 py-2">
                                                     <div class="flex items-center justify-end gap-2">
+                                                        <button type="button"
+                                                                onclick="openEditSiswaModal('{{ $siswa->nisn }}', '{{ addslashes($siswa->nama_lengkap) }}', '{{ $siswa->kelas }}', '{{ addslashes($siswa->jurusan) }}')"
+                                                                class="text-amber-600 font-bold hover:underline cursor-pointer">Edit</button>
                                                         <form action="{{ route('siswa.destroy', $siswa) }}" method="POST" onsubmit="return confirm('Hapus akun siswa ini?')">
                                                             @csrf @method('DELETE')
                                                             <input type="hidden" name="from" value="superadmin">
@@ -405,12 +411,10 @@
                                             <td class="px-4 py-3 font-semibold text-slate-700">{{ $guru->nip }}</td>
                                             <td class="px-4 py-3 font-bold text-slate-900">{{ $guru->nama_lengkap }}</td>
                                             <td class="px-4 py-3">
-                                                <span class="bg-purple-50 text-purple-700 border border-purple-200/60 font-bold px-2.5 py-0.5 rounded-full text-[10px] uppercase">
-                                                    {{ $guru->role }}
-                                                </span>
-                                            </td>
-                                            <td class="px-4 py-3">
                                                 <div class="flex items-center justify-end gap-3">
+                                                    <button type="button"
+                                                            onclick="openEditGuruModal('{{ $guru->nip }}', '{{ addslashes($guru->nama_lengkap) }}')"
+                                                            class="text-amber-600 font-bold hover:underline cursor-pointer">Edit</button>
                                                     <form action="{{ route('admin.destroy', $guru) }}" method="POST" onsubmit="return confirm('Hapus akun guru ini?')">
                                                         @csrf @method('DELETE')
                                                         <input type="hidden" name="from" value="superadmin">
@@ -467,6 +471,37 @@
                                        class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
                             </div>
                             <div>
+                                <label class="mb-1 block text-xs font-bold text-slate-700">Kelas</label>
+                                <select name="kelas" required class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition bg-white">
+                                    <option value="" disabled {{ old('kelas') ? '' : 'selected' }}>-- Pilih Kelas --</option>
+                                    @foreach (['10', '11', '12'] as $k)
+                                        <option value="{{ $k }}" {{ old('kelas') === $k ? 'selected' : '' }}>Kelas {{ $k }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="mb-1 block text-xs font-bold text-slate-700">Jurusan</label>
+                                <select name="jurusan" required class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition bg-white">
+                                    <option value="" disabled {{ old('jurusan') ? '' : 'selected' }}>-- Pilih Jurusan --</option>
+                                    @foreach ([
+                                        'Teknik Alat Berat',
+                                        'Teknik Kendaraan Ringan',
+                                        'Teknik Sepeda Motor',
+                                        'Teknik Pemesinan',
+                                        'Teknik Instalasi Listrik',
+                                        'Teknik Pembangkit Listrik',
+                                        'Teknik Mekatronika',
+                                        'Teknik Audio Video',
+                                        'Teknik Komputer & Jaringan',
+                                        'Teknik Konstruksi & Perumahan',
+                                        'Desain Permodelan & Informasi Bangunan',
+                                        'Desain Komunikasi Visual',
+                                    ] as $j)
+                                        <option value="{{ $j }}" {{ old('jurusan') === $j ? 'selected' : '' }}>{{ $j }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
                                 <label class="mb-1 block text-xs font-bold text-slate-700">Password</label>
                                 <input type="password" name="password" required 
                                        placeholder="Minimal 6 karakter"
@@ -489,6 +524,8 @@
                                     <tr class="border-b border-slate-200 bg-slate-50/80 text-slate-500 uppercase tracking-wider font-bold">
                                         <th class="px-4 py-3 rounded-l-xl">NISN</th>
                                         <th class="px-4 py-3">Nama Lengkap</th>
+                                        <th class="px-4 py-3">Kelas</th>
+                                        <th class="px-4 py-3">Jurusan</th>
                                         <th class="px-4 py-3 text-right rounded-r-xl">Aksi</th>
                                     </tr>
                                 </thead>
@@ -497,9 +534,15 @@
                                         <tr class="hover:bg-slate-50/80 transition">
                                             <td class="px-4 py-3 font-semibold text-slate-700">{{ $siswa->nisn }}</td>
                                             <td class="px-4 py-3 font-bold text-slate-900">{{ $siswa->nama_lengkap }}</td>
-                                            <td class="px-4 py-3 font-bold text-amber-600">{{ $siswa->poin ?? 0 }} XP</td>
+                                            <td class="px-4 py-3">
+                                                <span class="bg-blue-50 text-blue-700 border border-blue-200/60 font-bold px-2.5 py-0.5 rounded-full text-[10px]">Kelas {{ $siswa->kelas }}</span>
+                                            </td>
+                                            <td class="px-4 py-3 text-slate-600">{{ $siswa->jurusan }}</td>
                                             <td class="px-4 py-3">
                                                 <div class="flex items-center justify-end gap-3">
+                                                    <button type="button"
+                                                            onclick="openEditSiswaModal('{{ $siswa->nisn }}', '{{ addslashes($siswa->nama_lengkap) }}', '{{ $siswa->kelas }}', '{{ addslashes($siswa->jurusan) }}')"
+                                                            class="text-amber-600 font-bold hover:underline cursor-pointer">Edit</button>
                                                     <form action="{{ route('siswa.destroy', $siswa) }}" method="POST" onsubmit="return confirm('Hapus akun siswa ini?')">
                                                         @csrf @method('DELETE')
                                                         <input type="hidden" name="from" value="superadmin">
@@ -653,6 +696,35 @@
                 <input type="text" id="edit-siswa-nama" name="nama_lengkap" required class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
             </div>
             <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Kelas</label>
+                <select id="edit-siswa-kelas" name="kelas" required class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition bg-white">
+                    <option value="10">Kelas 10</option>
+                    <option value="11">Kelas 11</option>
+                    <option value="12">Kelas 12</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Jurusan</label>
+                <select id="edit-siswa-jurusan" name="jurusan" required class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition bg-white">
+                    @foreach ([
+                        'Teknik Alat Berat',
+                        'Teknik Kendaraan Ringan',
+                        'Teknik Sepeda Motor',
+                        'Teknik Pemesinan',
+                        'Teknik Instalasi Listrik',
+                        'Teknik Pembangkit Listrik',
+                        'Teknik Mekatronika',
+                        'Teknik Audio Video',
+                        'Teknik Komputer & Jaringan',
+                        'Teknik Konstruksi & Perumahan',
+                        'Desain Permodelan & Informasi Bangunan',
+                        'Desain Komunikasi Visual',
+                    ] as $j)
+                        <option value="{{ $j }}">{{ $j }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Password Baru <span class="font-normal text-slate-400">(Opsional)</span></label>
                 <input type="password" name="password" placeholder="Kosongkan jika tidak diubah" class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
             </div>
@@ -675,10 +747,12 @@
         document.getElementById('edit-guru-modal').classList.add('hidden');
     }
 
-    function openEditSiswaModal(nisn, nama) {
+    function openEditSiswaModal(nisn, nama, kelas, jurusan) {
         document.getElementById('edit-siswa-form').action = "/siswa/" + encodeURIComponent(nisn);
         document.getElementById('edit-siswa-nisn').value = nisn;
         document.getElementById('edit-siswa-nama').value = nama;
+        document.getElementById('edit-siswa-kelas').value = kelas;
+        document.getElementById('edit-siswa-jurusan').value = jurusan;
         document.getElementById('edit-siswa-modal').classList.remove('hidden');
     }
     function closeEditSiswaModal() {

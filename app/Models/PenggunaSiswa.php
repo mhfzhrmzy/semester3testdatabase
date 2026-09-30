@@ -10,12 +10,15 @@ class PenggunaSiswa extends Authenticatable
     use Notifiable;
 
     protected $table = 'pengguna_siswa';
+
     protected $primaryKey = 'nisn';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
-        'nisn', 'nama_lengkap', 'email', 'password', 'poin',
+        'nisn', 'nama_lengkap', 'kelas', 'jurusan', 'password', 'poin',
     ];
 
     protected $hidden = ['password', 'remember_token'];
