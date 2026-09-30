@@ -7,6 +7,7 @@ use App\Models\Materi;
 use App\Models\PenggunaSiswa;
 use App\Models\Quiz;
 use App\Models\Sertifikat;
+use Illuminate\Support\Facades\Auth;
 
 class SuperadminController extends Controller
 {
@@ -17,6 +18,7 @@ class SuperadminController extends Controller
         $materiCount = Materi::count();
         $quizCount = Quiz::count();
         $sertifikatCount = Sertifikat::count();
+        $superadmin = Auth::guard('superadmin')->user();
 
         $menu = request()->query('menu', 'dashboard');
 
@@ -24,6 +26,6 @@ class SuperadminController extends Controller
             $menu = 'dashboard';
         }
 
-        return view('superadmin.index', compact('gurus', 'siswas', 'materiCount', 'quizCount', 'sertifikatCount', 'menu'));
+        return view('superadmin.index', compact('gurus', 'siswas', 'materiCount', 'quizCount', 'sertifikatCount', 'menu', 'superadmin'));
     }
 }

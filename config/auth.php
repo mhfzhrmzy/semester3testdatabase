@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\AdminGuru;
+use App\Models\PenggunaSiswa;
+use App\Models\SuperAdmin;
 use App\Models\User;
 
 return [
@@ -41,9 +44,9 @@ return [
         'web' => ['driver' => 'session', 'provider' => 'users'],
 
         'admin' => ['driver' => 'session', 'provider' => 'admin_guru'],
+        'superadmin' => ['driver' => 'session', 'provider' => 'super_admin'],
         'siswa' => ['driver' => 'session', 'provider' => 'pengguna_siswa'],
     ],
-
 
     /*
     |--------------------------------------------------------------------------
@@ -63,16 +66,17 @@ return [
     */
 
     'providers' => [
-        'users' => ['driver' => 'eloquent', 'model' => env('AUTH_MODEL', App\Models\User::class)],
+        'users' => ['driver' => 'eloquent', 'model' => env('AUTH_MODEL', User::class)],
 
-        'admin_guru' => ['driver' => 'eloquent', 'model' => App\Models\AdminGuru::class],
-        'pengguna_siswa' => ['driver' => 'eloquent', 'model' => App\Models\PenggunaSiswa::class],
+        'admin_guru' => ['driver' => 'eloquent', 'model' => AdminGuru::class],
+        'super_admin' => ['driver' => 'eloquent', 'model' => SuperAdmin::class],
+        'pengguna_siswa' => ['driver' => 'eloquent', 'model' => PenggunaSiswa::class],
     ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+    // 'users' => [
+    //     'driver' => 'database',
+    //     'table' => 'users',
+    // ],
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords

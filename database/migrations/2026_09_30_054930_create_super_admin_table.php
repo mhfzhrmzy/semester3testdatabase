@@ -8,11 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('admin_guru', function (Blueprint $table) {
-            $table->unsignedBigInteger('nip')->primary(); // 18 digit, diisi manual (bukan auto-increment)
+        Schema::create('super_admin', function (Blueprint $table) {
+            $table->unsignedBigInteger('nip')->primary(); // 18 digit, diisi manual
             $table->string('nama_lengkap', 60);
             $table->string('password');
-            $table->string('foto_profile')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
@@ -20,6 +19,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('admin_guru');
+        Schema::dropIfExists('super_admin');
     }
 };

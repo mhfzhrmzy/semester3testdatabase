@@ -249,7 +249,6 @@
                                         <tr class="border-b border-slate-200 bg-slate-50/80 text-slate-500 uppercase tracking-wider font-bold">
                                             <th class="px-3 py-2 rounded-l-lg">NIP</th>
                                             <th class="px-3 py-2">Nama</th>
-                                            <th class="px-3 py-2">Email</th>
                                             <th class="px-3 py-2 text-right rounded-r-lg">Aksi</th>
                                         </tr>
                                     </thead>
@@ -258,14 +257,8 @@
                                             <tr class="hover:bg-slate-50/80 transition">
                                                 <td class="px-3 py-2 font-semibold text-slate-700">{{ $guru->nip }}</td>
                                                 <td class="px-3 py-2 font-bold text-slate-900">{{ $guru->nama_lengkap }}</td>
-                                                <td class="px-3 py-2 text-slate-600 truncate max-w-[150px]">{{ $guru->email }}</td>
                                                 <td class="px-3 py-2">
                                                     <div class="flex items-center justify-end gap-2">
-                                                        <button type="button" 
-                                                                onclick="openEditGuruModal('{{ $guru->nip }}', '{{ addslashes($guru->nama_lengkap) }}', '{{ $guru->email }}')" 
-                                                                class="text-amber-600 font-bold hover:underline cursor-pointer">
-                                                            Edit
-                                                        </button>
                                                         <form action="{{ route('admin.destroy', $guru) }}" method="POST" onsubmit="return confirm('Hapus akun guru ini?')">
                                                             @csrf @method('DELETE')
                                                             <input type="hidden" name="from" value="superadmin">
@@ -309,7 +302,6 @@
                                         <tr class="border-b border-slate-200 bg-slate-50/80 text-slate-500 uppercase tracking-wider font-bold">
                                             <th class="px-3 py-2 rounded-l-lg">NISN</th>
                                             <th class="px-3 py-2">Nama</th>
-                                            <th class="px-3 py-2">Email</th>
                                             <th class="px-3 py-2 text-right rounded-r-lg">Aksi</th>
                                         </tr>
                                     </thead>
@@ -318,14 +310,8 @@
                                             <tr class="hover:bg-slate-50/80 transition">
                                                 <td class="px-3 py-2 font-semibold text-slate-700">{{ $siswa->nisn }}</td>
                                                 <td class="px-3 py-2 font-bold text-slate-900">{{ $siswa->nama_lengkap }}</td>
-                                                <td class="px-3 py-2 text-slate-600 truncate max-w-[150px]">{{ $siswa->email }}</td>
                                                 <td class="px-3 py-2">
                                                     <div class="flex items-center justify-end gap-2">
-                                                        <button type="button" 
-                                                                onclick="openEditSiswaModal('{{ $siswa->nisn }}', '{{ addslashes($siswa->nama_lengkap) }}', '{{ $siswa->email }}')" 
-                                                                class="text-amber-600 font-bold hover:underline cursor-pointer">
-                                                            Edit
-                                                        </button>
                                                         <form action="{{ route('siswa.destroy', $siswa) }}" method="POST" onsubmit="return confirm('Hapus akun siswa ini?')">
                                                             @csrf @method('DELETE')
                                                             <input type="hidden" name="from" value="superadmin">
@@ -382,12 +368,7 @@
                                        placeholder="Siti Rahmawati, S.Pd"
                                        class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
                             </div>
-                            <div>
-                                <label class="mb-1 block text-xs font-bold text-slate-700">Alamat Email</label>
-                                <input type="email" name="email" value="{{ old('email') }}" required 
-                                       placeholder="guru@smkn2jember.sch.id"
-                                       class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
-                            </div>
+
                             <div>
                                 <label class="mb-1 block text-xs font-bold text-slate-700">Password</label>
                                 <input type="password" name="password" required 
@@ -415,8 +396,6 @@
                                     <tr class="border-b border-slate-200 bg-slate-50/80 text-slate-500 uppercase tracking-wider font-bold">
                                         <th class="px-4 py-3 rounded-l-xl">NIP</th>
                                         <th class="px-4 py-3">Nama Lengkap</th>
-                                        <th class="px-4 py-3">Email</th>
-                                        <th class="px-4 py-3">Role</th>
                                         <th class="px-4 py-3 text-right rounded-r-xl">Aksi</th>
                                     </tr>
                                 </thead>
@@ -425,7 +404,6 @@
                                         <tr class="hover:bg-slate-50/80 transition">
                                             <td class="px-4 py-3 font-semibold text-slate-700">{{ $guru->nip }}</td>
                                             <td class="px-4 py-3 font-bold text-slate-900">{{ $guru->nama_lengkap }}</td>
-                                            <td class="px-4 py-3 text-slate-600">{{ $guru->email }}</td>
                                             <td class="px-4 py-3">
                                                 <span class="bg-purple-50 text-purple-700 border border-purple-200/60 font-bold px-2.5 py-0.5 rounded-full text-[10px] uppercase">
                                                     {{ $guru->role }}
@@ -433,11 +411,6 @@
                                             </td>
                                             <td class="px-4 py-3">
                                                 <div class="flex items-center justify-end gap-3">
-                                                    <button type="button" 
-                                                            onclick="openEditGuruModal('{{ $guru->nip }}', '{{ addslashes($guru->nama_lengkap) }}', '{{ $guru->email }}')" 
-                                                            class="text-amber-600 font-bold hover:underline cursor-pointer">
-                                                        Edit
-                                                    </button>
                                                     <form action="{{ route('admin.destroy', $guru) }}" method="POST" onsubmit="return confirm('Hapus akun guru ini?')">
                                                         @csrf @method('DELETE')
                                                         <input type="hidden" name="from" value="superadmin">
@@ -494,12 +467,6 @@
                                        class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
                             </div>
                             <div>
-                                <label class="mb-1 block text-xs font-bold text-slate-700">Alamat Email</label>
-                                <input type="email" name="email" value="{{ old('email') }}" required 
-                                       placeholder="siswa@smkn2jember.sch.id"
-                                       class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
-                            </div>
-                            <div>
                                 <label class="mb-1 block text-xs font-bold text-slate-700">Password</label>
                                 <input type="password" name="password" required 
                                        placeholder="Minimal 6 karakter"
@@ -522,8 +489,6 @@
                                     <tr class="border-b border-slate-200 bg-slate-50/80 text-slate-500 uppercase tracking-wider font-bold">
                                         <th class="px-4 py-3 rounded-l-xl">NISN</th>
                                         <th class="px-4 py-3">Nama Lengkap</th>
-                                        <th class="px-4 py-3">Email</th>
-                                        <th class="px-4 py-3">Poin XP</th>
                                         <th class="px-4 py-3 text-right rounded-r-xl">Aksi</th>
                                     </tr>
                                 </thead>
@@ -532,15 +497,9 @@
                                         <tr class="hover:bg-slate-50/80 transition">
                                             <td class="px-4 py-3 font-semibold text-slate-700">{{ $siswa->nisn }}</td>
                                             <td class="px-4 py-3 font-bold text-slate-900">{{ $siswa->nama_lengkap }}</td>
-                                            <td class="px-4 py-3 text-slate-600">{{ $siswa->email }}</td>
                                             <td class="px-4 py-3 font-bold text-amber-600">{{ $siswa->poin ?? 0 }} XP</td>
                                             <td class="px-4 py-3">
                                                 <div class="flex items-center justify-end gap-3">
-                                                    <button type="button" 
-                                                            onclick="openEditSiswaModal('{{ $siswa->nisn }}', '{{ addslashes($siswa->nama_lengkap) }}', '{{ $siswa->email }}')" 
-                                                            class="text-amber-600 font-bold hover:underline cursor-pointer">
-                                                        Edit
-                                                    </button>
                                                     <form action="{{ route('siswa.destroy', $siswa) }}" method="POST" onsubmit="return confirm('Hapus akun siswa ini?')">
                                                         @csrf @method('DELETE')
                                                         <input type="hidden" name="from" value="superadmin">
@@ -659,10 +618,6 @@
                 <input type="text" id="edit-guru-nama" name="nama_lengkap" required class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Email</label>
-                <input type="email" id="edit-guru-email" name="email" required class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
-            </div>
-            <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Password Baru <span class="font-normal text-slate-400">(Opsional)</span></label>
                 <input type="password" name="password" placeholder="Kosongkan jika tidak diubah" class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
             </div>
@@ -698,10 +653,6 @@
                 <input type="text" id="edit-siswa-nama" name="nama_lengkap" required class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Email</label>
-                <input type="email" id="edit-siswa-email" name="email" required class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
-            </div>
-            <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Password Baru <span class="font-normal text-slate-400">(Opsional)</span></label>
                 <input type="password" name="password" placeholder="Kosongkan jika tidak diubah" class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
             </div>
@@ -714,22 +665,20 @@
 </div>
 
 <script>
-    function openEditGuruModal(nip, nama, email) {
+    function openEditGuruModal(nip, nama) {
         document.getElementById('edit-guru-form').action = "/admin/" + encodeURIComponent(nip);
         document.getElementById('edit-guru-nip').value = nip;
         document.getElementById('edit-guru-nama').value = nama;
-        document.getElementById('edit-guru-email').value = email;
         document.getElementById('edit-guru-modal').classList.remove('hidden');
     }
     function closeEditGuruModal() {
         document.getElementById('edit-guru-modal').classList.add('hidden');
     }
 
-    function openEditSiswaModal(nisn, nama, email) {
+    function openEditSiswaModal(nisn, nama) {
         document.getElementById('edit-siswa-form').action = "/siswa/" + encodeURIComponent(nisn);
         document.getElementById('edit-siswa-nisn').value = nisn;
         document.getElementById('edit-siswa-nama').value = nama;
-        document.getElementById('edit-siswa-email').value = email;
         document.getElementById('edit-siswa-modal').classList.remove('hidden');
     }
     function closeEditSiswaModal() {

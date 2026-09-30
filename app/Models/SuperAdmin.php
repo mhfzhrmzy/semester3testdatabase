@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class AdminGuru extends Authenticatable
+class SuperAdmin extends Authenticatable
 {
     use Notifiable;
 
-    protected $table = 'admin_guru';
+    protected $table = 'super_admin';
 
     protected $primaryKey = 'nip';
 
@@ -18,7 +18,7 @@ class AdminGuru extends Authenticatable
     protected $keyType = 'string';
 
     protected $fillable = [
-        'nip', 'nama_lengkap', 'password', 'foto_profile',
+        'nip', 'nama_lengkap', 'password',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -29,15 +29,5 @@ class AdminGuru extends Authenticatable
             'nip' => 'string',
             'password' => 'hashed',
         ];
-    }
-
-    public function materi()
-    {
-        return $this->hasMany(Materi::class, 'nip', 'nip');
-    }
-
-    public function quiz()
-    {
-        return $this->hasMany(Quiz::class, 'nip', 'nip');
     }
 }

@@ -27,7 +27,6 @@ class AdminGuruController extends Controller
         $validated = $request->validate([
             'nip' => ['required', 'digits:18', 'unique:admin_guru,nip'],
             'nama_lengkap' => ['required', 'string', 'max:60', 'regex:/^[a-zA-Z\s]+$/'],
-            'email' => ['required', 'email', 'max:255', 'unique:admin_guru,email'],
             'password' => ['required', 'string', 'min:6'],
             'foto_profile' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ], [
@@ -55,7 +54,6 @@ class AdminGuruController extends Controller
         $validated = $request->validate([
             'nip' => ['required', 'digits:18', Rule::unique('admin_guru', 'nip')->ignore($guru->nip, 'nip')],
             'nama_lengkap' => ['required', 'string', 'max:60', 'regex:/^[a-zA-Z\s]+$/'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('admin_guru', 'email')->ignore($guru->nip, 'nip')],
             'password' => ['nullable', 'string', 'min:6'],
             'foto_profile' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ], [
