@@ -69,9 +69,9 @@
                     </button>
                 </form>
 
-                <!-- Redirect link -->
+                <!-- Notice -->
                 <div class="mt-6 text-center text-xs text-slate-500">
-                    Belum memiliki akun siswa? <a href="{{ route('siswa.register') }}" class="text-[#3B5284] hover:underline font-bold">Daftar Akun Siswa</a>
+                    Akun siswa dibuat oleh Superadmin. Silakan hubungi Administrator jika belum memiliki akun.
                 </div>
             </div>
 

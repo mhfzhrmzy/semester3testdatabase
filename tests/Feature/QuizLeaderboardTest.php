@@ -6,10 +6,10 @@ use App\Models\AdminGuru;
 use App\Models\Materi;
 use App\Models\PenggunaSiswa;
 use App\Models\Quiz;
-use App\Models\Soal;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
 
 class QuizLeaderboardTest extends TestCase
 {
@@ -52,6 +52,7 @@ class QuizLeaderboardTest extends TestCase
 
         $materi = Materi::create([
             'judul_materi' => 'Fisika Dasar',
+            'isi_materi' => 'Isi materi fisika dasar',
             'nip' => $admin->nip,
         ]);
 
@@ -65,7 +66,7 @@ class QuizLeaderboardTest extends TestCase
         $this->assertDatabaseHas('quiz', [
             'id_materi' => $materi->id_materi,
             'tipe_test' => 'pretest',
-            'tanggal' => now()->toDateString(),
+            'tanggal' => now()->startOfDay()->toDateTimeString(),
         ]);
 
         $response->assertRedirect(route('admin.quiz.index'));
@@ -81,7 +82,7 @@ class QuizLeaderboardTest extends TestCase
             'role' => 'guru',
         ]);
 
-        $materi = Materi::create(['judul_materi' => 'Biologi', 'nip' => $admin->nip]);
+        $materi = Materi::create(['judul_materi' => 'Biologi', 'isi_materi' => 'Isi materi biologi', 'nip' => $admin->nip]);
         $quiz = Quiz::create([
             'id_materi' => $materi->id_materi,
             'nip' => $admin->nip,
@@ -91,8 +92,8 @@ class QuizLeaderboardTest extends TestCase
             'tanggal' => now()->toDateString(),
         ]);
 
-        $csvContent = "pertanyaan,pilihan_a,pilihan_b,pilihan_c,pilihan_d,jawaban_benar,timer_per_soal\n" .
-                      "Berapa 1+1?,1,2,3,4,b,30\n" .
+        $csvContent = "pertanyaan,pilihan_a,pilihan_b,pilihan_c,pilihan_d,jawaban_benar,timer_per_soal\n".
+                      "Berapa 1+1?,1,2,3,4,b,30\n".
                       "Apa warna daun?,Hijau,Biru,Merah,Kuning,a,45\n";
 
         $file = UploadedFile::fake()->createWithContent('soal.csv', $csvContent);

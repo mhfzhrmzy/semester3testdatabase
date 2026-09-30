@@ -4,9 +4,7 @@ use App\Http\Controllers\Admin\QuizController as AdminQuizController;
 use App\Http\Controllers\Admin\SoalController as AdminSoalController;
 use App\Http\Controllers\AdminGuruController;
 use App\Http\Controllers\Auth\AdminLoginController;
-use App\Http\Controllers\Auth\AdminRegisterController;
 use App\Http\Controllers\Auth\SiswaLoginController;
-use App\Http\Controllers\Auth\SiswaRegisterController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\MateriController;
 use App\Http\Controllers\PenggunaSiswaController;
@@ -36,15 +34,11 @@ Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leade
 // Autentikasi Guru / Admin
 Route::get('/login/guru', [AdminLoginController::class, 'create'])->name('admin.login');
 Route::post('/login/guru', [AdminLoginController::class, 'store'])->name('admin.login.attempt');
-Route::get('/register/guru', [AdminRegisterController::class, 'create'])->name('admin.register');
-Route::post('/register/guru', [AdminRegisterController::class, 'store'])->name('admin.register.attempt');
 Route::post('/logout/guru', [AdminLoginController::class, 'destroy'])->name('admin.logout');
 
 // Autentikasi Siswa
 Route::get('/login/siswa', [SiswaLoginController::class, 'create'])->name('siswa.login');
 Route::post('/login/siswa', [SiswaLoginController::class, 'store'])->name('siswa.login.attempt');
-Route::get('/register/siswa', [SiswaRegisterController::class, 'create'])->name('siswa.register');
-Route::post('/register/siswa', [SiswaRegisterController::class, 'store'])->name('siswa.register.attempt');
 Route::post('/logout/siswa', [SiswaLoginController::class, 'destroy'])->name('siswa.logout');
 
 // Area Guru / Admin
