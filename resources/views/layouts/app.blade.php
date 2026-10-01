@@ -67,7 +67,8 @@
                         Sertifikat
                     </a>
                     <span class="text-gray-500">|</span>
-                    <span class="text-gray-300">{{ auth('siswa')->user()->nama_lengkap }}</span>
+                    <a href="{{ route('siswa.profil') }}" class="text-gray-300 hover:text-white">
+                    {{ auth('siswa')->user()->nama_lengkap }}</a>
                     <form action="{{ route('siswa.logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="hover:text-red-400">Logout</button>
