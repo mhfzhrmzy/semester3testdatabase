@@ -29,7 +29,7 @@ Route::get('/', function () {
         return redirect()->route('portal.materi.index');
     }
 
-    return view('home');
+    return redirect()->route('siswa.login');
 })->name('home');
 
 Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
