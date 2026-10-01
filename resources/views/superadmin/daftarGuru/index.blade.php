@@ -2,7 +2,7 @@
 <div>
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Kelola Akun Guru</h1>
+            <h1 class="text-2xl font-semibold text-slate-900 tracking-tight">Kelola Akun Guru</h1>
             <p class="text-xs text-slate-500 mt-1">Tambah, perbarui, atau hapus data akun guru pengampu.</p>
         </div>
         <div class="flex items-center gap-3 flex-wrap">
@@ -40,13 +40,13 @@
             <div>
                 <label class="mb-1 block text-xs font-bold text-slate-700">NIP (18 Digit)</label>
                 <input type="text" name="nip" value="{{ old('nip') }}" maxlength="18" inputmode="numeric" pattern="[0-9]*" required 
-                       placeholder="19890412..."
+                       placeholder="Masukkan NIP 18 digit"
                        class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
             </div>
             <div>
                 <label class="mb-1 block text-xs font-bold text-slate-700">Nama Lengkap</label>
                 <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" required 
-                       placeholder="Siti Rahmawati, S.Pd"
+                       placeholder="Masukkan Nama Lengkap"
                        class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
             </div>
 
@@ -74,7 +74,7 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead>
-                    <tr class="border-b border-slate-200 bg-slate-50/80 text-slate-500 uppercase tracking-wider font-bold">
+                    <tr class="border-b border-slate-200 bg-slate-50/80 text-slate-700 uppercase tracking-wider font-bold">
                         <th class="px-4 py-3 rounded-l-xl">Foto</th>
                         <th class="px-4 py-3">NIP</th>
                         <th class="px-4 py-3">Nama Lengkap</th>
@@ -93,17 +93,17 @@
                                     </div>
                                 @endif
                             </td>
-                            <td class="px-4 py-3 font-semibold text-slate-700 font-mono tracking-tight">{{ $guru->nip }}</td>
-                            <td class="px-4 py-3 font-bold text-slate-900">{{ $guru->nama_lengkap }}</td>
+                            <td class="px-4 py-3 font-normal text-slate-500 font-mono tracking-tight">{{ $guru->nip }}</td>
+                            <td class="px-4 py-3 font-normal text-slate-700">{{ $guru->nama_lengkap }}</td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-end gap-3">
                                     <button type="button"
                                             onclick="openEditGuruModal('{{ $guru->nip }}', '{{ addslashes($guru->nama_lengkap) }}')"
-                                            class="text-amber-600 font-bold hover:underline cursor-pointer">Edit</button>
+                                            class="text-amber-600 font-medium hover:underline cursor-pointer">Edit</button>
                                     <form action="{{ route('admin.destroy', $guru) }}" method="POST" onsubmit="return confirm('Hapus akun guru ini?')">
                                         @csrf @method('DELETE')
                                         <input type="hidden" name="from" value="superadmin">
-                                        <button type="submit" class="text-red-600 font-bold hover:underline cursor-pointer">Hapus</button>
+                                        <button type="submit" class="text-red-600 font-medium hover:underline cursor-pointer">Hapus</button>
                                     </form>
                                 </div>
                             </td>

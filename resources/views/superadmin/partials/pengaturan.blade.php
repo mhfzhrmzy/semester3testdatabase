@@ -1,7 +1,7 @@
 <!-- PENGATURAN & LOG VIEW -->
 <div class="space-y-6">
     <div>
-        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Pengaturan & Log Sistem</h1>
+        <h1 class="text-2xl font-semibold text-slate-900 tracking-tight">Pengaturan & Log Sistem</h1>
         <p class="text-xs text-slate-500 mt-1">Konfigurasi pusat, status node server, dan riwayat aktivitas superadmin.</p>
     </div>
 

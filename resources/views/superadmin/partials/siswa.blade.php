@@ -2,7 +2,7 @@
 <div>
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Kelola Akun Siswa</h1>
+            <h1 class="text-2xl font-semibold text-slate-900 tracking-tight">Kelola Akun Siswa</h1>
             <p class="text-xs text-slate-500 mt-1">Tambah, perbarui, atau hapus data akun siswa.</p>
         </div>
         <div class="flex items-center gap-3 flex-wrap">
@@ -39,13 +39,13 @@
             <div>
                 <label class="mb-1 block text-xs font-bold text-slate-700">NISN (10 Digit)</label>
                 <input type="text" name="nisn" value="{{ old('nisn') }}" maxlength="10" inputmode="numeric" pattern="[0-9]*" required 
-                       placeholder="0081293812"
+                       placeholder="Masukkan NISN 10 digit"
                        class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
             </div>
             <div>
                 <label class="mb-1 block text-xs font-bold text-slate-700">Nama Lengkap</label>
                 <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" required 
-                       placeholder="Andi Pratama"
+                       placeholder="Masukkan Nama Lengkap"
                        class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
             </div>
             <div>
@@ -109,7 +109,7 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead>
-                    <tr class="border-b border-slate-200 bg-slate-50/80 text-slate-500 uppercase tracking-wider font-bold">
+                    <tr class="border-b border-slate-200 bg-slate-50/80 text-slate-700 uppercase tracking-wider font-bold">
                         <th class="px-4 py-3 rounded-l-xl">Foto</th>
                         <th class="px-4 py-3">NISN</th>
                         <th class="px-4 py-3">Nama Lengkap</th>
@@ -130,21 +130,21 @@
                                     </div>
                                 @endif
                             </td>
-                            <td class="px-4 py-3 font-semibold text-slate-700 font-mono tracking-tight">{{ $siswa->nisn }}</td>
-                            <td class="px-4 py-3 font-bold text-slate-900">{{ $siswa->nama_lengkap }}</td>
+                            <td class="px-4 py-3 font-normal text-slate-500 font-mono tracking-tight">{{ $siswa->nisn }}</td>
+                            <td class="px-4 py-3 font-normal text-slate-700">{{ $siswa->nama_lengkap }}</td>
                             <td class="px-4 py-3">
-                                <span class="bg-blue-50 text-blue-700 border border-blue-200/60 font-bold px-2.5 py-0.5 rounded-full text-[10px]">Kelas {{ $siswa->kelas }}</span>
+                                <span class="bg-blue-50 text-blue-700 border border-blue-200/60 font-medium px-2.5 py-0.5 rounded-full text-[10px]">Kelas {{ $siswa->kelas }}</span>
                             </td>
-                            <td class="px-4 py-3 text-slate-600">{{ $siswa->jurusan }}</td>
+                            <td class="px-4 py-3 font-normal text-slate-600">{{ $siswa->jurusan }}</td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-end gap-3">
                                     <button type="button"
                                             onclick="openEditSiswaModal('{{ $siswa->nisn }}', '{{ addslashes($siswa->nama_lengkap) }}', '{{ $siswa->kelas }}', '{{ addslashes($siswa->jurusan) }}')"
-                                            class="text-amber-600 font-bold hover:underline cursor-pointer">Edit</button>
+                                            class="text-amber-600 font-medium hover:underline cursor-pointer">Edit</button>
                                     <form action="{{ route('siswa.destroy', $siswa) }}" method="POST" onsubmit="return confirm('Hapus akun siswa ini?')">
                                         @csrf @method('DELETE')
                                         <input type="hidden" name="from" value="superadmin">
-                                        <button type="submit" class="text-red-600 font-bold hover:underline cursor-pointer">Hapus</button>
+                                        <button type="submit" class="text-red-600 font-medium hover:underline cursor-pointer">Hapus</button>
                                     </form>
                                 </div>
                             </td>
