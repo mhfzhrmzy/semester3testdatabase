@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Materi')
+@section('title', 'Daftar Bahan Ajar')
 
 @section('content')
 <div class="container mx-auto p-6">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Form Tambah Materi -->
+        <!-- Form Bahan Ajar -->
         <div class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-xl font-bold mb-4">Tambah Materi</h2>
+            <h2 class="text-xl font-bold mb-4">Bahan Ajar</h2>
 
             @if(session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
@@ -89,7 +89,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Isi Materi</label>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Deskripsi Materi</label>
                     <textarea name="isi_materi" rows="4" class="w-full border rounded px-3 py-2 text-gray-700">{{ old('isi_materi') }}</textarea>
                 </div>
 
@@ -112,9 +112,9 @@
             </form>
         </div>
 
-        <!-- Tabel Daftar Materi -->
+        <!-- Tabel Daftar Bahan Ajar -->
         <div class="md:col-span-2 bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-xl font-bold mb-4">Daftar Materi</h2>
+            <h2 class="text-xl font-bold mb-4">Daftar Bahan Ajar</h2>
             <div class="overflow-x-auto">
                 <table class="min-w-full bg-white border border-gray-200">
                     <thead>

@@ -1,8 +1,8 @@
 @extends('layouts.app')
-@section('title', 'Daftar Materi - Siswa')
+@section('title', 'Daftar Bahan Belajar - Siswa')
 
 @section('content')
-    <h1>Daftar Materi</h1>
+    <h1>Daftar Bahan Belajar</h1>
 
     <table>
         <tr>

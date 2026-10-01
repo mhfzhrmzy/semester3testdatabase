@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Portal Siswa — Daftar Materi')
+@section('title', 'Portal Siswa — Daftar Bahan Belajar')
 
 @section('content')
 <div>

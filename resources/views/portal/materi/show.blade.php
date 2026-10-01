@@ -3,7 +3,7 @@
 @section('title', $materi->judul_materi)
 
 @section('content')
-<a href="{{ route('portal.materi.index') }}" class="text-sm text-blue-600 hover:underline">&larr; Kembali ke daftar materi</a>
+<a href="{{ route('portal.materi.index') }}" class="text-sm text-blue-600 hover:underline">&larr; Kembali ke daftar bahan belajar</a>
 
 <div class="bg-white rounded-lg shadow p-6 mt-4">
     <h2 class="text-xl font-semibold mb-1">{{ $materi->judul_materi }}</h2>
