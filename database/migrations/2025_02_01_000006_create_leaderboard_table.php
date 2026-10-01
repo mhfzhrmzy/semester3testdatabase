@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('leaderboard', function (Blueprint $table) {
             $table->id('id_leaderboard');
             $table->unsignedBigInteger('id_quiz'); // FK -> quiz.id_quiz
-            $table->unsignedBigInteger('nisn');     // FK -> pengguna_siswa.nisn
+            $table->string('nisn', 10);     // FK -> pengguna_siswa.nisn
             $table->unsignedInteger('total_poin')->default(0);
             $table->unsignedInteger('peringkat')->nullable();
             $table->timestamps();

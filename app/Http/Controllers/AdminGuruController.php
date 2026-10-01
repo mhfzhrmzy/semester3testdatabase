@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminGuruController extends Controller
 {
@@ -94,5 +95,88 @@ class AdminGuruController extends Controller
         $redirectParameters = request()->input('from') === 'superadmin' ? ['menu' => 'guru'] : [];
 
         return redirect()->route($redirectRoute, $redirectParameters)->with('success', 'Akun guru berhasil dihapus.');
+    }
+
+    public function importCsv(Request $request)
+    {
+        $request->validate([
+            'csv_file' => ['required', 'file', 'mimes:csv,txt', 'max:5120'],
+        ], [
+            'csv_file.required' => 'File CSV wajib diunggah.',
+            'csv_file.mimes' => 'Format file harus berupa .csv',
+        ]);
+
+        $file = $request->file('csv_file');
+        $handle = fopen($file->getRealPath(), 'r');
+
+        if (! $handle) {
+            return back()->with('error', 'Gagal membaca file CSV.');
+        }
+
+        $header = fgetcsv($handle, 2000, ',');
+
+        if ($header && count($header) === 1 && str_contains($header[0], ';')) {
+            rewind($handle);
+            $header = fgetcsv($handle, 2000, ';');
+            $delimiter = ';';
+        } else {
+            $delimiter = ',';
+        }
+
+        $importedCount = 0;
+
+        while (($row = fgetcsv($handle, 2000, $delimiter)) !== false) {
+            if (empty(array_filter($row))) {
+                continue;
+            }
+
+            $nipRaw = trim($row[0] ?? '');
+            if (strtolower($nipRaw) === 'nip') {
+                continue;
+            }
+
+            $digitsOnly = preg_replace('/[^0-9]/', '', $nipRaw);
+            $nip = str_pad($digitsOnly, 18, '0', STR_PAD_LEFT);
+            $namaLengkap = trim($row[1] ?? '');
+            $passwordRaw = trim($row[2] ?? '');
+
+            if (strlen($nip) === 18 && $namaLengkap !== '') {
+                $password = $passwordRaw !== '' ? Hash::make($passwordRaw) : Hash::make('password123');
+
+                AdminGuru::updateOrCreate(
+                    ['nip' => $nip],
+                    [
+                        'nama_lengkap' => $namaLengkap,
+                        'password' => $password,
+                    ]
+                );
+
+                $importedCount++;
+            }
+        }
+
+        fclose($handle);
+
+        $redirectRoute = $request->input('from') === 'superadmin' ? 'superadmin.index' : 'admin.index';
+        $redirectParameters = $request->input('from') === 'superadmin' ? ['menu' => 'guru'] : [];
+
+        return redirect()->route($redirectRoute, $redirectParameters)
+            ->with('success', "Berhasil meng-import {$importedCount} data akun guru dari file CSV.");
+    }
+
+    public function downloadTemplate(): StreamedResponse
+    {
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="template_data_guru.csv"',
+        ];
+
+        return response()->stream(function () {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['nip', 'nama_lengkap', 'password']);
+            fputcsv($handle, ['198501012010011001', 'Budi Santoso S.Pd', 'password123']);
+            fputcsv($handle, ['198803152012022002', 'Siti Rahmawati M.Kom', 'password123']);
+            fclose($handle);
+        }, 200, $headers);
     }
 }

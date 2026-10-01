@@ -87,6 +87,8 @@ Route::middleware('auth:superadmin')->group(function () {
     Route::controller(AdminGuruController::class)->group(function () {
         Route::get('/admin', 'index')->name('admin.index');
         Route::post('/admin', 'store')->name('admin.store');
+        Route::post('/admin/import', 'importCsv')->name('admin.import');
+        Route::get('/admin/template', 'downloadTemplate')->name('admin.template');
         Route::get('/admin/{guru}/edit', 'edit')->name('admin.edit');
         Route::put('/admin/{guru}', 'update')->name('admin.update');
         Route::delete('/admin/{guru}', 'destroy')->name('admin.destroy');
@@ -95,6 +97,8 @@ Route::middleware('auth:superadmin')->group(function () {
     Route::controller(PenggunaSiswaController::class)->group(function () {
         Route::get('/siswa', 'index')->name('siswa.index');
         Route::post('/siswa', 'store')->name('siswa.store');
+        Route::post('/siswa/import', 'importCsv')->name('siswa.import');
+        Route::get('/siswa/template', 'downloadTemplate')->name('siswa.template');
         Route::get('/siswa/{siswa}/edit', 'edit')->name('siswa.edit');
         Route::put('/siswa/{siswa}', 'update')->name('siswa.update');
         Route::delete('/siswa/{siswa}', 'destroy')->name('siswa.destroy');

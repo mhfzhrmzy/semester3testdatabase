@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pengguna_siswa', function (Blueprint $table) {
-            $table->unsignedBigInteger('nisn')->primary(); // 10 digit, diisi manual
+            $table->string('nisn', 10)->primary(); // 10 digit, diisi manual
             $table->string('nama_lengkap', 60);
             $table->enum('kelas', ['10', '11', '12']);
             $table->enum('jurusan', [

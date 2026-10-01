@@ -1,0 +1,176 @@
+<!-- DASHBOARD VIEW (IKHTISAR OPERASIONAL) -->
+<div class="space-y-6">
+    <!-- Header Row -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Ikhtisar Operasional</h1>
+            <p class="text-xs text-slate-500 mt-1">Pusat kendali manajemen akun guru dan siswa SMKN 2 Jember.</p>
+        </div>
+    </div>
+
+    <!-- 4 STAT CARDS GRID -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Card 1: Total Guru -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-sm">
+            <p class="text-[10px] font-bold text-slate-400 tracking-wider uppercase mb-2">TOTAL AKUN GURU</p>
+            <div class="flex items-baseline gap-2">
+                <span class="text-2xl font-black text-slate-900 tracking-tight">
+                    {{ $gurus->count() }}
+                </span>
+                <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200/60">Pendidik</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-2 font-medium">Terdaftar di sistem</p>
+        </div>
+
+        <!-- Card 2: Total Siswa -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-sm">
+            <p class="text-[10px] font-bold text-slate-400 tracking-wider uppercase mb-2">TOTAL AKUN SISWA</p>
+            <div class="flex items-baseline gap-2">
+                <span class="text-2xl font-black text-slate-900 tracking-tight">
+                    {{ $siswas->count() }}
+                </span>
+                <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/60">Peserta Didik</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-2 font-medium">Terdaftar di sistem</p>
+        </div>
+
+        <!-- Card 3: Modul Materi -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-sm">
+            <p class="text-[10px] font-bold text-slate-400 tracking-wider uppercase mb-2">MODUL MATERI</p>
+            <div class="flex items-baseline gap-2">
+                <span class="text-2xl font-black text-slate-900 tracking-tight">
+                    {{ $materiCount }}
+                </span>
+                <span class="text-xs font-semibold text-slate-600">Modul</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-2 font-medium">Materi Pembelajaran Active</p>
+        </div>
+
+        <!-- Card 4: Quiz -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-sm">
+            <p class="text-[10px] font-bold text-slate-400 tracking-wider uppercase mb-2">QUIZ & EVALUASI</p>
+            <div class="flex items-baseline gap-2">
+                <span class="text-2xl font-black text-slate-900 tracking-tight">
+                    {{ $quizCount }}
+                </span>
+                <span class="text-xs font-semibold text-slate-600">Quiz</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-2 font-medium">Ujian & Praktikum Active</p>
+        </div>
+    </div>
+
+    <!-- LOWER 2-COLUMN SECTION: DAFTAR GURU & DAFTAR SISWA -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- LEFT COLUMN: DAFTAR AKUN GURU -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-sm space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">Daftar Akun Guru</h2>
+                        <p class="text-[11px] text-slate-500">Total {{ $gurus->count() }} Guru Terdaftar</p>
+                    </div>
+                </div>
+                <a href="{{ route('superadmin.index', ['menu' => 'guru']) }}" class="text-xs font-bold text-[#4a101d] hover:underline flex items-center gap-1">
+                    Kelola Guru &rarr;
+                </a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="border-b border-slate-200 bg-slate-50/80 text-slate-500 uppercase tracking-wider font-bold">
+                            <th class="px-3 py-2 rounded-l-lg">NIP</th>
+                            <th class="px-3 py-2">Nama</th>
+                            <th class="px-3 py-2 text-right rounded-r-lg">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @forelse ($gurus as $guru)
+                            <tr class="hover:bg-slate-50/80 transition">
+                                <td class="px-3 py-2 font-semibold text-slate-700">{{ $guru->nip }}</td>
+                                <td class="px-3 py-2 font-bold text-slate-900">{{ $guru->nama_lengkap }}</td>
+                                <td class="px-3 py-2">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button type="button"
+                                                onclick="openEditGuruModal('{{ $guru->nip }}', '{{ addslashes($guru->nama_lengkap) }}')"
+                                                class="text-amber-600 font-bold hover:underline cursor-pointer">Edit</button>
+                                        <form action="{{ route('admin.destroy', $guru) }}" method="POST" onsubmit="return confirm('Hapus akun guru ini?')">
+                                            @csrf @method('DELETE')
+                                            <input type="hidden" name="from" value="superadmin">
+                                            <button type="submit" class="text-red-600 font-bold hover:underline cursor-pointer">Hapus</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="px-3 py-6 text-center text-slate-400 font-medium">Belum ada akun guru.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: DAFTAR AKUN SISWA -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-sm space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">Daftar Akun Siswa</h2>
+                        <p class="text-[11px] text-slate-500">Total {{ $siswas->count() }} Siswa Terdaftar</p>
+                    </div>
+                </div>
+                <a href="{{ route('superadmin.index', ['menu' => 'siswa']) }}" class="text-xs font-bold text-amber-600 hover:underline flex items-center gap-1">
+                    Kelola Siswa &rarr;
+                </a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="border-b border-slate-200 bg-slate-50/80 text-slate-500 uppercase tracking-wider font-bold">
+                            <th class="px-3 py-2 rounded-l-lg">NISN</th>
+                            <th class="px-3 py-2">Nama</th>
+                            <th class="px-3 py-2 text-right rounded-r-lg">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @forelse ($siswas as $siswa)
+                            <tr class="hover:bg-slate-50/80 transition">
+                                <td class="px-3 py-2 font-semibold text-slate-700">{{ $siswa->nisn }}</td>
+                                <td class="px-3 py-2 font-bold text-slate-900">{{ $siswa->nama_lengkap }}</td>
+                                <td class="px-3 py-2">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button type="button"
+                                                onclick="openEditSiswaModal('{{ $siswa->nisn }}', '{{ addslashes($siswa->nama_lengkap) }}', '{{ $siswa->kelas }}', '{{ addslashes($siswa->jurusan) }}')"
+                                                class="text-amber-600 font-bold hover:underline cursor-pointer">Edit</button>
+                                        <form action="{{ route('siswa.destroy', $siswa) }}" method="POST" onsubmit="return confirm('Hapus akun siswa ini?')">
+                                            @csrf @method('DELETE')
+                                            <input type="hidden" name="from" value="superadmin">
+                                            <button type="submit" class="text-red-600 font-bold hover:underline cursor-pointer">Hapus</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="px-3 py-6 text-center text-slate-400 font-medium">Belum ada akun siswa.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('super_admin', function (Blueprint $table) {
-            $table->unsignedBigInteger('nip')->primary(); // 18 digit, diisi manual
+            $table->string('nip', 18)->primary(); // 18 digit, diisi manual
             $table->string('nama_lengkap', 60);
             $table->string('password');
             $table->rememberToken();
