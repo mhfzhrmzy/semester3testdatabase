@@ -10,15 +10,6 @@
                 <h1 class="text-2xl font-bold text-gray-800">
                     Leaderboard &amp; Peringkat Nilai Siswa
                 </h1>
-                @if ($isGuru)
-                    <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-indigo-200">
-                        Mode Guru
-                    </span>
-                @elseif ($isSiswa)
-                    <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-emerald-200">
-                        Siswa • Kelas {{ $kelas }} • {{ $jurusan }}
-                    </span>
-                @endif
             </div>
             <p class="text-sm text-gray-600">
                 @if ($isSiswa)
@@ -64,15 +55,11 @@
                             </div>
                         </div>
                     </div>
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-800 border border-green-200 text-xs font-bold rounded-lg self-start sm:self-auto">
-                        <span>🎯</span> Khusus Post-Test
-                    </span>
                 </div>
             @else
                 {{-- 1. PEMILIHAN KELAS DAN JURUSAN (UNTUK GURU) --}}
                 <div>
                     <div class="flex items-center gap-2 mb-2">
-                        <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">1</span>
                         <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider">
                             Pilih Kelas &amp; Jurusan Yang Dituju
                         </h3>
@@ -115,7 +102,6 @@
             {{-- 2. TIPE LEADERBOARD: KESELURUHAN vs PER MATERI --}}
             <div>
                 <div class="flex items-center gap-2 mb-2">
-                    <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">{{ $isSiswa ? '1' : '2' }}</span>
                     <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider">
                         Tipe Leaderboard
                     </h3>
@@ -126,9 +112,6 @@
                     <label class="cursor-pointer border-2 rounded-xl p-3 flex items-center gap-3 transition {{ $tipeLeaderboard === 'keseluruhan' ? 'border-blue-600 bg-blue-50/70 text-blue-900 shadow-sm' : 'border-gray-200 bg-white hover:border-gray-300 text-gray-700' }}">
                         <input type="radio" name="tipe_leaderboard" value="keseluruhan" class="hidden"
                                @checked($tipeLeaderboard === 'keseluruhan') onchange="this.form.submit()">
-                        <div class="w-9 h-9 rounded-lg {{ $tipeLeaderboard === 'keseluruhan' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500' }} flex items-center justify-center font-bold text-lg">
-                            🏆
-                        </div>
                         <div>
                             <div class="font-bold text-sm">
                                 {{ $isSiswa ? 'Leaderboard Post-Test Keseluruhan' : 'Leaderboard Keseluruhan' }}
@@ -143,9 +126,6 @@
                     <label class="cursor-pointer border-2 rounded-xl p-3 flex items-center gap-3 transition {{ $tipeLeaderboard === 'permateri' ? 'border-blue-600 bg-blue-50/70 text-blue-900 shadow-sm' : 'border-gray-200 bg-white hover:border-gray-300 text-gray-700' }}">
                         <input type="radio" name="tipe_leaderboard" value="permateri" class="hidden"
                                @checked($tipeLeaderboard === 'permateri') onchange="this.form.submit()">
-                        <div class="w-9 h-9 rounded-lg {{ $tipeLeaderboard === 'permateri' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500' }} flex items-center justify-center font-bold text-lg">
-                            📚
-                        </div>
                         <div>
                             <div class="font-bold text-sm">
                                 {{ $isSiswa ? 'Leaderboard Post-Test Per Materi' : 'Leaderboard Per Materi' }}
@@ -165,7 +145,6 @@
                 {{-- OPSI UNTUK PER MATERI --}}
                 <div class="space-y-4 bg-white p-4 rounded-xl border border-blue-200">
                     <div class="flex items-center gap-2 mb-1">
-                        <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">{{ $isSiswa ? '2' : '3' }}</span>
                         <h3 class="text-sm font-bold text-blue-900 uppercase tracking-wider">
                             Pilih Materi Pembelajaran
                         </h3>
@@ -197,7 +176,7 @@
                                     Menampilkan Leaderboard: <strong class="text-blue-800">{{ $selectedMateri->judul_materi }}</strong>
                                 </div>
                                 <span class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 text-xs font-bold rounded-lg border border-green-200">
-                                    <span>🎯</span> Post-Test
+                                    Post-Test
                                 </span>
                             </div>
                         @else
@@ -211,7 +190,7 @@
                                         <input type="radio" name="tipe_test" value="pretest" class="hidden"
                                                @checked($filterTest === 'pretest') onchange="this.form.submit()">
                                         <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition border {{ $filterTest === 'pretest' ? 'bg-amber-600 text-white border-amber-700 shadow' : 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100' }}">
-                                            <span>📝</span> Leaderboard Pre-Test
+                                            Leaderboard Pre-Test
                                         </span>
                                     </label>
 
@@ -219,7 +198,7 @@
                                         <input type="radio" name="tipe_test" value="posttest" class="hidden"
                                                @checked($filterTest === 'posttest') onchange="this.form.submit()">
                                         <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition border {{ $filterTest === 'posttest' ? 'bg-green-600 text-white border-green-700 shadow' : 'bg-green-50 text-green-800 border-green-200 hover:bg-green-100' }}">
-                                            <span>🎯</span> Leaderboard Post-Test
+                                            Leaderboard Post-Test
                                         </span>
                                     </label>
 
@@ -235,7 +214,6 @@
                         @endif
                     @else
                         <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800 flex items-center gap-2">
-                            <span>ℹ️</span>
                             <span>Silakan pilih salah satu materi di atas untuk melihat nilai leaderboard.</span>
                         </div>
                     @endif
@@ -253,14 +231,13 @@
                             </p>
                         </div>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-green-100 text-green-800 border border-green-200 self-start sm:self-auto">
-                            <span>🎯</span> Post-Test Only
+                            Post-Test Only
                         </span>
                     </div>
                 @else
                     {{-- Untuk Guru: Opsi Tipe Test Keseluruhan --}}
                     <div class="bg-white p-4 rounded-xl border border-gray-200">
                         <div class="flex items-center gap-2 mb-1">
-                            <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">3</span>
                             <span class="text-xs font-bold text-gray-700 uppercase tracking-wider">
                                 Pilih Tipe Test (Akumulasi Semua Materi):
                             </span>
@@ -277,16 +254,16 @@
                             <label class="cursor-pointer">
                                 <input type="radio" name="tipe_test" value="pretest" class="hidden"
                                        @checked($filterTest === 'pretest') onchange="this.form.submit()">
-                                <span class="inline-block px-3.5 py-2 rounded-lg text-xs font-semibold border transition {{ $filterTest === 'pretest' ? 'bg-amber-600 text-white border-amber-700 shadow-sm' : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200' }}">
-                                    📝 Pre-Test Only
+                                 <span class="inline-block px-3.5 py-2 rounded-lg text-xs font-semibold border transition {{ $filterTest === 'pretest' ? 'bg-amber-600 text-white border-amber-700 shadow-sm' : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200' }}">
+                                    Pre-Test Only
                                 </span>
                             </label>
 
                             <label class="cursor-pointer">
                                 <input type="radio" name="tipe_test" value="posttest" class="hidden"
                                        @checked($filterTest === 'posttest') onchange="this.form.submit()">
-                                <span class="inline-block px-3.5 py-2 rounded-lg text-xs font-semibold border transition {{ $filterTest === 'posttest' ? 'bg-green-600 text-white border-green-700 shadow-sm' : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200' }}">
-                                    🎯 Post-Test Only
+                                 <span class="inline-block px-3.5 py-2 rounded-lg text-xs font-semibold border transition {{ $filterTest === 'posttest' ? 'bg-green-600 text-white border-green-700 shadow-sm' : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200' }}">
+                                    Post-Test Only
                                 </span>
                             </label>
                         </div>
@@ -307,10 +284,10 @@
             <span class="bg-blue-50 text-blue-700 font-semibold px-2 py-0.5 rounded border border-blue-200">
                 {{ $jurusan ? $jurusan : 'Semua Jurusan' }}
             </span>
-            <span class="bg-purple-50 text-purple-700 font-semibold px-2 py-0.5 rounded border border-purple-200">
+            <span class="bg-blue-50 text-blue-700 font-semibold px-2 py-0.5 rounded border border-blue-200">
                 {{ $tipeLeaderboard === 'permateri' ? ('Per Materi: ' . ($selectedMateri->judul_materi ?? 'Semua Materi')) : 'Keseluruhan' }}
             </span>
-            <span class="font-semibold px-2 py-0.5 rounded border {{ $filterTest === 'pretest' ? 'bg-amber-50 text-amber-800 border-amber-200' : ($filterTest === 'posttest' ? 'bg-green-50 text-green-800 border-green-200' : 'bg-gray-100 text-gray-700 border-gray-200') }}">
+            <span class="bg-blue-50 text-blue-700 font-semibold px-2 py-0.5 rounded border border-blue-200">
                 {{ $filterTest ? ucfirst($filterTest) : 'Semua Test' }}
             </span>
         </div>
