@@ -12,9 +12,13 @@
 
             {{-- Kartu profil --}}
             <div class="border rounded-lg p-6 text-center">
-                <div class="w-24 h-24 mx-auto rounded-full bg-gray-300 flex items-center justify-center font-bold text-xl">
-                    {{ strtoupper(substr($siswa->nama_lengkap, 0, 3)) }}
-                </div>
+                @if ($siswa->foto_profile)
+                    <img src="{{ asset('storage/' . $siswa->foto_profile) }}" alt="{{ $siswa->nama_lengkap }}" class="w-24 h-24 mx-auto rounded-full object-cover border border-slate-200 shadow-sm">
+                @else
+                    <div class="w-24 h-24 mx-auto rounded-full bg-gray-300 flex items-center justify-center font-bold text-xl">
+                        {{ strtoupper(substr($siswa->nama_lengkap, 0, 3)) }}
+                    </div>
+                @endif
 
                 <h2 class="mt-3 text-xl font-bold">{{ $siswa->nama_lengkap }}</h2>
                 <p class="text-sm text-gray-500">NISN: {{ $siswa->nisn }}</p>

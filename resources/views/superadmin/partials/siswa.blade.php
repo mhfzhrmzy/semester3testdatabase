@@ -33,7 +33,7 @@
             </svg>
             Tambah Akun Siswa Baru
         </h2>
-        <form action="{{ route('siswa.store') }}" method="POST" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <form action="{{ route('siswa.store') }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 gap-4 md:grid-cols-2">
             @csrf
             <input type="hidden" name="from" value="superadmin">
             <div>
@@ -85,6 +85,10 @@
                        placeholder="Minimal 6 karakter"
                        class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
             </div>
+            <div>
+                <label class="mb-1 block text-xs font-bold text-slate-700">Foto Profil <span class="font-normal text-slate-400">(opsional)</span></label>
+                <input type="file" name="foto_profile" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+            </div>
             <div class="flex items-center gap-2 md:col-span-2 md:justify-end flex-wrap">
                 <button type="button" onclick="openImportSiswaModal()" class="rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white shadow-md hover:bg-emerald-700 transition cursor-pointer flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,7 +110,8 @@
             <table class="w-full text-left text-xs">
                 <thead>
                     <tr class="border-b border-slate-200 bg-slate-50/80 text-slate-500 uppercase tracking-wider font-bold">
-                        <th class="px-4 py-3 rounded-l-xl">NISN</th>
+                        <th class="px-4 py-3 rounded-l-xl">Foto</th>
+                        <th class="px-4 py-3">NISN</th>
                         <th class="px-4 py-3">Nama Lengkap</th>
                         <th class="px-4 py-3">Kelas</th>
                         <th class="px-4 py-3">Jurusan</th>
@@ -116,7 +121,16 @@
                 <tbody class="divide-y divide-slate-100">
                     @forelse ($siswas as $siswa)
                         <tr class="hover:bg-slate-50/80 transition">
-                            <td class="px-4 py-3 font-semibold text-slate-700">{{ $siswa->nisn }}</td>
+                            <td class="px-4 py-3">
+                                @if ($siswa->foto_profile)
+                                    <img src="{{ asset('storage/' . $siswa->foto_profile) }}" alt="{{ $siswa->nama_lengkap }}" class="w-9 h-9 rounded-full object-cover border border-slate-200 shadow-xs shrink-0">
+                                @else
+                                    <div class="w-9 h-9 rounded-full bg-amber-100 text-amber-800 font-bold flex items-center justify-center text-xs shrink-0 border border-amber-200/80 shadow-xs">
+                                        {{ strtoupper(substr($siswa->nama_lengkap, 0, 2)) }}
+                                    </div>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3 font-semibold text-slate-700 font-mono tracking-tight">{{ $siswa->nisn }}</td>
                             <td class="px-4 py-3 font-bold text-slate-900">{{ $siswa->nama_lengkap }}</td>
                             <td class="px-4 py-3">
                                 <span class="bg-blue-50 text-blue-700 border border-blue-200/60 font-bold px-2.5 py-0.5 rounded-full text-[10px]">Kelas {{ $siswa->kelas }}</span>
@@ -137,7 +151,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-4 py-8 text-center text-slate-400 font-medium">Belum ada akun siswa registered.</td>
+                            <td colspan="6" class="px-4 py-8 text-center text-slate-400 font-medium">Belum ada akun siswa registered.</td>
                         </tr>
                     @endforelse
                 </tbody>

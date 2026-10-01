@@ -27,6 +27,7 @@ return new class extends Migration
                 'Desain Komunikasi Visual',
             ]);
             $table->string('password');
+            $table->string('foto_profile')->nullable();
             $table->unsignedInteger('poin')->default(0);
             $table->rememberToken();
             $table->timestamps();

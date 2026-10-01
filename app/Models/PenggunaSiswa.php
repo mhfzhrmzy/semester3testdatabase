@@ -18,7 +18,7 @@ class PenggunaSiswa extends Authenticatable
     protected $keyType = 'string';
 
     protected $fillable = [
-        'nisn', 'nama_lengkap', 'kelas', 'jurusan', 'password', 'poin',
+        'nisn', 'nama_lengkap', 'kelas', 'jurusan', 'password', 'poin', 'foto_profile',
     ];
 
     protected $hidden = ['password', 'remember_token'];

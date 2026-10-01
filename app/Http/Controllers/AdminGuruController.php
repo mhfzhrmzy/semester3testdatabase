@@ -27,12 +27,12 @@ class AdminGuruController extends Controller
     {
         $validated = $request->validate([
             'nip' => ['required', 'digits:18', 'unique:admin_guru,nip'],
-            'nama_lengkap' => ['required', 'string', 'max:60', 'regex:/^[a-zA-Z\s]+$/'],
+            'nama_lengkap' => ['required', 'string', 'max:60', 'regex:/^[a-zA-Z\s.,]+$/'],
             'password' => ['required', 'string', 'min:6'],
             'foto_profile' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ], [
             'nip.digits' => 'NIP wajib tepat 18 digit angka.',
-            'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
+            'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf, spasi, titik (.), dan koma (,).',
         ]);
 
         if ($request->hasFile('foto_profile')) {
@@ -54,12 +54,12 @@ class AdminGuruController extends Controller
     {
         $validated = $request->validate([
             'nip' => ['required', 'digits:18', Rule::unique('admin_guru', 'nip')->ignore($guru->nip, 'nip')],
-            'nama_lengkap' => ['required', 'string', 'max:60', 'regex:/^[a-zA-Z\s]+$/'],
+            'nama_lengkap' => ['required', 'string', 'max:60', 'regex:/^[a-zA-Z\s.,]+$/'],
             'password' => ['nullable', 'string', 'min:6'],
             'foto_profile' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ], [
             'nip.digits' => 'NIP wajib tepat 18 digit angka.',
-            'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
+            'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf, spasi, titik (.), dan koma (,).',
         ]);
 
         if ($request->hasFile('foto_profile')) {

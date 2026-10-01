@@ -40,7 +40,7 @@
             <h3 class="font-black text-slate-900 text-base">Edit Akun Siswa</h3>
             <button type="button" onclick="closeEditSiswaModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold px-2 cursor-pointer">&times;</button>
         </div>
-        <form id="edit-siswa-form" action="" method="POST" class="space-y-3">
+        <form id="edit-siswa-form" action="" method="POST" enctype="multipart/form-data" class="space-y-3">
             @csrf
             @method('PUT')
             <input type="hidden" name="from" value="superadmin">
@@ -84,6 +84,10 @@
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Password Baru <span class="font-normal text-slate-400">(Opsional)</span></label>
                 <input type="password" name="password" placeholder="Kosongkan jika tidak diubah" class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Foto Profil <span class="font-normal text-slate-400">(Opsional)</span></label>
+                <input type="file" name="foto_profile" accept="image/*" class="w-full text-xs text-slate-500">
             </div>
             <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
                 <button type="button" onclick="closeEditSiswaModal()" class="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition cursor-pointer">Batal</button>

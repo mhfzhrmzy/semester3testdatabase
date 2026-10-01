@@ -59,7 +59,8 @@
             <table class="w-full text-left text-xs">
                 <thead>
                     <tr class="border-b border-slate-200 bg-slate-50/80 text-slate-500 uppercase tracking-wider font-bold">
-                        <th class="px-4 py-3 rounded-l-xl">NIP</th>
+                        <th class="px-4 py-3 rounded-l-xl">Foto</th>
+                        <th class="px-4 py-3">NIP</th>
                         <th class="px-4 py-3">Nama Lengkap</th>
                         <th class="px-4 py-3 text-right rounded-r-xl">Aksi</th>
                     </tr>
@@ -67,7 +68,16 @@
                 <tbody class="divide-y divide-slate-100">
                     @forelse ($gurus as $guru)
                         <tr class="hover:bg-slate-50/80 transition">
-                            <td class="px-4 py-3 font-semibold text-slate-700">{{ $guru->nip }}</td>
+                            <td class="px-4 py-3">
+                                @if ($guru->foto_profile)
+                                    <img src="{{ asset('storage/' . $guru->foto_profile) }}" alt="{{ $guru->nama_lengkap }}" class="w-9 h-9 rounded-full object-cover border border-slate-200 shadow-xs shrink-0">
+                                @else
+                                    <div class="w-9 h-9 rounded-full bg-purple-100 text-purple-800 font-bold flex items-center justify-center text-xs shrink-0 border border-purple-200/80 shadow-xs">
+                                        {{ strtoupper(substr($guru->nama_lengkap, 0, 2)) }}
+                                    </div>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3 font-semibold text-slate-700 font-mono tracking-tight">{{ $guru->nip }}</td>
                             <td class="px-4 py-3 font-bold text-slate-900">{{ $guru->nama_lengkap }}</td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-end gap-3">
@@ -84,7 +94,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-4 py-8 text-center text-slate-400 font-medium">Belum ada akun guru registered.</td>
+                            <td colspan="4" class="px-4 py-8 text-center text-slate-400 font-medium">Belum ada akun guru registered.</td>
                         </tr>
                     @endforelse
                 </tbody>
