@@ -85,7 +85,6 @@
                             <label for="filterJurusan" class="block text-xs font-semibold text-gray-600 mb-1">Jurusan / Program Keahlian</label>
                             <select name="jurusan" id="filterJurusan" onchange="this.form.submit()"
                                     class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
-                                <option value="">-- Semua Jurusan --</option>
                                 @foreach ($daftarJurusan as $j)
                                     <option value="{{ $j }}" @selected($jurusan === $j)>
                                         {{ $j }}

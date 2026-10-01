@@ -55,8 +55,8 @@ class LeaderboardController extends Controller
             if ($kelas && ! in_array($kelas, self::DAFTAR_KELAS)) {
                 $kelas = null;
             }
-            if ($jurusan && ! in_array($jurusan, self::DAFTAR_JURUSAN)) {
-                $jurusan = null;
+            if (! $jurusan || ! in_array($jurusan, self::DAFTAR_JURUSAN)) {
+                $jurusan = self::DAFTAR_JURUSAN[0];
             }
 
             $filterTest = $request->query('tipe_test');
