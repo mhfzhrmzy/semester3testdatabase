@@ -111,6 +111,9 @@ Route::middleware('auth:superadmin')->group(function () {
     Route::get('/superadmin', [SuperadminController::class, 'index'])->name('superadmin.index');
 });
 
+// Area Siswa
+Route::middleware('auth:siswa')->group(function () {
+
     // Profil Siswa
     Route::get('/siswa/profil', [ProfilSiswaController::class, 'index'])->name('siswa.profil');
     Route::post('/siswa/profil/foto', [ProfilSiswaController::class, 'updateFoto'])->name('siswa.profil.foto');
@@ -128,14 +131,11 @@ Route::middleware('auth:superadmin')->group(function () {
         Route::post('/quiz/{quiz}', [PortalQuizController::class, 'submit'])->name('quiz.submit');
     });
 
-    // Sertifikat Siswa (Memakai folder Siswa)
+    // Sertifikat Siswa
     Route::prefix('siswa')->name('siswa.')->controller(SertifikatSiswaController::class)->group(function () {
         Route::get('/sertifikat', 'index')->name('sertifikat.index');
         Route::get('/sertifikat/create', 'create')->name('sertifikat.create');
         Route::post('/sertifikat', 'store')->name('sertifikat.store');
         Route::delete('/sertifikat/{sertifikat}', 'destroy')->name('sertifikat.destroy');
     });
-
-    // Profil Siswa
-    Route::get('/siswa/profil', [ProfilSiswaController::class, 'index'])
-        ->name('siswa.profil');
+});

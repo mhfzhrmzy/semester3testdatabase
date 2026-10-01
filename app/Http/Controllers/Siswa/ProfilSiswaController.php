@@ -25,13 +25,13 @@ class ProfilSiswaController extends Controller
 
         $siswa = auth('siswa')->user();
 
-        if ($siswa->foto && Storage::disk('public')->exists($siswa->foto)) {
-            Storage::disk('public')->delete($siswa->foto);
+        if ($siswa->foto_profile && Storage::disk('public')->exists($siswa->foto_profile)) {
+            Storage::disk('public')->delete($siswa->foto_profile);
         }
 
         $path = $request->file('foto')->store('profil', 'public');
 
-        DB::table('pengguna_siswa')->where('nisn', $siswa->nisn)->update(['foto' => $path]);
+        DB::table('pengguna_siswa')->where('nisn', $siswa->nisn)->update(['foto_profile' => $path]);
 
         return back()->with('success', 'Foto profil berhasil diperbarui.');
     }
@@ -40,11 +40,11 @@ class ProfilSiswaController extends Controller
     {
         $siswa = auth('siswa')->user();
 
-        if ($siswa->foto && Storage::disk('public')->exists($siswa->foto)) {
-            Storage::disk('public')->delete($siswa->foto);
+        if ($siswa->foto_profile && Storage::disk('public')->exists($siswa->foto_profile)) {
+            Storage::disk('public')->delete($siswa->foto_profile);
         }
 
-        DB::table('pengguna_siswa')->where('nisn', $siswa->nisn)->update(['foto' => null]);
+        DB::table('pengguna_siswa')->where('nisn', $siswa->nisn)->update(['foto_profile' => null]);
 
         return back()->with('success', 'Foto profil berhasil dihapus.');
     }
