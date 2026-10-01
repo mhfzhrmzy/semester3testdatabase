@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Portal;
 use App\Http\Controllers\Controller;
 use App\Models\Leaderboard;
 use App\Models\Materi;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -13,16 +14,29 @@ class MateriController extends Controller
 {
     public function index()
     {
-        $materis = Materi::with(['adminGuru', 'quiz'])->latest()->get();
+        $siswa = auth('siswa')->user();
+
+        $materis = Materi::with(['adminGuru', 'quiz'])
+            ->where('kelas', $siswa->kelas)
+            ->where('jurusan', $siswa->jurusan)
+            ->latest()
+            ->get();
 
         return view('portal.materi.index', compact('materis'));
     }
 
-    public function show(Materi $materi)
+    public function show(Materi $materi): View|RedirectResponse
     {
-        $materi->load(['adminGuru', 'quiz.soal']);
-
         $siswa = auth('siswa')->user();
+
+        // Pastikan materi ini memang untuk kelas & jurusan siswa
+        if ($materi->kelas !== $siswa->kelas || $materi->jurusan !== $siswa->jurusan) {
+            return redirect()
+                ->route('portal.materi.index')
+                ->with('error', 'Kamu tidak memiliki akses ke materi ini.');
+        }
+
+        $materi->load(['adminGuru', 'quiz.soal']);
 
         // Cek apakah ada pre-test untuk materi ini
         $pretests = $materi->quiz->where('tipe_test', 'pretest');
@@ -45,12 +59,20 @@ class MateriController extends Controller
 
     /**
      * Melayani file materi untuk siswa.
-     * Siswa hanya bisa mengakses file jika sudah mengerjakan pre-test
-     * (atau jika tidak ada pre-test untuk materi ini).
+     * Siswa hanya bisa mengakses file jika:
+     * 1. Kelas dan jurusannya sesuai dengan materi
+     * 2. Sudah mengerjakan pre-test (atau tidak ada pre-test)
      */
     public function serveFile(Materi $materi): StreamedResponse|RedirectResponse
     {
         $siswa = auth('siswa')->user();
+
+        // Pastikan materi ini memang untuk kelas & jurusan siswa
+        if ($materi->kelas !== $siswa->kelas || $materi->jurusan !== $siswa->jurusan) {
+            return redirect()
+                ->route('portal.materi.index')
+                ->with('error', 'Kamu tidak memiliki akses ke file materi ini.');
+        }
 
         // Cek keberadaan pre-test dan apakah sudah dikerjakan
         $pretests = $materi->quiz()->where('tipe_test', 'pretest')->get();
