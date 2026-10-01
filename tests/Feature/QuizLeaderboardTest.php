@@ -295,4 +295,142 @@ class QuizLeaderboardTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Leaderboard');
     }
+
+    public function test_siswa_only_sees_posttest_for_their_own_kelas_and_jurusan(): void
+    {
+        $admin = AdminGuru::create([
+            'nip' => '198501012010011012',
+            'nama_lengkap' => 'Guru Pengampu Siswa',
+            'email' => 'pengampusiswa@sekolah.sch.id',
+            'password' => 'password123',
+            'role' => 'guru',
+        ]);
+
+        $siswaTKJ = PenggunaSiswa::create([
+            'nisn' => '0054444441',
+            'nama_lengkap' => 'Siswa Kelas 10 TKJ Satu',
+            'email' => 'tkj1@sekolah.sch.id',
+            'kelas' => '10',
+            'jurusan' => 'Teknik Komputer & Jaringan',
+            'password' => 'password123',
+        ]);
+
+        $siswaMesin = PenggunaSiswa::create([
+            'nisn' => '0054444442',
+            'nama_lengkap' => 'Siswa Kelas 11 Mesin Dua',
+            'email' => 'mesin2@sekolah.sch.id',
+            'kelas' => '11',
+            'jurusan' => 'Teknik Pemesinan',
+            'password' => 'password123',
+        ]);
+
+        $materiTKJ = Materi::create([
+            'judul_materi' => 'Jaringan Komputer Siswa',
+            'isi_materi' => 'Konten Jarkom',
+            'nip' => $admin->nip,
+            'kelas' => '10',
+            'jurusan' => 'Teknik Komputer & Jaringan',
+        ]);
+
+        $materiMesin = Materi::create([
+            'judul_materi' => 'Teknik Bubut Siswa',
+            'isi_materi' => 'Konten Bubut',
+            'nip' => $admin->nip,
+            'kelas' => '11',
+            'jurusan' => 'Teknik Pemesinan',
+        ]);
+
+        $quizTKJPre = Quiz::create([
+            'id_materi' => $materiTKJ->id_materi,
+            'nip' => $admin->nip,
+            'tipe_test' => 'pretest',
+            'poin' => 10,
+            'timer' => 30,
+            'tanggal' => now()->toDateString(),
+        ]);
+
+        $quizTKJPost = Quiz::create([
+            'id_materi' => $materiTKJ->id_materi,
+            'nip' => $admin->nip,
+            'tipe_test' => 'posttest',
+            'poin' => 10,
+            'timer' => 30,
+            'tanggal' => now()->toDateString(),
+        ]);
+
+        $quizMesinPost = Quiz::create([
+            'id_materi' => $materiMesin->id_materi,
+            'nip' => $admin->nip,
+            'tipe_test' => 'posttest',
+            'poin' => 10,
+            'timer' => 30,
+            'tanggal' => now()->toDateString(),
+        ]);
+
+        // Nilai Pre-Test Siswa TKJ = 40 (tidak boleh muncul di leaderboard siswa)
+        Leaderboard::create([
+            'id_quiz' => $quizTKJPre->id_quiz,
+            'nisn' => $siswaTKJ->nisn,
+            'total_poin' => 40,
+        ]);
+
+        // Nilai Post-Test Siswa TKJ = 95 (harus muncul)
+        Leaderboard::create([
+            'id_quiz' => $quizTKJPost->id_quiz,
+            'nisn' => $siswaTKJ->nisn,
+            'total_poin' => 95,
+        ]);
+
+        // Nilai Post-Test Siswa Mesin = 100 (tidak boleh muncul karena kelas/jurusan lain)
+        Leaderboard::create([
+            'id_quiz' => $quizMesinPost->id_quiz,
+            'nisn' => $siswaMesin->nisn,
+            'total_poin' => 100,
+        ]);
+
+        // Login sebagai Siswa TKJ
+        $response = $this->actingAs($siswaTKJ, 'siswa')->get(route('leaderboard.index'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Siswa Kelas 10 TKJ Satu');
+        $response->assertSee('95');
+        // Tidak boleh melihat siswa dari kelas/jurusan lain
+        $response->assertDontSee('Siswa Kelas 11 Mesin Dua');
+        // Tidak boleh melihat nilai pre-test (40)
+        $response->assertDontSee('Pre-Test');
+        $response->assertSee('Post-Test');
+    }
+
+    public function test_siswa_cannot_tamper_kelas_or_jurusan_via_query_params(): void
+    {
+        $siswaTKJ = PenggunaSiswa::create([
+            'nisn' => '0055555551',
+            'nama_lengkap' => 'Siswa Anti Tamper',
+            'email' => 'tamper@sekolah.sch.id',
+            'kelas' => '10',
+            'jurusan' => 'Teknik Komputer & Jaringan',
+            'password' => 'password123',
+        ]);
+
+        $siswaMesin = PenggunaSiswa::create([
+            'nisn' => '0055555552',
+            'nama_lengkap' => 'Siswa Mesin Tersembunyi',
+            'email' => 'sembunyi@sekolah.sch.id',
+            'kelas' => '11',
+            'jurusan' => 'Teknik Pemesinan',
+            'password' => 'password123',
+        ]);
+
+        // Siswa TKJ mencoba mengintip Kelas 11 Mesin via URL parameter
+        $response = $this->actingAs($siswaTKJ, 'siswa')->get(route('leaderboard.index', [
+            'kelas' => '11',
+            'jurusan' => 'Teknik Pemesinan',
+            'tipe_test' => 'pretest',
+        ]));
+
+        $response->assertStatus(200);
+        // Tetap terkunci ke kelas siswa tersebut (10 TKJ)
+        $response->assertDontSee('Siswa Mesin Tersembunyi');
+        $response->assertSee('Siswa • Kelas 10 • Teknik Komputer & Jaringan');
+    }
 }

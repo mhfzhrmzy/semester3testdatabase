@@ -31,22 +31,52 @@ class LeaderboardController extends Controller
         $isGuru = auth('admin')->check();
         $isSiswa = auth('siswa')->check();
 
-        // 1. Filter Kelas & Jurusan
-        $kelas = $request->query('kelas');
-        $jurusan = $request->query('jurusan');
-
-        // Jika siswa login dan belum memilih kelas/jurusan, default ke kelas & jurusannya
-        if ($isSiswa && ! $kelas && ! $jurusan) {
+        // 1. Filter Kelas, Jurusan, dan Tipe Test berdasarkan Aktor (Guru vs Siswa)
+        if ($isSiswa) {
             $siswa = auth('siswa')->user();
             $kelas = $siswa->kelas;
             $jurusan = $siswa->jurusan;
-        }
+            // Siswa HANYA menampilkan post-test di kelas & jurusannya sendiri
+            $filterTest = 'posttest';
 
-        if ($kelas && ! in_array($kelas, self::DAFTAR_KELAS)) {
-            $kelas = null;
-        }
-        if ($jurusan && ! in_array($jurusan, self::DAFTAR_JURUSAN)) {
-            $jurusan = null;
+            // Materi yang dapat dipilih siswa hanya yang sesuai kelas & jurusannya
+            $daftarMateri = Materi::with(['quiz' => function ($q) {
+                $q->where('tipe_test', 'posttest');
+            }])
+                ->where('kelas', $kelas)
+                ->where('jurusan', $jurusan)
+                ->orderBy('judul_materi', 'asc')
+                ->get();
+        } else {
+            // Aktor Guru / Tamu: Bebas memilih kelas, jurusan, dan tipe test
+            $kelas = $request->query('kelas');
+            $jurusan = $request->query('jurusan');
+
+            if ($kelas && ! in_array($kelas, self::DAFTAR_KELAS)) {
+                $kelas = null;
+            }
+            if ($jurusan && ! in_array($jurusan, self::DAFTAR_JURUSAN)) {
+                $jurusan = null;
+            }
+
+            $filterTest = $request->query('tipe_test');
+            if (! in_array($filterTest, ['pretest', 'posttest'])) {
+                $filterTest = null;
+            }
+
+            // Daftar Materi untuk Guru (disaring berdasarkan kelas dan jurusan jika dipilih)
+            $materiQuery = Materi::with(['quiz']);
+            if ($kelas) {
+                $materiQuery->where(function ($q) use ($kelas) {
+                    $q->where('kelas', $kelas)->orWhereNull('kelas');
+                });
+            }
+            if ($jurusan) {
+                $materiQuery->where(function ($q) use ($jurusan) {
+                    $q->where('jurusan', $jurusan)->orWhereNull('jurusan');
+                });
+            }
+            $daftarMateri = $materiQuery->orderBy('judul_materi', 'asc')->get();
         }
 
         // 2. Tipe Leaderboard: 'keseluruhan' atau 'permateri'
@@ -55,36 +85,18 @@ class LeaderboardController extends Controller
             $tipeLeaderboard = 'keseluruhan';
         }
 
-        // 3. Tipe Test: 'pretest', 'posttest', atau null (semua test)
-        $filterTest = $request->query('tipe_test');
-        if (! in_array($filterTest, ['pretest', 'posttest'])) {
-            $filterTest = null;
-        }
-
-        // 4. Daftar Materi untuk dipilih
-        $materiQuery = Materi::with(['quiz']);
-        if ($kelas) {
-            $materiQuery->where(function ($q) use ($kelas) {
-                $q->where('kelas', $kelas)->orWhereNull('kelas');
-            });
-        }
-        if ($jurusan) {
-            $materiQuery->where(function ($q) use ($jurusan) {
-                $q->where('jurusan', $jurusan)->orWhereNull('jurusan');
-            });
-        }
-        $daftarMateri = $materiQuery->orderBy('judul_materi', 'asc')->get();
-
+        // 3. Materi Terpilih (jika mode permateri)
         $selectedMateriId = $request->query('materi_id');
         $selectedMateri = null;
         if ($selectedMateriId) {
-            $selectedMateri = $daftarMateri->firstWhere('id_materi', $selectedMateriId)
-                ?? Materi::with('quiz')->find($selectedMateriId);
+            $selectedMateri = $daftarMateri->firstWhere('id_materi', $selectedMateriId);
+            if (! $selectedMateri && ! $isSiswa) {
+                $selectedMateri = Materi::with('quiz')->find($selectedMateriId);
+            }
         }
 
-        // Jika mode permateri dan materi dipilih tetapi tipe_test belum dipilih,
-        // default ke 'posttest' jika ada, atau 'pretest'
-        if ($tipeLeaderboard === 'permateri' && $selectedMateri && ! $filterTest) {
+        // Untuk Guru: jika mode permateri dan materi dipilih tetapi tipe_test belum dipilih, default ke posttest
+        if (! $isSiswa && $tipeLeaderboard === 'permateri' && $selectedMateri && ! $filterTest) {
             $filterTest = 'posttest';
         }
 
