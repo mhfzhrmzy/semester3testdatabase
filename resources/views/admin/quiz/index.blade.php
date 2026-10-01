@@ -16,28 +16,35 @@
             @csrf
             <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Pilih Materi</label>
-                <select name="id_materi" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+                <select name="id_materi" id="select-materi" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
                     <option value="">-- Pilih Materi --</option>
                     @foreach ($materis as $m)
-                        <option value="{{ $m->id_materi }}">{{ $m->judul_materi }}</option>
+                        <option value="{{ $m->id_materi }}" {{ old('id_materi') == $m->id_materi ? 'selected' : '' }}>{{ $m->judul_materi }}</option>
                     @endforeach
                 </select>
+                @error('id_materi')
+                    <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                @enderror
             </div>
             <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Tipe Test</label>
-                <select name="tipe_test" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
-                    <option value="pretest">Pre-Test</option>
-                    <option value="posttest">Post-Test</option>
+                <select name="tipe_test" id="select-tipe" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+                    <option value="pretest" id="opt-pretest">Pre-Test</option>
+                    <option value="posttest" id="opt-posttest">Post-Test</option>
                 </select>
+                @error('tipe_test')
+                    <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                @enderror
+                <p id="tipe-info" class="text-xs text-amber-600 mt-1 hidden"></p>
             </div>
             <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Poin / Soal</label>
-                <input type="number" name="poin" value="10" min="1" max="100" required placeholder="Contoh: 10" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
+                <input type="number" name="poin" value="{{ old('poin', 10) }}" min="1" max="100" required placeholder="Contoh: 10" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
                 <p class="text-xs text-gray-400 mt-1">Maks. 100 poin</p>
             </div>
             <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Timer Total (Menit)</label>
-                <input type="number" name="timer" value="30" min="1" max="120" required placeholder="Contoh: 30" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
+                <input type="number" name="timer" value="{{ old('timer', 30) }}" min="1" max="120" required placeholder="Contoh: 30" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
                 <p class="text-xs text-gray-400 mt-1">Maks. 120 menit</p>
             </div>
             <div>
@@ -45,7 +52,10 @@
                 <input type="date" value="{{ date('Y-m-d') }}" readonly class="w-full rounded-md border border-gray-200 px-3 py-2 text-sm font-semibold bg-gray-100 text-gray-500 cursor-not-allowed">
                 <p class="text-xs text-gray-400 mt-1">Otomatis, tidak dapat diubah</p>
             </div>
-            <button type="submit" class="md:col-span-5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-md transition duration-150">
+            <div class="md:col-span-5 bg-amber-50 border border-amber-200 rounded-md px-4 py-2 text-xs text-amber-800">
+                ℹ️ Setiap materi hanya dapat memiliki <strong>1 pre-test</strong> dan <strong>1 post-test</strong>. Tipe yang sudah ada tidak dapat dibuat ulang.
+            </div>
+            <button type="submit" id="btn-submit" class="md:col-span-5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-md transition duration-150">
                 Simpan &amp; Buat Quiz
             </button>
         </form>
@@ -92,4 +102,51 @@
         </tbody>
     </table>
 </div>
+
+@push('scripts')
+<script>
+    const existing = @json($existingCombinations);
+    const selectMateri = document.getElementById('select-materi');
+    const selectTipe = document.getElementById('select-tipe');
+    const optPretest = document.getElementById('opt-pretest');
+    const optPosttest = document.getElementById('opt-posttest');
+    const tipeInfo = document.getElementById('tipe-info');
+    const btnSubmit = document.getElementById('btn-submit');
+
+    function updateTipeOptions() {
+        const materiId = selectMateri.value;
+        const usedTypes = existing[materiId] || [];
+
+        const pretestUsed = usedTypes.includes('pretest');
+        const posttestUsed = usedTypes.includes('posttest');
+
+        optPretest.disabled = pretestUsed;
+        optPosttest.disabled = posttestUsed;
+        optPretest.textContent = 'Pre-Test' + (pretestUsed ? ' (sudah ada)' : '');
+        optPosttest.textContent = 'Post-Test' + (posttestUsed ? ' (sudah ada)' : '');
+
+        // Auto-select first available option
+        if (pretestUsed && !posttestUsed) {
+            selectTipe.value = 'posttest';
+        } else if (!pretestUsed) {
+            selectTipe.value = 'pretest';
+        }
+
+        const allUsed = pretestUsed && posttestUsed;
+        if (allUsed && materiId) {
+            tipeInfo.textContent = '⚠️ Materi ini sudah memiliki pre-test dan post-test.';
+            tipeInfo.classList.remove('hidden');
+            btnSubmit.disabled = true;
+            btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            tipeInfo.classList.add('hidden');
+            btnSubmit.disabled = false;
+            btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    }
+
+    selectMateri.addEventListener('change', updateTipeOptions);
+    updateTipeOptions();
+</script>
+@endpush
 @endsection

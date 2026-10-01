@@ -8,6 +8,7 @@ use App\Models\Quiz;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class QuizController extends Controller
 {
@@ -16,16 +17,28 @@ class QuizController extends Controller
         $quizzes = Quiz::with(['materi', 'adminGuru', 'soal'])->latest()->get();
         $materis = Materi::orderBy('judul_materi')->get();
 
-        return view('admin.quiz.index', compact('quizzes', 'materis'));
+        // Kombinasi id_materi => [tipe_test, ...] yang sudah ada
+        $existingCombinations = Quiz::select('id_materi', 'tipe_test')
+            ->get()
+            ->groupBy('id_materi')
+            ->map(fn ($items) => $items->pluck('tipe_test')->toArray());
+
+        return view('admin.quiz.index', compact('quizzes', 'materis', 'existingCombinations'));
     }
 
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'id_materi' => ['required', 'exists:materi,id_materi'],
-            'tipe_test' => ['required', 'in:pretest,posttest'],
+            'tipe_test' => [
+                'required',
+                'in:pretest,posttest',
+                Rule::unique('quiz')->where(fn ($query) => $query->where('id_materi', $request->id_materi)),
+            ],
             'poin' => ['required', 'integer', 'min:1', 'max:100'],
             'timer' => ['required', 'integer', 'min:1', 'max:120'],
+        ], [
+            'tipe_test.unique' => 'Quiz tipe ini sudah ada untuk materi yang dipilih. Setiap materi hanya boleh memiliki satu pre-test dan satu post-test.',
         ]);
 
         // Tanggal selalu otomatis dari server, tidak dari input pengguna
