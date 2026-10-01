@@ -42,42 +42,42 @@
                             </a>
                         @endif
 
-                        <span class="text-gray-500">|</span>
-                        <span class="text-gray-300">{{ $currentAdmin->nama_lengkap }}</span>
-                        <form action="{{ route('admin.logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="hover:text-red-400">Logout</button>
-                        </form>
-                    @elseif (auth('siswa')->check())
-                        <a href="{{ route('portal.materi.index') }}"
-                           class="hover:text-gray-300 {{ request()->routeIs('portal.*') ? 'text-blue-400 font-semibold' : '' }}">
-                            Portal Siswa
-                        </a>
-                        <a href="{{ route('leaderboard.index') }}"
-                           class="hover:text-gray-300 {{ request()->routeIs('leaderboard.*') ? 'text-amber-400 font-semibold' : '' }}">
-                            Leaderboard
-                        </a>
-                        <a href="{{ route('siswa.sertifikat.index') }}"
-                           class="hover:text-gray-300 {{ request()->routeIs('siswa.sertifikat.*') ? 'text-blue-400 font-semibold' : '' }}">
-                            Sertifikat
-                        </a>
-                        <span class="text-gray-500">|</span>
-                        <span class="text-gray-300">{{ auth('siswa')->user()->nama_lengkap }}</span>
-                        <form action="{{ route('siswa.logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="hover:text-red-400">Logout</button>
-                        </form>
-                    @else
-                        <a href="{{ route('admin.login') }}" class="hover:text-gray-300 {{ request()->routeIs('admin.login') ? 'text-blue-400 font-semibold' : '' }}">Login Guru</a>
-                        <a href="{{ route('admin.register') }}" class="hover:text-gray-300 {{ request()->routeIs('admin.register') ? 'text-blue-400 font-semibold' : '' }}">Registrasi Guru</a>
-                        <span class="text-gray-600">|</span>
-                        <a href="{{ route('siswa.login') }}" class="hover:text-gray-300 {{ request()->routeIs('siswa.login') ? 'text-amber-400 font-semibold' : '' }}">Login Siswa</a>
-                        <a href="{{ route('siswa.register') }}" class="hover:text-gray-300 {{ request()->routeIs('siswa.register') ? 'text-amber-400 font-semibold' : '' }}">Registrasi Siswa</a>
-                    @endif
-                </div>
+                    <span class="text-gray-500">|</span>
+                    <span class="text-gray-300">{{ $currentAdmin->nama_lengkap }}</span>
+                    <form action="{{ route('admin.logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="hover:text-red-400">Logout</button>
+                    </form>
+                @elseif (auth('siswa')->check())
+                    <a href="{{ route('portal.materi.index') }}"
+                       class="hover:text-gray-300 {{ request()->routeIs('portal.*') ? 'text-blue-400 font-semibold' : '' }}">
+                        Portal Siswa
+                    </a>
+                    <a href="{{ route('leaderboard.index') }}"
+                       class="hover:text-gray-300 {{ request()->routeIs('leaderboard.*') ? 'text-amber-400 font-semibold' : '' }}">
+                        Leaderboard
+                    </a>
+                    <a href="{{ route('siswa.sertifikat.index') }}"
+                       class="hover:text-gray-300 {{ request()->routeIs('siswa.sertifikat.*') ? 'text-blue-400 font-semibold' : '' }}">
+                        Sertifikat
+                    </a>
+                    <span class="text-gray-500">|</span>
+                    <span class="text-gray-300">{{ auth('siswa')->user()->nama_lengkap }}</span>
+                    <form action="{{ route('siswa.logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="hover:text-red-400">Logout</button>
+                    </form>
+                @else
+                    <a href="{{ route('admin.login') }}" class="hover:text-gray-300 {{ request()->routeIs('admin.login') ? 'text-blue-400 font-semibold' : '' }}">Login Guru</a>
+                    <a href="{{ route('admin.register') }}" class="hover:text-gray-300 {{ request()->routeIs('admin.register') ? 'text-blue-400 font-semibold' : '' }}">Registrasi Guru</a>
+                    <span class="text-gray-600">|</span>
+                    <a href="{{ route('siswa.login') }}" class="hover:text-gray-300 {{ request()->routeIs('siswa.login') ? 'text-amber-400 font-semibold' : '' }}">Login Siswa</a>
+                    <a href="{{ route('siswa.register') }}" class="hover:text-gray-300 {{ request()->routeIs('siswa.register') ? 'text-amber-400 font-semibold' : '' }}">Registrasi Siswa</a>
+                @endif
             </div>
-        </nav>
-        @endif
+        </div>
+    </nav>
+    @endif
 
         @if (request()->routeIs('home', 'admin.login', 'admin.register', 'siswa.login', 'siswa.register'))
             @yield('content')

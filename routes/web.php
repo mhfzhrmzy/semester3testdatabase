@@ -12,6 +12,7 @@ use App\Http\Controllers\Portal\MateriController as PortalMateriController;
 use App\Http\Controllers\Portal\QuizController as PortalQuizController;
 use App\Http\Controllers\SertifikatController;
 use App\Http\Controllers\Siswa\SertifikatSiswaController;
+use App\Http\Controllers\Siswa\ProfilSiswaController;
 use App\Http\Controllers\SuperadminController;
 use Illuminate\Support\Facades\Route;
 
@@ -128,4 +129,9 @@ Route::middleware('auth:siswa')->group(function () {
         Route::post('/sertifikat', 'store')->name('sertifikat.store');
         Route::delete('/sertifikat/{sertifikat}', 'destroy')->name('sertifikat.destroy');
     });
-});
+
+
+        // Profil Siswa
+    Route::get('/siswa/profil', [ProfilSiswaController::class, 'index'])
+        ->name('siswa.profil');
+    });
