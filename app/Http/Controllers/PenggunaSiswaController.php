@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PenggunaSiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -38,12 +39,17 @@ class PenggunaSiswaController extends Controller
             'kelas' => ['required', 'in:10,11,12'],
             'jurusan' => ['required', 'in:'.implode(',', $jurusanList)],
             'password' => ['required', 'string', 'min:6'],
+            'foto_profile' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ], [
             'nisn.digits' => 'NISN wajib tepat 10 digit angka.',
             'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
             'kelas.required' => 'Kelas wajib dipilih.',
             'jurusan.required' => 'Jurusan wajib dipilih.',
         ]);
+
+        if ($request->hasFile('foto_profile')) {
+            $validated['foto_profile'] = $request->file('foto_profile')->store('siswa/foto', 'public');
+        }
 
         $validated['password'] = Hash::make($validated['password']);
         $validated['poin'] = 0;
@@ -72,12 +78,22 @@ class PenggunaSiswaController extends Controller
             'kelas' => ['required', 'in:10,11,12'],
             'jurusan' => ['required', 'in:'.implode(',', $jurusanList)],
             'password' => ['nullable', 'string', 'min:6'],
+            'foto_profile' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ], [
             'nisn.digits' => 'NISN wajib tepat 10 digit angka.',
             'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
             'kelas.required' => 'Kelas wajib dipilih.',
             'jurusan.required' => 'Jurusan wajib dipilih.',
         ]);
+
+        if ($request->hasFile('foto_profile')) {
+            if ($siswa->foto_profile) {
+                Storage::disk('public')->delete($siswa->foto_profile);
+            }
+            $validated['foto_profile'] = $request->file('foto_profile')->store('siswa/foto', 'public');
+        } else {
+            unset($validated['foto_profile']);
+        }
 
         $validated['password'] = $request->filled('password')
             ? Hash::make($validated['password'])
@@ -93,6 +109,10 @@ class PenggunaSiswaController extends Controller
 
     public function destroy(PenggunaSiswa $siswa)
     {
+        if ($siswa->foto_profile) {
+            Storage::disk('public')->delete($siswa->foto_profile);
+        }
+
         $siswa->delete();
 
         $redirectRoute = request()->input('from') === 'superadmin' ? 'superadmin.index' : 'siswa.index';

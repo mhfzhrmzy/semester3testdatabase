@@ -5,7 +5,7 @@
 @section('content')
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <div class="lg:col-span-1 bg-white rounded-lg shadow p-6 h-fit">
-        <h2 class="text-lg font-semibold mb-4">Tambah Materi</h2>
+        <h2 class="text-lg font-semibold mb-4">Bahan Ajar</h2>
         <form action="{{ route('materi.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
             @csrf
             <div>
@@ -15,7 +15,7 @@
                 @error('judul_materi')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
             </div>
             <div>
-                <label class="block text-sm font-medium mb-1">Isi Materi</label>
+                <label class="block text-sm font-medium mb-1">Deskripsi Materi</label>
                 <textarea name="isi_materi" rows="4"
                           class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">{{ old('isi_materi') }}</textarea>
                 @error('isi_materi')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
@@ -32,7 +32,7 @@
     </div>
 
     <div class="lg:col-span-2 bg-white rounded-lg shadow p-6">
-        <h2 class="text-lg font-semibold mb-4">Daftar Materi</h2>
+        <h2 class="text-lg font-semibold mb-4">Daftar Bahan Ajar</h2>
         <table class="w-full text-sm text-left">
             <thead>
                 <tr class="border-b bg-gray-50">

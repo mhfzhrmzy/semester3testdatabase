@@ -1,8 +1,8 @@
 @extends('layouts.app')
-@section('title', 'Tambah Materi')
+@section('title', 'Bahan Ajar')
 
 @section('content')
-    <h1>Tambah Materi</h1>
+    <h1>Bahan Ajar</h1>
 
     <form action="{{ route('admin.materi.store') }}" method="POST" enctype="multipart/form-data">
         @csrf

@@ -46,8 +46,6 @@
                 @include('superadmin.daftarGuru.index')
             @elseif ($menu === 'siswa')
                 @include('superadmin.daftarSiswa.index')
-            @elseif ($menu === 'pengaturan')
-                @include('superadmin.partials.pengaturan')
             @endif
         </main>
     </div>

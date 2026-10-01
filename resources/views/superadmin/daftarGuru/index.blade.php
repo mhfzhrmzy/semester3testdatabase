@@ -2,7 +2,7 @@
 <div>
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Kelola Akun Guru</h1>
+            <h1 class="text-2xl font-semibold text-slate-900 tracking-tight">Kelola Akun Guru</h1>
             <p class="text-xs text-slate-500 mt-1">Tambah, perbarui, atau hapus data akun guru pengampu.</p>
         </div>
         <div class="flex items-center gap-3 flex-wrap">
@@ -40,13 +40,13 @@
             <div>
                 <label class="mb-1 block text-xs font-bold text-slate-700">NIP (18 Digit)</label>
                 <input type="text" name="nip" value="{{ old('nip') }}" maxlength="18" inputmode="numeric" pattern="[0-9]*" required 
-                       placeholder="19890412..."
+                       placeholder="Masukkan NIP 18 digit"
                        class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
             </div>
             <div>
                 <label class="mb-1 block text-xs font-bold text-slate-700">Nama Lengkap</label>
                 <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" required 
-                       placeholder="Siti Rahmawati, S.Pd"
+                       placeholder="Masukkan Nama Lengkap"
                        class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#4a101d]/20 transition">
             </div>
 
@@ -61,12 +61,6 @@
                 <input type="file" name="foto_profile" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
             </div>
             <div class="flex items-center gap-2 md:col-span-2 md:justify-end flex-wrap">
-                <button type="button" onclick="openImportGuruModal()" style="background-color: #7e22ce; color: #ffffff;" class="rounded-xl bg-purple-700 px-4 py-2.5 text-xs font-bold text-white shadow-md hover:bg-purple-800 transition cursor-pointer flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                    </svg>
-                    Import CSV Guru
-                </button>
                 <button type="submit" class="w-full md:w-auto rounded-xl bg-[#4a101d] px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-amber-950/20 hover:bg-[#380b15] transition cursor-pointer">
                     + Tambah Akun Guru
                 </button>
@@ -80,8 +74,9 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead>
-                    <tr class="border-b border-slate-200 bg-slate-50/80 text-slate-500 uppercase tracking-wider font-bold">
-                        <th class="px-4 py-3 rounded-l-xl">NIP</th>
+                    <tr class="border-b border-slate-200 bg-slate-50/80 text-slate-700 uppercase tracking-wider font-bold">
+                        <th class="px-4 py-3 rounded-l-xl">Foto</th>
+                        <th class="px-4 py-3">NIP</th>
                         <th class="px-4 py-3">Nama Lengkap</th>
                         <th class="px-4 py-3 text-right rounded-r-xl">Aksi</th>
                     </tr>
@@ -89,24 +84,33 @@
                 <tbody class="divide-y divide-slate-100">
                     @forelse ($gurus as $guru)
                         <tr class="hover:bg-slate-50/80 transition">
-                            <td class="px-4 py-3 font-semibold text-slate-700">{{ $guru->nip }}</td>
-                            <td class="px-4 py-3 font-bold text-slate-900">{{ $guru->nama_lengkap }}</td>
+                            <td class="px-4 py-3">
+                                @if ($guru->foto_profile)
+                                    <img src="{{ asset('storage/' . $guru->foto_profile) }}" alt="{{ $guru->nama_lengkap }}" class="w-9 h-9 rounded-full object-cover border border-slate-200 shadow-xs shrink-0">
+                                @else
+                                    <div class="w-9 h-9 rounded-full bg-purple-100 text-purple-800 font-bold flex items-center justify-center text-xs shrink-0 border border-purple-200/80 shadow-xs">
+                                        {{ strtoupper(substr($guru->nama_lengkap, 0, 2)) }}
+                                    </div>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3 font-normal text-slate-500 font-mono tracking-tight">{{ $guru->nip }}</td>
+                            <td class="px-4 py-3 font-normal text-slate-700">{{ $guru->nama_lengkap }}</td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-end gap-3">
                                     <button type="button"
                                             onclick="openEditGuruModal('{{ $guru->nip }}', '{{ addslashes($guru->nama_lengkap) }}')"
-                                            class="text-amber-600 font-bold hover:underline cursor-pointer">Edit</button>
+                                            class="text-amber-600 font-medium hover:underline cursor-pointer">Edit</button>
                                     <form action="{{ route('admin.destroy', $guru) }}" method="POST" onsubmit="return confirm('Hapus akun guru ini?')">
                                         @csrf @method('DELETE')
                                         <input type="hidden" name="from" value="superadmin">
-                                        <button type="submit" class="text-red-600 font-bold hover:underline cursor-pointer">Hapus</button>
+                                        <button type="submit" class="text-red-600 font-medium hover:underline cursor-pointer">Hapus</button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-4 py-8 text-center text-slate-400 font-medium">Belum ada akun guru registered.</td>
+                            <td colspan="4" class="px-4 py-8 text-center text-slate-400 font-medium">Belum ada akun guru registered.</td>
                         </tr>
                     @endforelse
                 </tbody>

@@ -7,7 +7,7 @@
     <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-bold">Edit Data Materi</h2>
-            <a href="{{ route('materi.index') }}" class="text-sm text-blue-600 hover:underline">&larr; Kembali ke Daftar Materi</a>
+            <a href="{{ route('materi.index') }}" class="text-sm text-blue-600 hover:underline">&larr; Kembali ke Daftar Bahan Ajar</a>
         </div>
 
         @if(session('error'))
@@ -85,7 +85,7 @@
             </div>
 
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Isi Materi</label>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Deskripsi Materi</label>
                 <textarea name="isi_materi" rows="5" class="w-full border rounded px-3 py-2 text-gray-700">{{ old('isi_materi', $materi->isi_materi) }}</textarea>
             </div>
 

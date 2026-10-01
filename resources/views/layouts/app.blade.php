@@ -109,5 +109,6 @@
             </main>
         @endif
     @endif
+@stack('scripts')
 </body>
 </html>
