@@ -34,12 +34,9 @@
                                 <p class="text-xs text-slate-500">Materi, kuis, &amp; nilai hasil belajar</p>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-2 mt-4">
-                            <a href="{{ route('siswa.login') }}" class="w-full bg-[#0A2342] hover:bg-[#061529] text-white text-xs font-semibold py-3 px-3 rounded-xl text-center shadow-sm transition">
+                        <div class="mt-4">
+                            <a href="{{ route('siswa.login') }}" class="block w-full bg-[#0A2342] hover:bg-[#061529] text-white text-xs font-semibold py-3 px-3 rounded-xl text-center shadow-sm transition">
                                 Login Siswa
-                            </a>
-                            <a href="{{ route('siswa.register') }}" class="w-full bg-white hover:bg-slate-100 text-[#3B5284] border border-[#3B5284]/40 text-xs font-semibold py-3 px-3 rounded-xl text-center transition">
-                                Daftar Siswa
                             </a>
                         </div>
                     </div>
@@ -52,12 +49,9 @@
                                 <p class="text-xs text-slate-500">Kelola materi, bank soal, &amp; nilai</p>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-2 mt-4">
-                            <a href="{{ route('admin.login') }}" class="w-full bg-[#0A2342] hover:bg-[#061529] text-white text-xs font-semibold py-3 px-3 rounded-xl text-center shadow-sm transition">
+                        <div class="mt-4">
+                            <a href="{{ route('admin.login') }}" class="block w-full bg-[#0A2342] hover:bg-[#061529] text-white text-xs font-semibold py-3 px-3 rounded-xl text-center shadow-sm transition">
                                 Login Guru
-                            </a>
-                            <a href="{{ route('admin.register') }}" class="w-full bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-semibold py-3 px-3 rounded-xl text-center transition">
-                                Daftar Guru
                             </a>
                         </div>
                     </div>

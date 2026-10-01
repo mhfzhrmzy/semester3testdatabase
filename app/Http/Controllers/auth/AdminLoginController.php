@@ -18,28 +18,40 @@ class AdminLoginController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
-            'nip' => ['required', 'digits:18'],
+            'nip'      => ['required', 'digits:18'],
             'password' => ['required', 'string'],
         ], [
-            'nip.required' => 'NIP wajib diisi.',
-            'nip.digits' => 'NIP wajib 18 digit angka.',
+            'nip.required'      => 'NIP wajib diisi.',
+            'nip.digits'        => 'NIP wajib 18 digit angka.',
             'password.required' => 'Password wajib diisi.',
         ]);
 
-        if (! Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
-            return back()->withInput($request->only('nip'))->withErrors(['nip' => 'NIP atau password salah.']);
+        // Coba login sebagai superadmin terlebih dahulu
+        if (Auth::guard('superadmin')->attempt($credentials, $request->boolean('remember'))) {
+            $request->session()->regenerate();
+            $superadmin = Auth::guard('superadmin')->user();
+
+            return redirect()->route('superadmin.index')
+                ->with('success', 'Selamat datang kembali, Superadmin ' . $superadmin->nama_lengkap . '.');
         }
 
-        $request->session()->regenerate();
-        $admin = Auth::guard('admin')->user();
+        // Coba login sebagai guru
+        if (Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
+            $request->session()->regenerate();
+            $guru = Auth::guard('admin')->user();
 
-        return $admin->role === 'superadmin'
-            ? redirect()->route('superadmin.index')->with('success', 'Selamat datang kembali, Superadmin ' . $admin->nama_lengkap . '.')
-            : redirect()->route('materi.index')->with('success', 'Selamat datang kembali, Guru ' . $admin->nama_lengkap . '.');
+            return redirect()->route('materi.index')
+                ->with('success', 'Selamat datang kembali, Guru ' . $guru->nama_lengkap . '.');
+        }
+
+        return back()
+            ->withInput($request->only('nip'))
+            ->withErrors(['nip' => 'NIP atau password salah.']);
     }
 
     public function destroy(Request $request): RedirectResponse
     {
+        Auth::guard('superadmin')->logout();
         Auth::guard('admin')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

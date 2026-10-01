@@ -10,13 +10,13 @@ return new class extends Migration
     {
         Schema::create('sertifikat', function (Blueprint $table) {
             $table->id('id_sertifikat');
-            
-            // Relasi ke pengguna_siswa (nisn bertipe unsignedBigInteger)
-            $table->unsignedBigInteger('nisn');
+
+            // Relasi ke pengguna_siswa (nisn bertipe string)
+            $table->string('nisn', 10);
             $table->foreign('nisn')->references('nisn')->on('pengguna_siswa')->onDelete('cascade');
 
             // Relasi opsional jika diterbitkan guru (nip & id_materi)
-            $table->unsignedBigInteger('nip')->nullable();
+            $table->string('nip', 18)->nullable();
             $table->foreign('nip')->references('nip')->on('admin_guru')->onDelete('set null');
 
             $table->unsignedBigInteger('id_materi')->nullable();

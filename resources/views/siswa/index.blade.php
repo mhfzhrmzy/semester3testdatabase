@@ -67,12 +67,15 @@
                             <td class="px-3 py-2">{{ $siswa->email }}</td>
                             <td class="px-3 py-2">{{ $siswa->poin }}</td>
                             <td class="px-3 py-2 text-right">
-                                <form action="{{ route('siswa.destroy', $siswa) }}" method="POST"
-                                      onsubmit="return confirm('Hapus siswa ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:underline">Hapus</button>
-                                </form>
+                                <div class="flex items-center justify-end gap-3">
+                                    <a href="{{ route('siswa.edit', $siswa) }}" class="text-amber-600 hover:underline">Edit</a>
+                                    <form action="{{ route('siswa.destroy', $siswa) }}" method="POST"
+                                          onsubmit="return confirm('Hapus siswa ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:underline">Hapus</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty

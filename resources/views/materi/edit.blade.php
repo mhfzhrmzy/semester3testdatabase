@@ -37,6 +37,49 @@
             </div>
 
             <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Kelas <span class="text-red-500">*</span></label>
+                <select name="kelas" id="kelas" class="w-full border rounded px-3 py-2 text-gray-700 {{ $errors->has('kelas') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}" required>
+                    <option value="">-- Pilih Kelas --</option>
+                    @foreach(['10', '11', '12'] as $k)
+                        <option value="{{ $k }}" {{ old('kelas', $materi->kelas) == $k ? 'selected' : '' }}>
+                            Kelas {{ $k }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('kelas')
+                    <p class="text-red-600 text-xs mt-1 font-medium">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Jurusan <span class="text-red-500">*</span></label>
+                <select name="jurusan" id="jurusan" class="w-full border rounded px-3 py-2 text-gray-700 {{ $errors->has('jurusan') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}" required>
+                    <option value="">-- Pilih Jurusan --</option>
+                    @foreach([
+                        'Teknik Alat Berat',
+                        'Teknik Kendaraan Ringan',
+                        'Teknik Sepeda Motor',
+                        'Teknik Pemesinan',
+                        'Teknik Instalasi Listrik',
+                        'Teknik Pembangkit Listrik',
+                        'Teknik Mekatronika',
+                        'Teknik Audio Video',
+                        'Teknik Komputer & Jaringan',
+                        'Teknik Konstruksi & Perumahan',
+                        'Desain Permodelan & Informasi Bangunan',
+                        'Desain Komunikasi Visual',
+                    ] as $j)
+                        <option value="{{ $j }}" {{ old('jurusan', $materi->jurusan) == $j ? 'selected' : '' }}>
+                            {{ $j }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('jurusan')
+                    <p class="text-red-600 text-xs mt-1 font-medium">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2">Judul Materi</label>
                 <input type="text" name="judul_materi" value="{{ old('judul_materi', $materi->judul_materi) }}" class="w-full border rounded px-3 py-2 text-gray-700" required>
             </div>
@@ -49,7 +92,7 @@
             <div class="mb-6">
                 <label class="block text-gray-700 text-sm font-bold mb-2">Ganti File Modul (PDF/Word/PPT)</label>
                 <input type="file" name="upload_file" class="w-full text-sm text-gray-500 mb-2">
-                
+
                 @if($materi->upload_file)
                     <div class="p-3 bg-gray-50 border rounded text-xs text-gray-600 flex items-center justify-between">
                         <span>File Terpasang: <strong>{{ basename($materi->upload_file) }}</strong></span>

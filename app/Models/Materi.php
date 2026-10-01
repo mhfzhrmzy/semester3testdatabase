@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Materi extends Model
 {
     protected $table = 'materi';
+
     protected $primaryKey = 'id_materi';
 
-    protected $fillable = ['nip', 'judul_materi', 'isi_materi', 'upload_file'];
+    protected $fillable = ['nip', 'kelas', 'jurusan', 'judul_materi', 'isi_materi', 'upload_file'];
 
     public function adminGuru()
     {

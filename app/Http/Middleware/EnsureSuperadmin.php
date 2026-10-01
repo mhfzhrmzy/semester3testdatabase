@@ -11,9 +11,7 @@ class EnsureSuperadmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $admin = Auth::guard('admin')->user();
-
-        if (! $admin || $admin->role !== 'superadmin') {
+        if (! Auth::guard('superadmin')->check()) {
             abort(403, 'Halaman ini khusus Superadmin.');
         }
 

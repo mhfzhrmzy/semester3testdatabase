@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('materi', function (Blueprint $table) {
             $table->id('id_materi');
-            $table->unsignedBigInteger('nip'); // FK -> admin_guru.nip
+            $table->string('nip', 18); // FK -> admin_guru.nip
             $table->string('judul_materi');
             $table->text('isi_materi');
             $table->string('upload_file')->nullable();

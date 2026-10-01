@@ -6,12 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('pengguna_siswa', function (Blueprint $table) {
-            $table->string('nisn', 10)->primary(); // 10 digit, diisi manual
-            $table->string('nama_lengkap', 60);
-            $table->enum('kelas', ['10', '11', '12']);
+        Schema::table('materi', function (Blueprint $table) {
+            $table->enum('kelas', ['10', '11', '12'])->nullable()->after('nip');
             $table->enum('jurusan', [
                 'Teknik Alat Berat',
                 'Teknik Kendaraan Ringan',
@@ -25,16 +26,17 @@ return new class extends Migration
                 'Teknik Konstruksi & Perumahan',
                 'Desain Permodelan & Informasi Bangunan',
                 'Desain Komunikasi Visual',
-            ]);
-            $table->string('password');
-            $table->unsignedInteger('poin')->default(0);
-            $table->rememberToken();
-            $table->timestamps();
+            ])->nullable()->after('kelas');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('pengguna_siswa');
+        Schema::table('materi', function (Blueprint $table) {
+            $table->dropColumn(['kelas', 'jurusan']);
+        });
     }
 };

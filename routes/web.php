@@ -4,9 +4,7 @@ use App\Http\Controllers\Admin\QuizController as AdminQuizController;
 use App\Http\Controllers\Admin\SoalController as AdminSoalController;
 use App\Http\Controllers\AdminGuruController;
 use App\Http\Controllers\Auth\AdminLoginController;
-use App\Http\Controllers\Auth\AdminRegisterController;
 use App\Http\Controllers\Auth\SiswaLoginController;
-use App\Http\Controllers\Auth\SiswaRegisterController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\MateriController;
 use App\Http\Controllers\PenggunaSiswaController;
@@ -19,10 +17,12 @@ use App\Http\Controllers\SuperadminController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
+    if (auth('superadmin')->check()) {
+        return redirect()->route('superadmin.index');
+    }
+
     if (auth('admin')->check()) {
-        return auth('admin')->user()->role === 'superadmin'
-            ? redirect()->route('superadmin.index')
-            : redirect()->route('materi.index');
+        return redirect()->route('materi.index');
     }
 
     if (auth('siswa')->check()) {
@@ -34,21 +34,17 @@ Route::get('/', function () {
 
 Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
 
-// Autentikasi Guru / Admin
+// Autentikasi Guru / Admin (halaman login sama untuk guru & superadmin)
 Route::get('/login/guru', [AdminLoginController::class, 'create'])->name('admin.login');
 Route::post('/login/guru', [AdminLoginController::class, 'store'])->name('admin.login.attempt');
-Route::get('/register/guru', [AdminRegisterController::class, 'create'])->name('admin.register');
-Route::post('/register/guru', [AdminRegisterController::class, 'store'])->name('admin.register.attempt');
 Route::post('/logout/guru', [AdminLoginController::class, 'destroy'])->name('admin.logout');
 
 // Autentikasi Siswa
 Route::get('/login/siswa', [SiswaLoginController::class, 'create'])->name('siswa.login');
 Route::post('/login/siswa', [SiswaLoginController::class, 'store'])->name('siswa.login.attempt');
-Route::get('/register/siswa', [SiswaRegisterController::class, 'create'])->name('siswa.register');
-Route::post('/register/siswa', [SiswaRegisterController::class, 'store'])->name('siswa.register.attempt');
 Route::post('/logout/siswa', [SiswaLoginController::class, 'destroy'])->name('siswa.logout');
 
-// Area Guru / Admin
+// Area Guru
 Route::middleware('auth:admin')->group(function () {
 
     Route::controller(MateriController::class)->group(function () {
@@ -85,24 +81,31 @@ Route::middleware('auth:admin')->group(function () {
             Route::delete('/soal/{soal}', 'destroy')->name('soal.destroy');
         });
     });
+});
 
-    Route::middleware('superadmin')->group(function () {
-        Route::controller(AdminGuruController::class)->group(function () {
-            Route::get('/admin', 'index')->name('admin.index');
-            Route::post('/admin', 'store')->name('admin.store');
-            Route::put('/admin/{guru}', 'update')->name('admin.update');
-            Route::delete('/admin/{guru}', 'destroy')->name('admin.destroy');
-        });
-
-        Route::controller(PenggunaSiswaController::class)->group(function () {
-            Route::get('/siswa', 'index')->name('siswa.index');
-            Route::post('/siswa', 'store')->name('siswa.store');
-            Route::put('/siswa/{siswa}', 'update')->name('siswa.update');
-            Route::delete('/siswa/{siswa}', 'destroy')->name('siswa.destroy');
-        });
-
-        Route::get('/superadmin', [SuperadminController::class, 'index'])->name('superadmin.index');
+// Area Superadmin (guard terpisah, tabel super_admin)
+Route::middleware('auth:superadmin')->group(function () {
+    Route::controller(AdminGuruController::class)->group(function () {
+        Route::get('/admin', 'index')->name('admin.index');
+        Route::post('/admin', 'store')->name('admin.store');
+        Route::post('/admin/import', 'importCsv')->name('admin.import');
+        Route::get('/admin/template', 'downloadTemplate')->name('admin.template');
+        Route::get('/admin/{guru}/edit', 'edit')->name('admin.edit');
+        Route::put('/admin/{guru}', 'update')->name('admin.update');
+        Route::delete('/admin/{guru}', 'destroy')->name('admin.destroy');
     });
+
+    Route::controller(PenggunaSiswaController::class)->group(function () {
+        Route::get('/siswa', 'index')->name('siswa.index');
+        Route::post('/siswa', 'store')->name('siswa.store');
+        Route::post('/siswa/import', 'importCsv')->name('siswa.import');
+        Route::get('/siswa/template', 'downloadTemplate')->name('siswa.template');
+        Route::get('/siswa/{siswa}/edit', 'edit')->name('siswa.edit');
+        Route::put('/siswa/{siswa}', 'update')->name('siswa.update');
+        Route::delete('/siswa/{siswa}', 'destroy')->name('siswa.destroy');
+    });
+
+    Route::get('/superadmin', [SuperadminController::class, 'index'])->name('superadmin.index');
 });
 
 // Area Siswa

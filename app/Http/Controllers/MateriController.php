@@ -32,9 +32,13 @@ class MateriController extends Controller
         $request->validate([
             'judul_materi' => 'required|string|max:255',
             'nip' => 'nullable|exists:admin_guru,nip',
+            'kelas' => 'required|in:10,11,12',
+            'jurusan' => 'required|in:Teknik Alat Berat,Teknik Kendaraan Ringan,Teknik Sepeda Motor,Teknik Pemesinan,Teknik Instalasi Listrik,Teknik Pembangkit Listrik,Teknik Mekatronika,Teknik Audio Video,Teknik Komputer & Jaringan,Teknik Konstruksi & Perumahan,Desain Permodelan & Informasi Bangunan,Desain Komunikasi Visual',
             'isi_materi' => 'nullable|string',
             'upload_file' => 'required|mimes:pdf,pptx,ppt,doc,docx|max:25600',
         ], [
+            'kelas.required' => 'Kelas wajib dipilih.',
+            'jurusan.required' => 'Jurusan wajib dipilih.',
             'upload_file.required' => 'File modul materi wajib diupload.',
             'upload_file.mimes' => 'Format file harus PDF, PPT, PPTX, DOC, atau DOCX.',
             'upload_file.max' => 'Ukuran file tidak boleh lebih dari 25 MB.',
@@ -50,6 +54,8 @@ class MateriController extends Controller
         Materi::create([
             'judul_materi' => $request->judul_materi,
             'nip' => $nip,
+            'kelas' => $request->kelas,
+            'jurusan' => $request->jurusan,
             'isi_materi' => $request->isi_materi ?? '',
             'upload_file' => $filePath,
         ]);
@@ -87,13 +93,20 @@ class MateriController extends Controller
         $request->validate([
             'judul_materi' => 'required|string|max:255',
             'nip' => 'nullable|exists:admin_guru,nip',
+            'kelas' => 'required|in:10,11,12',
+            'jurusan' => 'required|in:Teknik Alat Berat,Teknik Kendaraan Ringan,Teknik Sepeda Motor,Teknik Pemesinan,Teknik Instalasi Listrik,Teknik Pembangkit Listrik,Teknik Mekatronika,Teknik Audio Video,Teknik Komputer & Jaringan,Teknik Konstruksi & Perumahan,Desain Permodelan & Informasi Bangunan,Desain Komunikasi Visual',
             'isi_materi' => 'nullable|string',
             'upload_file' => 'nullable|mimes:pdf,pptx,ppt,doc,docx|max:25600',
+        ], [
+            'kelas.required' => 'Kelas wajib dipilih.',
+            'jurusan.required' => 'Jurusan wajib dipilih.',
         ]);
 
         $data = [
             'judul_materi' => $request->judul_materi,
             'nip' => $request->input('nip') ?: $materi->nip,
+            'kelas' => $request->kelas,
+            'jurusan' => $request->jurusan,
             'isi_materi' => $request->isi_materi ?? '',
         ];
 

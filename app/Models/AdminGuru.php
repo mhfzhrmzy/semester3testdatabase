@@ -10,12 +10,15 @@ class AdminGuru extends Authenticatable
     use Notifiable;
 
     protected $table = 'admin_guru';
+
     protected $primaryKey = 'nip';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
-        'nip', 'nama_lengkap', 'email', 'password', 'role', 'foto_profile',
+        'nip', 'nama_lengkap', 'password', 'foto_profile',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -26,11 +29,6 @@ class AdminGuru extends Authenticatable
             'nip' => 'string',
             'password' => 'hashed',
         ];
-    }
-
-    public function isSuperadmin(): bool
-    {
-        return $this->role === 'superadmin';
     }
 
     public function materi()

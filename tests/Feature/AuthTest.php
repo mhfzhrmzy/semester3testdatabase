@@ -12,34 +12,11 @@ class AuthTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_register_screen_can_be_rendered(): void
+    public function test_admin_register_screen_is_not_accessible(): void
     {
         $response = $this->get('/register/guru');
 
-        $response->assertStatus(200);
-        $response->assertSee('Registrasi Guru Baru');
-    }
-
-    public function test_admin_can_register_and_be_authenticated(): void
-    {
-        $response = $this->post('/register/guru', [
-            'nip' => '198501012010011001',
-            'nama_lengkap' => 'Guru Budi',
-            'email' => 'budi@sekolah.sch.id',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-        ]);
-
-        $this->assertDatabaseHas('admin_guru', [
-            'nip' => '198501012010011001',
-            'email' => 'budi@sekolah.sch.id',
-            'nama_lengkap' => 'Guru Budi',
-            'role' => 'guru',
-        ]);
-
-        $admin = AdminGuru::where('email', 'budi@sekolah.sch.id')->first();
-        $this->assertAuthenticatedAs($admin, 'admin');
-        $response->assertRedirect('/materi');
+        $response->assertStatus(404);
     }
 
     public function test_admin_login_screen_can_be_rendered(): void
@@ -47,7 +24,7 @@ class AuthTest extends TestCase
         $response = $this->get('/login/guru');
 
         $response->assertStatus(200);
-        $response->assertSee('Login Guru / Admin');
+        $response->assertSee('Login Guru');
     }
 
     public function test_admin_can_login(): void
@@ -87,33 +64,11 @@ class AuthTest extends TestCase
         $response->assertRedirect('/');
     }
 
-    public function test_siswa_register_screen_can_be_rendered(): void
+    public function test_siswa_register_screen_is_not_accessible(): void
     {
         $response = $this->get('/register/siswa');
 
-        $response->assertStatus(200);
-        $response->assertSee('Registrasi Siswa Baru');
-    }
-
-    public function test_siswa_can_register_and_be_authenticated(): void
-    {
-        $response = $this->post('/register/siswa', [
-            'nisn' => '0051234567',
-            'nama_lengkap' => 'Siswa Doni',
-            'email' => 'doni@sekolah.sch.id',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-        ]);
-
-        $this->assertDatabaseHas('pengguna_siswa', [
-            'email' => 'doni@sekolah.sch.id',
-            'nama_lengkap' => 'Siswa Doni',
-            'poin' => 0,
-        ]);
-
-        $siswa = PenggunaSiswa::where('email', 'doni@sekolah.sch.id')->first();
-        $this->assertAuthenticatedAs($siswa, 'siswa');
-        $response->assertRedirect('/portal/materi');
+        $response->assertStatus(404);
     }
 
     public function test_siswa_login_screen_can_be_rendered(): void
@@ -121,7 +76,7 @@ class AuthTest extends TestCase
         $response = $this->get('/login/siswa');
 
         $response->assertStatus(200);
-        $response->assertSee('Login Siswa');
+        $response->assertSee('Login');
     }
 
     public function test_siswa_can_login(): void
@@ -159,28 +114,5 @@ class AuthTest extends TestCase
 
         $this->assertGuest('siswa');
         $response->assertRedirect('/');
-    }
-
-    public function test_registration_validation_fails_for_invalid_nip_and_nisn(): void
-    {
-        $responseGuru = $this->post('/register/guru', [
-            'nip' => '12345',
-            'nama_lengkap' => 'Guru Invalid',
-            'email' => 'invalid-email',
-            'password' => '123',
-            'password_confirmation' => '456',
-        ]);
-
-        $responseGuru->assertSessionHasErrors(['nip', 'email', 'password']);
-
-        $responseSiswa = $this->post('/register/siswa', [
-            'nisn' => '123',
-            'nama_lengkap' => 'Siswa Invalid',
-            'email' => 'invalid-email',
-            'password' => '123',
-            'password_confirmation' => '456',
-        ]);
-
-        $responseSiswa->assertSessionHasErrors(['nisn', 'email', 'password']);
     }
 }

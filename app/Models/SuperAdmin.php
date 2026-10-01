@@ -5,20 +5,20 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class PenggunaSiswa extends Authenticatable
+class SuperAdmin extends Authenticatable
 {
     use Notifiable;
 
-    protected $table = 'pengguna_siswa';
+    protected $table = 'super_admin';
 
-    protected $primaryKey = 'nisn';
+    protected $primaryKey = 'nip';
 
     public $incrementing = false;
 
     protected $keyType = 'string';
 
     protected $fillable = [
-        'nisn', 'nama_lengkap', 'kelas', 'jurusan', 'password', 'poin',
+        'nip', 'nama_lengkap', 'password',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -26,13 +26,8 @@ class PenggunaSiswa extends Authenticatable
     protected function casts(): array
     {
         return [
-            'nisn' => 'string',
+            'nip' => 'string',
             'password' => 'hashed',
         ];
-    }
-
-    public function leaderboard()
-    {
-        return $this->hasMany(Leaderboard::class, 'nisn', 'nisn');
     }
 }

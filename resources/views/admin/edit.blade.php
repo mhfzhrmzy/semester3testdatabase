@@ -25,6 +25,13 @@
         </div>
 
         <div>
+            <label class="block text-sm font-medium mb-1">Email</label>
+            <input type="email" name="email" value="{{ old('email', $admin->email) }}"
+                   class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring focus:ring-blue-200 focus:outline-none">
+            @error('email')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+        </div>
+
+        <div>
             <label class="block text-sm font-medium mb-1">Password <span class="text-xs text-gray-500">(Kosongkan jika tidak ingin diubah)</span></label>
             <input type="password" name="password"
                    class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring focus:ring-blue-200 focus:outline-none">

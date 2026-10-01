@@ -69,9 +69,9 @@
                     </button>
                 </form>
 
-                <!-- Redirect link -->
+                <!-- Notice -->
                 <div class="mt-6 text-center text-xs text-slate-500">
-                    Belum memiliki akun guru? <a href="{{ route('admin.register') }}" class="text-[#3B5284] hover:underline font-bold">Daftar Akun Guru</a>
+                    Akun guru dibuat oleh Superadmin. Silakan hubungi Administrator jika belum memiliki akun.
                 </div>
             </div>
 
