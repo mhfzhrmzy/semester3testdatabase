@@ -39,7 +39,7 @@ class SoalController extends Controller
         }
 
         return redirect()->route('admin.soal.index', $quiz)
-            ->with('success', count($validated['soals']) . ' soal berhasil ditambahkan.');
+            ->with('success', count($validated['soals']).' soal berhasil ditambahkan.');
     }
 
     public function importCsv(Request $request, Quiz $quiz): RedirectResponse
@@ -78,12 +78,12 @@ class SoalController extends Controller
 
             // Kolom: pertanyaan, pilihan_a, pilihan_b, pilihan_c, pilihan_d, jawaban_benar, timer_per_soal
             $pertanyaan = trim($row[0] ?? '');
-            $pilihanA   = trim($row[1] ?? '');
-            $pilihanB   = trim($row[2] ?? '');
-            $pilihanC   = trim($row[3] ?? '');
-            $pilihanD   = trim($row[4] ?? '');
-            $jawaban    = strtolower(trim($row[5] ?? 'a'));
-            $timer      = isset($row[6]) && is_numeric($row[6]) ? (int) $row[6] : 60;
+            $pilihanA = trim($row[1] ?? '');
+            $pilihanB = trim($row[2] ?? '');
+            $pilihanC = trim($row[3] ?? '');
+            $pilihanD = trim($row[4] ?? '');
+            $jawaban = strtolower(trim($row[5] ?? 'a'));
+            $timer = isset($row[6]) && is_numeric($row[6]) ? (int) $row[6] : 60;
 
             if ($pertanyaan !== '' && $pilihanA !== '' && $pilihanB !== '') {
                 if (! in_array($jawaban, ['a', 'b', 'c', 'd'])) {
@@ -92,10 +92,10 @@ class SoalController extends Controller
 
                 $quiz->soal()->create([
                     'pertanyaan' => $pertanyaan,
-                    'pilihan_a'  => $pilihanA,
-                    'pilihan_b'  => $pilihanB,
-                    'pilihan_c'  => $pilihanC,
-                    'pilihan_d'  => $pilihanD,
+                    'pilihan_a' => $pilihanA,
+                    'pilihan_b' => $pilihanB,
+                    'pilihan_c' => $pilihanC,
+                    'pilihan_d' => $pilihanD,
                     'jawaban_benar' => $jawaban,
                     'timer_per_soal' => $timer,
                 ]);

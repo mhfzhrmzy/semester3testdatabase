@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\AdminGuru;
+use App\Models\Leaderboard;
 use App\Models\Materi;
 use App\Models\PenggunaSiswa;
 use App\Models\Quiz;
@@ -118,10 +119,179 @@ class QuizLeaderboardTest extends TestCase
             'nisn' => '0059999999',
             'nama_lengkap' => 'Siswa Pintar',
             'email' => 'pintar@sekolah.sch.id',
+            'kelas' => '10',
+            'jurusan' => 'Teknik Komputer & Jaringan',
             'password' => 'password123',
         ]);
 
         $response = $this->actingAs($siswa, 'siswa')->get(route('leaderboard.index'));
+        $response->assertStatus(200);
+        $response->assertSee('Leaderboard');
+    }
+
+    public function test_guru_can_filter_leaderboard_by_kelas_and_jurusan(): void
+    {
+        $admin = AdminGuru::create([
+            'nip' => '198501012010011009',
+            'nama_lengkap' => 'Guru Leaderboard',
+            'email' => 'guruleaderboard@sekolah.sch.id',
+            'password' => 'password123',
+            'role' => 'guru',
+        ]);
+
+        $siswaA = PenggunaSiswa::create([
+            'nisn' => '0051111111',
+            'nama_lengkap' => 'Siswa Kelas 10 TKJ',
+            'email' => 'siswaA@sekolah.sch.id',
+            'kelas' => '10',
+            'jurusan' => 'Teknik Komputer & Jaringan',
+            'password' => 'password123',
+        ]);
+
+        $siswaB = PenggunaSiswa::create([
+            'nisn' => '0052222222',
+            'nama_lengkap' => 'Siswa Kelas 11 Mesin',
+            'email' => 'siswaB@sekolah.sch.id',
+            'kelas' => '11',
+            'jurusan' => 'Teknik Pemesinan',
+            'password' => 'password123',
+        ]);
+
+        $materi = Materi::create([
+            'judul_materi' => 'Jaringan Komputer Dasar',
+            'isi_materi' => 'Isi materi',
+            'nip' => $admin->nip,
+            'kelas' => '10',
+            'jurusan' => 'Teknik Komputer & Jaringan',
+        ]);
+
+        $quiz = Quiz::create([
+            'id_materi' => $materi->id_materi,
+            'nip' => $admin->nip,
+            'tipe_test' => 'posttest',
+            'poin' => 10,
+            'timer' => 30,
+            'tanggal' => now()->toDateString(),
+        ]);
+
+        Leaderboard::create([
+            'id_quiz' => $quiz->id_quiz,
+            'nisn' => $siswaA->nisn,
+            'total_poin' => 90,
+        ]);
+
+        Leaderboard::create([
+            'id_quiz' => $quiz->id_quiz,
+            'nisn' => $siswaB->nisn,
+            'total_poin' => 60,
+        ]);
+
+        // Filter kelas 10 & TKJ
+        $response = $this->actingAs($admin, 'admin')->get(route('leaderboard.index', [
+            'kelas' => '10',
+            'jurusan' => 'Teknik Komputer & Jaringan',
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertSee('Siswa Kelas 10 TKJ');
+        $response->assertDontSee('Siswa Kelas 11 Mesin');
+        $response->assertSee('Teknik Komputer & Jaringan');
+        $response->assertSee('Kelas 10');
+    }
+
+    public function test_guru_can_view_leaderboard_permateri_with_pretest_and_posttest(): void
+    {
+        $admin = AdminGuru::create([
+            'nip' => '198501012010011010',
+            'nama_lengkap' => 'Guru Materi Test',
+            'email' => 'gurumateri@sekolah.sch.id',
+            'password' => 'password123',
+            'role' => 'guru',
+        ]);
+
+        $siswa = PenggunaSiswa::create([
+            'nisn' => '0053333333',
+            'nama_lengkap' => 'Siswa Penguji',
+            'email' => 'penguji@sekolah.sch.id',
+            'kelas' => '10',
+            'jurusan' => 'Teknik Komputer & Jaringan',
+            'password' => 'password123',
+        ]);
+
+        $materi = Materi::create([
+            'judul_materi' => 'Sistem Operasi',
+            'isi_materi' => 'Konten OS',
+            'nip' => $admin->nip,
+            'kelas' => '10',
+            'jurusan' => 'Teknik Komputer & Jaringan',
+        ]);
+
+        $quizPre = Quiz::create([
+            'id_materi' => $materi->id_materi,
+            'nip' => $admin->nip,
+            'tipe_test' => 'pretest',
+            'poin' => 10,
+            'timer' => 30,
+            'tanggal' => now()->toDateString(),
+        ]);
+
+        $quizPost = Quiz::create([
+            'id_materi' => $materi->id_materi,
+            'nip' => $admin->nip,
+            'tipe_test' => 'posttest',
+            'poin' => 10,
+            'timer' => 30,
+            'tanggal' => now()->toDateString(),
+        ]);
+
+        Leaderboard::create([
+            'id_quiz' => $quizPre->id_quiz,
+            'nisn' => $siswa->nisn,
+            'total_poin' => 50,
+        ]);
+
+        Leaderboard::create([
+            'id_quiz' => $quizPost->id_quiz,
+            'nisn' => $siswa->nisn,
+            'total_poin' => 100,
+        ]);
+
+        // Cek Leaderboard Pre-Test per materi
+        $responsePre = $this->actingAs($admin, 'admin')->get(route('leaderboard.index', [
+            'tipe_leaderboard' => 'permateri',
+            'materi_id' => $materi->id_materi,
+            'tipe_test' => 'pretest',
+        ]));
+
+        $responsePre->assertStatus(200);
+        $responsePre->assertSee('Siswa Penguji');
+        $responsePre->assertSee('50');
+        $responsePre->assertSee('Pre-Test');
+
+        // Cek Leaderboard Post-Test per materi
+        $responsePost = $this->actingAs($admin, 'admin')->get(route('leaderboard.index', [
+            'tipe_leaderboard' => 'permateri',
+            'materi_id' => $materi->id_materi,
+            'tipe_test' => 'posttest',
+        ]));
+
+        $responsePost->assertStatus(200);
+        $responsePost->assertSee('Siswa Penguji');
+        $responsePost->assertSee('100');
+        $responsePost->assertSee('Post-Test');
+    }
+
+    public function test_admin_leaderboard_route_is_accessible(): void
+    {
+        $admin = AdminGuru::create([
+            'nip' => '198501012010011011',
+            'nama_lengkap' => 'Guru Admin Route',
+            'email' => 'adminroute@sekolah.sch.id',
+            'password' => 'password123',
+            'role' => 'guru',
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.leaderboard.index'));
         $response->assertStatus(200);
         $response->assertSee('Leaderboard');
     }

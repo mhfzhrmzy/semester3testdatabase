@@ -33,7 +33,7 @@ class SiswaLoginController extends Controller
         $request->session()->regenerate();
         $siswa = Auth::guard('siswa')->user();
 
-        return redirect()->route('portal.materi.index')->with('success', 'Selamat datang kembali, ' . $siswa->nama_lengkap . '.');
+        return redirect()->route('portal.materi.index')->with('success', 'Selamat datang kembali, '.$siswa->nama_lengkap.'.');
     }
 
     public function destroy(Request $request): RedirectResponse

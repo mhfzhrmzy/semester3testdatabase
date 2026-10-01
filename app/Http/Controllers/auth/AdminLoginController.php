@@ -18,11 +18,11 @@ class AdminLoginController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
-            'nip'      => ['required', 'digits:18'],
+            'nip' => ['required', 'digits:18'],
             'password' => ['required', 'string'],
         ], [
-            'nip.required'      => 'NIP wajib diisi.',
-            'nip.digits'        => 'NIP wajib 18 digit angka.',
+            'nip.required' => 'NIP wajib diisi.',
+            'nip.digits' => 'NIP wajib 18 digit angka.',
             'password.required' => 'Password wajib diisi.',
         ]);
 
@@ -32,7 +32,7 @@ class AdminLoginController extends Controller
             $superadmin = Auth::guard('superadmin')->user();
 
             return redirect()->route('superadmin.index')
-                ->with('success', 'Selamat datang kembali, Superadmin ' . $superadmin->nama_lengkap . '.');
+                ->with('success', 'Selamat datang kembali, Superadmin '.$superadmin->nama_lengkap.'.');
         }
 
         // Coba login sebagai guru
@@ -41,7 +41,7 @@ class AdminLoginController extends Controller
             $guru = Auth::guard('admin')->user();
 
             return redirect()->route('materi.index')
-                ->with('success', 'Selamat datang kembali, Guru ' . $guru->nama_lengkap . '.');
+                ->with('success', 'Selamat datang kembali, Guru '.$guru->nama_lengkap.'.');
         }
 
         return back()

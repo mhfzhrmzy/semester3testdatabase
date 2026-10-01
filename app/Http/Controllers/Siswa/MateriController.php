@@ -11,6 +11,7 @@ class MateriController extends Controller
     public function index()
     {
         $materis = Materi::latest()->get();
+
         return view('siswa.materi.index', compact('materis'));
     }
 

@@ -17,7 +17,7 @@ class Sertifikat extends Model
     ];
 
     protected $casts = [
-        'terverifikasi'  => 'boolean',
+        'terverifikasi' => 'boolean',
         'tanggal_terbit' => 'date',
     ];
 

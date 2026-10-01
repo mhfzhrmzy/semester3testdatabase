@@ -85,6 +85,8 @@ class AuthTest extends TestCase
             'nisn' => '0051234568',
             'nama_lengkap' => 'Siswa Eka',
             'email' => 'eka@sekolah.sch.id',
+            'kelas' => '10',
+            'jurusan' => 'Teknik Komputer & Jaringan',
             'password' => Hash::make('password123'),
             'poin' => 0,
         ]);
@@ -104,6 +106,8 @@ class AuthTest extends TestCase
             'nisn' => '0051234569',
             'nama_lengkap' => 'Siswa Fajar',
             'email' => 'fajar@sekolah.sch.id',
+            'kelas' => '10',
+            'jurusan' => 'Teknik Komputer & Jaringan',
             'password' => Hash::make('password123'),
             'poin' => 0,
         ]);

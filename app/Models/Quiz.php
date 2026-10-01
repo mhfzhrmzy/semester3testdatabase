@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Quiz extends Model
 {
     protected $table = 'quiz';
+
     protected $primaryKey = 'id_quiz';
 
     protected $fillable = ['nip', 'id_materi', 'tipe_test', 'poin', 'timer', 'tanggal'];
@@ -34,4 +35,4 @@ class Quiz extends Model
     {
         return $this->hasMany(Leaderboard::class, 'id_quiz', 'id_quiz');
     }
-}   
+}

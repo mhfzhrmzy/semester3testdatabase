@@ -34,24 +34,24 @@ class SertifikatSiswaController extends Controller
     {
         $validated = $request->validate([
             'judul_sertifikat' => ['required', 'string', 'max:255'],
-            'penerbit'         => ['nullable', 'string', 'max:255'],
-            'tanggal_terbit'   => ['nullable', 'date'],
-            'deskripsi'        => ['nullable', 'string'],
-            'file_sertifikat'  => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+            'penerbit' => ['nullable', 'string', 'max:255'],
+            'tanggal_terbit' => ['nullable', 'date'],
+            'deskripsi' => ['nullable', 'string'],
+            'file_sertifikat' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
         ]);
 
         $path = $request->file('file_sertifikat')->store('sertifikat/siswa', 'public');
 
         Sertifikat::create([
-            'nisn'             => $this->currentNisn(),
-            'nip'              => null,
-            'id_materi'        => null,
+            'nisn' => $this->currentNisn(),
+            'nip' => null,
+            'id_materi' => null,
             'judul_sertifikat' => $validated['judul_sertifikat'],
-            'penerbit'         => $validated['penerbit'] ?? null,
-            'tanggal_terbit'   => $validated['tanggal_terbit'] ?? null,
-            'deskripsi'        => $validated['deskripsi'] ?? null,
-            'file_sertifikat'  => $path,
-            'tipe_sertifikat'  => 'mandiri',
+            'penerbit' => $validated['penerbit'] ?? null,
+            'tanggal_terbit' => $validated['tanggal_terbit'] ?? null,
+            'deskripsi' => $validated['deskripsi'] ?? null,
+            'file_sertifikat' => $path,
+            'tipe_sertifikat' => 'mandiri',
         ]);
 
         return redirect()

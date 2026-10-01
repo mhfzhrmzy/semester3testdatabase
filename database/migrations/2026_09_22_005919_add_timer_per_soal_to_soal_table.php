@@ -10,13 +10,13 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::table('soal', function (Blueprint $table) {
-        if (!Schema::hasColumn('soal', 'timer_per_soal')) {
-            $table->integer('timer_per_soal')->default(60);
-        }
-    });
-}
+    {
+        Schema::table('soal', function (Blueprint $table) {
+            if (! Schema::hasColumn('soal', 'timer_per_soal')) {
+                $table->integer('timer_per_soal')->default(60);
+            }
+        });
+    }
 
     /**
      * Reverse the migrations.
