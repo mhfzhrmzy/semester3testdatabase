@@ -1,10 +1,12 @@
 @extends('layouts.app')
 
+@section('title', 'Upload Sertifikat')
+
 @section('content')
 <div class="max-w-2xl mx-auto my-4 p-6 bg-white rounded-xl border border-gray-200 shadow-sm">
     <div class="border-b border-gray-200 pb-4 mb-6">
         <h2 class="text-xl font-bold text-gray-900">Terbitkan Sertifikat untuk Siswa</h2>
-        <p class="text-sm text-gray-500 mt-1">Unggah berkas sertifikat resmi yang akan diberikan langsung ke akun siswa.</p>
+        <p class="text-sm text-gray-500 mt-1">Unggah berkas sertifikat resmi yang akan dikirimkan ke seluruh siswa yang dipilih.</p>
     </div>
 
     @if ($errors->any())
@@ -20,23 +22,36 @@
     <form action="{{ route('sertifikat.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
         @csrf
 
-        {{-- NISN dikirim sebagai hidden field, sudah dipilih dari halaman sebelumnya --}}
-        <input type="hidden" name="nisn" value="{{ $siswa->nisn }}">
-
-        {{-- Info Siswa Penerima (read-only, otomatis dari pilihan sebelumnya) --}}
+        {{-- Daftar Siswa Penerima --}}
         <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
                 Siswa Penerima
+                <span class="ml-1.5 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-700">
+                    {{ $siswaTerpilih->count() }} siswa
+                </span>
             </label>
-            <div class="w-full px-3.5 py-2.5 bg-gray-100 rounded-lg text-sm text-gray-800 border border-gray-200 flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                    <span class="text-blue-600 font-bold text-xs">{{ strtoupper(substr($siswa->nama_lengkap, 0, 1)) }}</span>
-                </div>
-                <div>
-                    <p class="font-semibold text-gray-900">{{ $siswa->nama_lengkap }}</p>
-                    <p class="text-xs text-gray-500">NISN: {{ $siswa->nisn }}</p>
-                </div>
+
+            <div class="rounded-lg border border-gray-200 overflow-hidden">
+                @foreach ($siswaTerpilih as $s)
+                    <div class="flex items-center gap-3 px-3.5 py-2.5 {{ !$loop->last ? 'border-b border-gray-100' : '' }} {{ $loop->first ? 'bg-gray-50' : 'bg-white' }}">
+                        <div class="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                            <span class="text-blue-600 font-bold text-xs">{{ strtoupper(substr($s->nama_lengkap, 0, 1)) }}</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900 leading-tight">{{ $s->nama_lengkap }}</p>
+                            <p class="text-xs text-gray-400">Kelas {{ $s->kelas }} — {{ $s->jurusan }}</p>
+                        </div>
+                    </div>
+                @endforeach
             </div>
+
+            {{-- Link kembali jika ingin mengubah pilihan --}}
+            <a href="{{ route('sertifikat.index') }}" class="inline-flex items-center gap-1 mt-2 text-xs text-blue-500 hover:text-blue-700 transition">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Ubah pilihan siswa
+            </a>
         </div>
 
         {{-- Judul Sertifikat --}}
@@ -118,7 +133,7 @@
                 class="w-full text-sm text-gray-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 bg-white rounded-lg p-1.5 cursor-pointer"
                 required
             >
-            <span class="text-xs text-gray-500 mt-1 block">Format: PDF, JPG, JPEG, PNG (Maksimal 2 MB)</span>
+            <span class="text-xs text-gray-500 mt-1 block">Format: PDF, JPG, JPEG, PNG (Maksimal 2 MB) — file akan didistribusikan ke seluruh siswa terpilih.</span>
         </div>
 
         {{-- Tombol Submit --}}
@@ -133,7 +148,7 @@
                 type="submit"
                 class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-sm transition"
             >
-                Terbitkan Sertifikat
+                Terbitkan ke {{ $siswaTerpilih->count() }} Siswa
             </button>
         </div>
     </form>

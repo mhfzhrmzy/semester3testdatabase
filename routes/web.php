@@ -59,7 +59,8 @@ Route::middleware('auth:admin')->group(function () {
     // Manajemen Sertifikat oleh Guru
     Route::controller(SertifikatController::class)->group(function () {
         Route::get('/sertifikat', 'index')->name('sertifikat.index');
-        Route::get('/sertifikat/create', 'create')->name('sertifikat.create');
+        Route::get('/sertifikat/siswa', 'siswaJson')->name('sertifikat.siswa-json');
+        Route::post('/sertifikat/create', 'create')->name('sertifikat.create');
         Route::post('/sertifikat', 'store')->name('sertifikat.store');
         Route::delete('/sertifikat/{sertifikat}', 'destroy')->name('sertifikat.destroy');
     });

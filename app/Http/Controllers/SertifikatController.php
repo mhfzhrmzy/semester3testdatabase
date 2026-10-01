@@ -7,7 +7,7 @@ use App\Models\Sertifikat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Str;
 
 class SertifikatController extends Controller
 {
@@ -20,24 +20,54 @@ class SertifikatController extends Controller
         return view('admin.sertifikat.index', compact('sertifikat'));
     }
 
-    public function create(Request $request)
+    /**
+     * Mengembalikan daftar siswa dalam format JSON untuk filter dinamis di frontend.
+     * Query params: kelas, jurusan
+     */
+    public function siswaJson(Request $request)
     {
-        $nisn = $request->query('nisn');
+        $query = PenggunaSiswa::orderBy('nama_lengkap');
 
-        if (! $nisn) {
-            return redirect()->route('sertifikat.index')
-                ->with('error', 'Silakan pilih siswa terlebih dahulu sebelum mengisi form sertifikat.');
+        if ($request->filled('kelas')) {
+            $query->where('kelas', $request->kelas);
         }
 
-        $siswa = PenggunaSiswa::where('nisn', $nisn)->firstOrFail();
+        if ($request->filled('jurusan')) {
+            $query->where('jurusan', $request->jurusan);
+        }
 
-        return view('admin.sertifikat.create', compact('siswa'));
+        $siswa = $query->get(['nisn', 'nama_lengkap', 'kelas', 'jurusan']);
+
+        return response()->json($siswa);
+    }
+
+    /**
+     * Menerima POST dari index (daftar siswa terpilih), lalu menampilkan form upload.
+     * Menyimpan daftar NISN ke session sehingga aman dari manipulasi URL.
+     */
+    public function create(Request $request)
+    {
+        $request->validate([
+            'student_ids' => ['required', 'array', 'min:1'],
+            'student_ids.*' => ['required', 'exists:pengguna_siswa,nisn'],
+        ], [
+            'student_ids.required' => 'Pilih minimal satu siswa terlebih dahulu.',
+            'student_ids.min' => 'Pilih minimal satu siswa terlebih dahulu.',
+        ]);
+
+        $siswaTerpilih = PenggunaSiswa::whereIn('nisn', $request->student_ids)
+            ->orderBy('nama_lengkap')
+            ->get(['nisn', 'nama_lengkap', 'kelas', 'jurusan']);
+
+        // Simpan ke session agar tidak bisa dimanipulasi di form selanjutnya
+        session(['sertifikat_target_ids' => $siswaTerpilih->pluck('nisn')->toArray()]);
+
+        return view('admin.sertifikat.create', compact('siswaTerpilih'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nisn' => ['required', 'exists:pengguna_siswa,nisn'],
             'id_materi' => ['nullable', 'exists:materi,id_materi'],
             'judul_sertifikat' => ['required', 'string', 'max:255'],
             'penerbit' => ['nullable', 'string', 'max:255'],
@@ -45,34 +75,61 @@ class SertifikatController extends Controller
             'file_sertifikat' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
         ]);
 
-        // Cek duplikat berdasarkan hash file
-        $uploadedFile = $request->file('file_sertifikat');
-        $fileHash = hash_file('sha256', $uploadedFile->getRealPath());
+        // Ambil NISN dari session (yang tersimpan saat create)
+        $targetNisns = session('sertifikat_target_ids', []);
 
-        $duplicate = Sertifikat::where('file_hash', $fileHash)->first();
-        if ($duplicate) {
-            throw ValidationException::withMessages([
-                'file_sertifikat' => 'File sertifikat ini sudah pernah diupload sebelumnya. Tidak boleh mengupload sertifikat yang sama (duplikat).',
-            ]);
+        if (empty($targetNisns)) {
+            return redirect()->route('sertifikat.index')
+                ->with('error', 'Sesi pilihan siswa telah habis. Silakan pilih siswa kembali.');
         }
 
-        $path = $uploadedFile->store('sertifikat/guru', 'public');
+        $uploadedFile = $request->file('file_sertifikat');
+        $fileHash = hash_file('sha256', $uploadedFile->getRealPath());
+        $nip = Auth::guard('admin')->user()->nip ?? null;
+        $tanggalTerbit = now();
+        $penerbit = $validated['penerbit'] ?? 'SMKN 2 Jember';
 
-        // tanggal_terbit selalu otomatis = waktu server saat ini, admin tidak bisa mengubahnya
-        Sertifikat::create([
-            'nisn' => $validated['nisn'],
-            'nip' => Auth::guard('admin')->user()->nip ?? null,
-            'id_materi' => null,
-            'judul_sertifikat' => $validated['judul_sertifikat'],
-            'penerbit' => $validated['penerbit'] ?? 'SMKN 2 Jember',
-            'tanggal_terbit' => now(),
-            'deskripsi' => $validated['deskripsi'] ?? null,
-            'file_sertifikat' => $path,
-            'file_hash' => $fileHash,
-            'tipe_sertifikat' => 'materi',
-        ]);
+        // Simpan file utama sekali
+        $originalPath = $uploadedFile->store('sertifikat/guru', 'public');
+        $extension = $uploadedFile->getClientOriginalExtension();
 
-        return redirect()->route('sertifikat.index')->with('success', 'Sertifikat berhasil diterbitkan.');
+        $jumlahBerhasil = 0;
+
+        foreach ($targetNisns as $index => $nisn) {
+            // Untuk siswa pertama pakai file asli, siswa berikutnya salin file
+            if ($index === 0) {
+                $filePath = $originalPath;
+                $hash = $fileHash;
+            } else {
+                // Salin file dengan nama unik agar setiap siswa punya path berbeda
+                $newName = 'sertifikat/guru/'.Str::uuid().'.'.$extension;
+                Storage::disk('public')->copy($originalPath, $newName);
+                $filePath = $newName;
+                // Hash dibuat unik per salinan dengan menambahkan nisn agar tidak kena cek duplikat
+                $hash = hash('sha256', $fileHash.$nisn);
+            }
+
+            Sertifikat::create([
+                'nisn' => $nisn,
+                'nip' => $nip,
+                'id_materi' => null,
+                'judul_sertifikat' => $validated['judul_sertifikat'],
+                'penerbit' => $penerbit,
+                'tanggal_terbit' => $tanggalTerbit,
+                'deskripsi' => $validated['deskripsi'] ?? null,
+                'file_sertifikat' => $filePath,
+                'file_hash' => $hash,
+                'tipe_sertifikat' => 'materi',
+            ]);
+
+            $jumlahBerhasil++;
+        }
+
+        // Hapus session setelah berhasil disimpan
+        session()->forget('sertifikat_target_ids');
+
+        return redirect()->route('sertifikat.index')
+            ->with('success', "Sertifikat berhasil diterbitkan untuk {$jumlahBerhasil} siswa.");
     }
 
     public function destroy(Sertifikat $sertifikat)
