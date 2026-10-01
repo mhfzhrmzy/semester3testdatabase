@@ -32,18 +32,45 @@ class SoalController extends Controller
             'soals.*.timer_per_soal' => ['nullable', 'integer', 'min:5'],
         ]);
 
+        // Kumpulkan pertanyaan yang sudah ada di quiz ini untuk cek duplikat
+        $existingPertanyaans = $quiz->soal()->pluck('pertanyaan')->map(fn ($p) => strtolower(trim($p)))->toArray();
+
+        $duplicates = [];
+        $added = 0;
+
         foreach ($validated['soals'] as $item) {
+            $normalizedPertanyaan = strtolower(trim($item['pertanyaan']));
+
+            if (in_array($normalizedPertanyaan, $existingPertanyaans, true)) {
+                $duplicates[] = $item['pertanyaan'];
+
+                continue;
+            }
+
             $item['jawaban_benar'] = strtolower($item['jawaban_benar']);
             $item['timer_per_soal'] = $item['timer_per_soal'] ?? 60;
             $quiz->soal()->create($item);
+            $existingPertanyaans[] = $normalizedPertanyaan;
+            $added++;
+        }
+
+        $message = $added > 0 ? "{$added} soal berhasil ditambahkan." : 'Tidak ada soal baru yang ditambahkan.';
+
+        if (! empty($duplicates)) {
+            $message .= ' '.count($duplicates).' soal dilewati karena pertanyaannya sudah ada: "'.implode('", "', $duplicates).'".';
         }
 
         return redirect()->route('admin.soal.index', $quiz)
-            ->with('success', count($validated['soals']).' soal berhasil ditambahkan.');
+            ->with($added > 0 ? 'success' : 'error', $message);
     }
 
     public function importCsv(Request $request, Quiz $quiz): RedirectResponse
     {
+        // Import CSV hanya diizinkan jika quiz belum memiliki soal sama sekali
+        if ($quiz->soal()->exists()) {
+            return back()->with('error', 'Import CSV hanya bisa dilakukan sekali. Quiz ini sudah memiliki soal. Tambahkan soal baru secara manual.');
+        }
+
         $request->validate([
             'csv_file' => ['required', 'file', 'mimes:csv,txt', 'max:5120'],
         ], [
