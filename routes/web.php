@@ -111,8 +111,11 @@ Route::middleware('auth:superadmin')->group(function () {
     Route::get('/superadmin', [SuperadminController::class, 'index'])->name('superadmin.index');
 });
 
-// Area Siswa
-Route::middleware('auth:siswa')->group(function () {
+    // Profil Siswa
+    Route::get('/siswa/profil', [ProfilSiswaController::class, 'index'])->name('siswa.profil');
+    Route::post('/siswa/profil/foto', [ProfilSiswaController::class, 'updateFoto'])->name('siswa.profil.foto');
+    Route::delete('/siswa/profil/foto', [ProfilSiswaController::class, 'hapusFoto'])->name('siswa.profil.foto.hapus');
+    Route::put('/siswa/profil/password', [ProfilSiswaController::class, 'updatePassword'])->name('siswa.profil.password');
 
     // Materi & Quiz Siswa
     Route::prefix('portal')->name('portal.')->group(function () {
@@ -136,4 +139,3 @@ Route::middleware('auth:siswa')->group(function () {
     // Profil Siswa
     Route::get('/siswa/profil', [ProfilSiswaController::class, 'index'])
         ->name('siswa.profil');
-});
