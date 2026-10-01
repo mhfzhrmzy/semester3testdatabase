@@ -8,7 +8,7 @@
         <!-- Form Tambah Materi -->
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h2 class="text-xl font-bold mb-4">Tambah Materi</h2>
-            
+
             @if(session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                     {{ session('success') }}
@@ -41,13 +41,56 @@
                 </div>
 
                 <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Kelas <span class="text-red-500">*</span></label>
+                    <select name="kelas" id="kelas" class="w-full border rounded px-3 py-2 text-gray-700 {{ $errors->has('kelas') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}" required>
+                        <option value="">-- Pilih Kelas --</option>
+                        @foreach(['10', '11', '12'] as $k)
+                            <option value="{{ $k }}" {{ old('kelas') == $k ? 'selected' : '' }}>
+                                Kelas {{ $k }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('kelas')
+                        <p class="text-red-600 text-xs mt-1 font-medium">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Jurusan <span class="text-red-500">*</span></label>
+                    <select name="jurusan" id="jurusan" class="w-full border rounded px-3 py-2 text-gray-700 {{ $errors->has('jurusan') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}" required>
+                        <option value="">-- Pilih Jurusan --</option>
+                        @foreach([
+                            'Teknik Alat Berat',
+                            'Teknik Kendaraan Ringan',
+                            'Teknik Sepeda Motor',
+                            'Teknik Pemesinan',
+                            'Teknik Instalasi Listrik',
+                            'Teknik Pembangkit Listrik',
+                            'Teknik Mekatronika',
+                            'Teknik Audio Video',
+                            'Teknik Komputer & Jaringan',
+                            'Teknik Konstruksi & Perumahan',
+                            'Desain Permodelan & Informasi Bangunan',
+                            'Desain Komunikasi Visual',
+                        ] as $j)
+                            <option value="{{ $j }}" {{ old('jurusan') == $j ? 'selected' : '' }}>
+                                {{ $j }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('jurusan')
+                        <p class="text-red-600 text-xs mt-1 font-medium">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Judul Materi</label>
-                    <input type="text" name="judul_materi" class="w-full border rounded px-3 py-2 text-gray-700" required>
+                    <input type="text" name="judul_materi" value="{{ old('judul_materi') }}" class="w-full border rounded px-3 py-2 text-gray-700" required>
                 </div>
 
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Isi Materi</label>
-                    <textarea name="isi_materi" rows="4" class="w-full border rounded px-3 py-2 text-gray-700"></textarea>
+                    <textarea name="isi_materi" rows="4" class="w-full border rounded px-3 py-2 text-gray-700">{{ old('isi_materi') }}</textarea>
                 </div>
 
                 <div class="mb-4">
@@ -78,6 +121,8 @@
                         <tr class="bg-gray-100 border-b">
                             <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Judul</th>
                             <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Diampu Oleh</th>
+                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Kelas</th>
+                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Jurusan</th>
                             <th class="text-left py-3 px-4 uppercase font-semibold text-sm">File</th>
                             <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Aksi</th>
                         </tr>
@@ -87,6 +132,16 @@
                             <tr class="border-b hover:bg-gray-50">
                                 <td class="py-3 px-4">{{ $item->judul_materi ?? $item->judul }}</td>
                                 <td class="py-3 px-4">{{ $item->adminGuru->nama_lengkap ?? '-' }}</td>
+                                <td class="py-3 px-4">
+                                    @if($item->kelas)
+                                        <span class="inline-block bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-0.5 rounded">
+                                            Kelas {{ $item->kelas }}
+                                        </span>
+                                    @else
+                                        <span class="text-gray-400 text-xs">-</span>
+                                    @endif
+                                </td>
+                                <td class="py-3 px-4 text-sm">{{ $item->jurusan ?? '-' }}</td>
                                 <td class="py-3 px-4">
                                     @if($item->upload_file || $item->file)
                                         <a href="{{ route('materi.show', $item) }}" target="_blank" class="text-blue-600 hover:underline font-semibold">
@@ -114,7 +169,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center py-4 text-gray-500">Belum ada data materi.</td>
+                                <td colspan="6" class="text-center py-4 text-gray-500">Belum ada data materi.</td>
                             </tr>
                         @endforelse
                     </tbody>
