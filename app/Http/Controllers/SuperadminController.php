@@ -17,7 +17,7 @@ class SuperadminController extends Controller
         $search = trim($request->query('search', ''));
         $menu = $request->query('menu', 'dashboard');
 
-        if (! in_array($menu, ['dashboard', 'guru', 'siswa', 'pengaturan'], true)) {
+        if (! in_array($menu, ['dashboard', 'guru', 'siswa'], true)) {
             $menu = 'dashboard';
         }
 
