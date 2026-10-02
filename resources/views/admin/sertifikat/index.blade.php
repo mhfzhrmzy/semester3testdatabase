@@ -389,8 +389,14 @@
     });
 
     /* ══ EVENTS ══ */
-    elFilterKelas.addEventListener('change', applyFilter);
-    elFilterJurusan.addEventListener('change', applyFilter);
+    function onDropdownFilterChange() {
+        checked.clear();
+        applyFilter();
+        syncAll();
+    }
+
+    elFilterKelas.addEventListener('change', onDropdownFilterChange);
+    elFilterJurusan.addEventListener('change', onDropdownFilterChange);
     elSearch.addEventListener('input', applyFilter);
 
     /* ══ UTIL ══ */
