@@ -260,6 +260,7 @@ class QuizLeaderboardTest extends TestCase
         $responsePre = $this->actingAs($admin, 'admin')->get(route('leaderboard.index', [
             'tipe_leaderboard' => 'permateri',
             'materi_id' => $materi->id_materi,
+            'jurusan' => 'Teknik Komputer & Jaringan',
             'tipe_test' => 'pretest',
         ]));
 
@@ -272,6 +273,7 @@ class QuizLeaderboardTest extends TestCase
         $responsePost = $this->actingAs($admin, 'admin')->get(route('leaderboard.index', [
             'tipe_leaderboard' => 'permateri',
             'materi_id' => $materi->id_materi,
+            'jurusan' => 'Teknik Komputer & Jaringan',
             'tipe_test' => 'posttest',
         ]));
 
@@ -431,6 +433,6 @@ class QuizLeaderboardTest extends TestCase
         $response->assertStatus(200);
         // Tetap terkunci ke kelas siswa tersebut (10 TKJ)
         $response->assertDontSee('Siswa Mesin Tersembunyi');
-        $response->assertSee('Siswa • Kelas 10 • Teknik Komputer & Jaringan');
+        $response->assertSee('Kelas 10 • Teknik Komputer & Jaringan');
     }
 }

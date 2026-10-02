@@ -45,7 +45,7 @@ Route::post('/login/siswa', [SiswaLoginController::class, 'store'])->name('siswa
 Route::post('/logout/siswa', [SiswaLoginController::class, 'destroy'])->name('siswa.logout');
 
 // Area Guru
-Route::middleware('auth:admin')->group(function () {
+Route::middleware('guru')->group(function () {
 
     Route::controller(MateriController::class)->group(function () {
         Route::get('/materi', 'index')->name('materi.index');
@@ -87,7 +87,7 @@ Route::middleware('auth:admin')->group(function () {
 });
 
 // Area Superadmin (guard terpisah, tabel super_admin)
-Route::middleware('auth:superadmin')->group(function () {
+Route::middleware('superadmin')->group(function () {
     Route::controller(AdminGuruController::class)->group(function () {
         Route::get('/admin', 'index')->name('admin.index');
         Route::post('/admin', 'store')->name('admin.store');
@@ -112,7 +112,7 @@ Route::middleware('auth:superadmin')->group(function () {
 });
 
 // Area Siswa
-Route::middleware('auth:siswa')->group(function () {
+Route::middleware('siswa')->group(function () {
 
     // Profil Siswa
     Route::get('/siswa/profil', [ProfilSiswaController::class, 'index'])->name('siswa.profil');

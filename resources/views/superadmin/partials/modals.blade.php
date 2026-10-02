@@ -121,7 +121,7 @@
             <div class="p-3 bg-emerald-50/60 rounded-xl border border-emerald-100 text-xs text-emerald-900 flex items-center justify-between">
                 <span>Belum punya contoh format?</span>
                 <a href="{{ route('siswa.template') }}" class="font-bold text-emerald-700 hover:underline flex items-center gap-1">
-                    📥 Download Template CSV
+                    Download Template CSV
                 </a>
             </div>
 
@@ -162,7 +162,7 @@
             <div class="p-3 bg-purple-50/60 rounded-xl border border-purple-100 text-xs text-purple-900 flex items-center justify-between">
                 <span>Belum punya contoh format?</span>
                 <a href="{{ route('admin.template') }}" class="font-bold text-purple-700 hover:underline flex items-center gap-1">
-                    📥 Download Template CSV
+                    Download Template CSV
                 </a>
             </div>
 

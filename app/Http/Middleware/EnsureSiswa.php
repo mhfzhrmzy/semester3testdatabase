@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureSuperadmin
+class EnsureSiswa
 {
     /**
      * Handle an incoming request.
@@ -16,14 +16,14 @@ class EnsureSuperadmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::guard('superadmin')->check()) {
+        if (Auth::guard('siswa')->check()) {
             return $next($request);
         }
 
-        if (Auth::guard('admin')->check() || Auth::guard('siswa')->check()) {
-            abort(403, 'Akses Ditolak: Halaman superadmin hanya boleh diakses oleh Superadmin.');
+        if (Auth::guard('superadmin')->check() || Auth::guard('admin')->check()) {
+            abort(403, 'Akses Ditolak: Halaman siswa hanya boleh diakses oleh Siswa.');
         }
 
-        return redirect()->route('admin.login');
+        return redirect()->route('siswa.login');
     }
 }

@@ -21,7 +21,7 @@
                 Import CSV Guru
             </button>
             <span class="rounded-full bg-blue-100 text-blue-700 px-3.5 py-1 text-xs font-bold shadow-xs">
-                {{ $gurus->count() }} Akun Registered
+                {{ $gurus->count() }} Guru Terdaftar
             </span>
         </div>
     </div>
@@ -29,9 +29,10 @@
     <!-- TAMBAH GURU FORM -->
     <div class="mb-6 bg-white rounded-2xl p-6 border border-slate-200/70 shadow-sm">
         <h2 class="mb-4 text-base font-bold text-slate-900 flex items-center gap-2">
-            <svg class="w-5 h-5 text-[#4a101d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-            </svg>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+                </svg>
             Tambah Akun Guru Baru
         </h2>
         <form action="{{ route('admin.store') }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 gap-4 md:grid-cols-2">

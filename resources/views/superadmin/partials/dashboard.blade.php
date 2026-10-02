@@ -17,7 +17,7 @@
                 <span class="text-2xl font-semibold text-slate-800 tracking-tight">
                     {{ $gurus->count() }}
                 </span>
-                <span class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200/60">Pendidik</span>
+                <span class="text-xs font-medium text-slate-800">Pendidik</span>
             </div>
             <p class="text-xs font-normal text-slate-400 mt-2">Terdaftar di sistem</p>
         </div>
@@ -29,7 +29,7 @@
                 <span class="text-2xl font-semibold text-slate-800 tracking-tight">
                     {{ $siswas->count() }}
                 </span>
-                <span class="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/60">Peserta Didik</span>
+                <span class="text-xs font-medium text-slite-800">Peserta Didik</span>
             </div>
             <p class="text-xs font-normal text-slate-400 mt-2">Terdaftar di sistem</p>
         </div>
@@ -41,21 +41,21 @@
                 <span class="text-2xl font-semibold text-slate-800 tracking-tight">
                     {{ $materiCount }}
                 </span>
-                <span class="text-xs font-normal text-slate-400">Modul</span>
+                <span class="text-xs font-medium text-slite-800">Modul</span>
             </div>
-            <p class="text-xs font-normal text-slate-400 mt-2">Materi Pembelajaran Active</p>
+            <p class="text-xs font-normal text-slate-400 mt-2">Terdaftar di sistem</p>
         </div>
 
         <!-- Card 4: Quiz -->
         <div class="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-sm">
-            <p class="text-[10px] font-semibold text-slate-500 tracking-wider uppercase mb-2">QUIZ & EVALUASI</p>
+            <p class="text-[10px] font-semibold text-slate-500 tracking-wider uppercase mb-2">QUIZ & SOAL</p>
             <div class="flex items-baseline gap-2">
                 <span class="text-2xl font-semibold text-slate-800 tracking-tight">
                     {{ $quizCount }}
                 </span>
-                <span class="text-xs font-normal text-slate-400">Quiz</span>
+                <span class="text-xs font-medium text-slite-800">Quiz</span>
             </div>
-            <p class="text-xs font-normal text-slate-400 mt-2">Ujian & Praktikum Active</p>
+            <p class="text-xs font-normal text-slate-400 mt-2">Terdaftar di sistem</p>
         </div>
     </div>
 
@@ -65,12 +65,6 @@
         <div class="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-sm space-y-4">
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
-                        </svg>
-                    </div>
                     <div>
                         <h2 class="text-base font-bold text-slate-900">Daftar Akun Guru</h2>
                         <p class="text-[11px] text-slate-500">Total {{ $gurus->count() }} Guru Terdaftar</p>
@@ -122,11 +116,6 @@
         <div class="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-sm space-y-4">
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                        </svg>
-                    </div>
                     <div>
                         <h2 class="text-base font-bold text-slate-900">Daftar Akun Siswa</h2>
                         <p class="text-[11px] text-slate-500">Total {{ $siswas->count() }} Siswa Terdaftar</p>
