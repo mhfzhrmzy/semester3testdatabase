@@ -395,7 +395,7 @@ class QuizLeaderboardTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Siswa Kelas 10 TKJ Satu');
-        $response->assertSee('95');
+        $response->assertSee('0054444441');
         // Tidak boleh melihat siswa dari kelas/jurusan lain
         $response->assertDontSee('Siswa Kelas 11 Mesin Dua');
         // Tidak boleh melihat nilai pre-test (40)

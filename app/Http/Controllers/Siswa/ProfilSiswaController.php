@@ -20,7 +20,11 @@ class ProfilSiswaController extends Controller
     public function updateFoto(Request $request)
     {
         $request->validate([
-            'foto' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'foto' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
+        ], [
+            'foto.max' => 'Ukuran foto profil tidak boleh lebih dari 5 MB.',
+            'foto.image' => 'File harus berupa gambar.',
+            'foto.mimes' => 'Format foto harus berupa JPG, JPEG, atau PNG.',
         ]);
 
         $siswa = auth('siswa')->user();

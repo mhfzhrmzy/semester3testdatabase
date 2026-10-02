@@ -39,12 +39,13 @@ class PenggunaSiswaController extends Controller
             'kelas' => ['required', 'in:10,11,12'],
             'jurusan' => ['required', 'in:'.implode(',', $jurusanList)],
             'password' => ['required', 'string', 'min:6'],
-            'foto_profile' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'foto_profile' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
         ], [
             'nisn.digits' => 'NISN wajib tepat 10 digit angka.',
             'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
             'kelas.required' => 'Kelas wajib dipilih.',
             'jurusan.required' => 'Jurusan wajib dipilih.',
+            'foto_profile.max' => 'Ukuran foto profil tidak boleh lebih dari 5 MB.',
         ]);
 
         if ($request->hasFile('foto_profile')) {
@@ -78,12 +79,13 @@ class PenggunaSiswaController extends Controller
             'kelas' => ['required', 'in:10,11,12'],
             'jurusan' => ['required', 'in:'.implode(',', $jurusanList)],
             'password' => ['nullable', 'string', 'min:6'],
-            'foto_profile' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'foto_profile' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
         ], [
             'nisn.digits' => 'NISN wajib tepat 10 digit angka.',
             'nama_lengkap.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
             'kelas.required' => 'Kelas wajib dipilih.',
             'jurusan.required' => 'Jurusan wajib dipilih.',
+            'foto_profile.max' => 'Ukuran foto profil tidak boleh lebih dari 5 MB.',
         ]);
 
         if ($request->hasFile('foto_profile')) {
