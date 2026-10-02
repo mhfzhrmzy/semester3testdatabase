@@ -20,6 +20,16 @@
             {{ session('error') }}
         </div>
     @endif
+    @if($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">
+            <p class="font-semibold mb-1">Terjadi kesalahan validasi:</p>
+            <ul class="list-disc list-inside">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <!-- Section Import Spreadsheet / CSV -->
     @if($soals->isEmpty())
@@ -204,8 +214,9 @@ function tambahSoal() {
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">Timer per Soal (Detik)</label>
-                <input type="number" name="soals[${i}][timer_per_soal]" value="60" min="5" required class="w-28 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-semibold">
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Timer per Soal (Detik, Maks. 300)</label>
+                <input type="number" name="soals[${i}][timer_per_soal]" value="60" min="5" max="300" required class="w-36 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-semibold">
+                <p class="text-[10px] text-gray-400 mt-0.5">Maks. 300 detik (5 menit)</p>
             </div>
         </div>`;
     c.appendChild(div);

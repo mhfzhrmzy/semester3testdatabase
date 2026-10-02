@@ -29,7 +29,10 @@ class SoalController extends Controller
             'soals.*.pilihan_c' => ['required', 'string', 'max:500'],
             'soals.*.pilihan_d' => ['required', 'string', 'max:500'],
             'soals.*.jawaban_benar' => ['required', 'in:a,b,c,d,A,B,C,D'],
-            'soals.*.timer_per_soal' => ['nullable', 'integer', 'min:5'],
+            'soals.*.timer_per_soal' => ['nullable', 'integer', 'min:5', 'max:300'],
+        ], [
+            'soals.*.timer_per_soal.min' => 'Timer per soal minimal 5 detik.',
+            'soals.*.timer_per_soal.max' => 'Timer per soal maksimal 300 detik.',
         ]);
 
         // Kumpulkan pertanyaan yang sudah ada di quiz ini untuk cek duplikat
@@ -111,6 +114,7 @@ class SoalController extends Controller
             $pilihanD = trim($row[4] ?? '');
             $jawaban = strtolower(trim($row[5] ?? 'a'));
             $timer = isset($row[6]) && is_numeric($row[6]) ? (int) $row[6] : 60;
+            $timer = max(5, min(300, $timer));
 
             if ($pertanyaan !== '' && $pilihanA !== '' && $pilihanB !== '') {
                 if (! in_array($jawaban, ['a', 'b', 'c', 'd'])) {
@@ -167,7 +171,10 @@ class SoalController extends Controller
             'pilihan_c' => ['required', 'string', 'max:500'],
             'pilihan_d' => ['required', 'string', 'max:500'],
             'jawaban_benar' => ['required', 'in:a,b,c,d,A,B,C,D'],
-            'timer_per_soal' => ['required', 'integer', 'min:5'],
+            'timer_per_soal' => ['required', 'integer', 'min:5', 'max:300'],
+        ], [
+            'timer_per_soal.min' => 'Timer per soal minimal 5 detik.',
+            'timer_per_soal.max' => 'Timer per soal maksimal 300 detik.',
         ]);
 
         $validated['jawaban_benar'] = strtolower($validated['jawaban_benar']);
