@@ -61,7 +61,7 @@
 
         {{-- Data pokok --}}
         <div class="border rounded-lg p-6 space-y-3">
-            <h3 class="font-bold text-lg">Data Pokok Siswa</h3>
+            <h3 class="font-bold text-lg">Informasi Pribadi Siswa</h3>
 
             @foreach ([
                 'NISN'               => $siswa->nisn,
