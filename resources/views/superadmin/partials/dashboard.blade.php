@@ -36,19 +36,19 @@
 
         <!-- Card 3: Modul Materi -->
         <div class="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-sm">
-            <p class="text-[10px] font-semibold text-slate-500 tracking-wider uppercase mb-2">MODUL MATERI</p>
+            <p class="text-[10px] font-semibold text-slate-500 tracking-wider uppercase mb-2">TOTAL MATERI</p>
             <div class="flex items-baseline gap-2">
                 <span class="text-2xl font-semibold text-slate-800 tracking-tight">
                     {{ $materiCount }}
                 </span>
-                <span class="text-xs font-medium text-slite-800">Modul</span>
+                <span class="text-xs font-medium text-slite-800">Materi</span>
             </div>
             <p class="text-xs font-normal text-slate-400 mt-2">Terdaftar di sistem</p>
         </div>
 
         <!-- Card 4: Quiz -->
         <div class="bg-white rounded-2xl p-5 border border-slate-200/70 shadow-sm">
-            <p class="text-[10px] font-semibold text-slate-500 tracking-wider uppercase mb-2">QUIZ & SOAL</p>
+            <p class="text-[10px] font-semibold text-slate-500 tracking-wider uppercase mb-2">TOTAL QUIZ</p>
             <div class="flex items-baseline gap-2">
                 <span class="text-2xl font-semibold text-slate-800 tracking-tight">
                     {{ $quizCount }}
