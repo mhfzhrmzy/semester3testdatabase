@@ -43,7 +43,10 @@
                         @endif
 
                     <span class="text-gray-500">|</span>
-                    <span class="text-gray-300">{{ $currentAdmin->nama_lengkap }}</span>
+                    <a href="{{ route('admin.profil') }}"
+                    class="hover:text-white {{ request()->routeIs('admin.profil*') ? 'text-blue-400 font-semibold' : 'text-gray-300' }}">
+                    {{ $currentAdmin->nama_lengkap }}
+                </a>
                     <form action="{{ route('admin.logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="hover:text-red-400">Logout</button>

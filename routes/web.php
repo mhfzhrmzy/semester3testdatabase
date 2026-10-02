@@ -15,6 +15,7 @@ use App\Http\Controllers\Siswa\ProfilSiswaController;
 use App\Http\Controllers\Siswa\SertifikatSiswaController;
 use App\Http\Controllers\SuperadminController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminProfilController;
 
 Route::get('/', function () {
     if (auth('superadmin')->check()) {
@@ -83,9 +84,13 @@ Route::middleware('auth:admin')->group(function () {
         });
 
         Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
+
+        // Profil Guru
+        Route::get('/profil', [AdminProfilController::class, 'show'])->name('profil');
+        Route::post('/profil/foto', [AdminProfilController::class, 'updateFoto'])->name('profil.foto');
+        Route::post('/profil/password', [AdminProfilController::class, 'updatePassword'])->name('profil.password');
     });
 });
-
 // Area Superadmin (guard terpisah, tabel super_admin)
 Route::middleware('auth:superadmin')->group(function () {
     Route::controller(AdminGuruController::class)->group(function () {
