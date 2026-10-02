@@ -305,7 +305,7 @@
                         1 => 'bg-gradient-to-b from-slate-100 via-slate-50 to-white border-slate-300 text-slate-800',  // Silver
                         2 => 'bg-gradient-to-b from-orange-100 via-orange-50 to-white border-orange-300 text-orange-900', // Bronze
                     ];
-                    $badges = [0 => '🥇 JUARA 1', 1 => '🥈 JUARA 2', 2 => '🥉 JUARA 3'];
+                    $badges = [0 => '🥇 PERINGKAT 1', 1 => '🥈 PERINGKAT 2', 2 => '🥉 PERINGKAT 3'];
                 @endphp
                 <div class="border-2 rounded-2xl p-5 text-center shadow-sm relative overflow-hidden {{ $colors[$rank] ?? 'border-gray-200 bg-white' }}">
                     <div class="text-xs font-extrabold uppercase tracking-wider mb-1.5">{{ $badges[$rank] }}</div>
@@ -326,9 +326,11 @@
                         @endif
                     </div>
 
+                    @if (!$isSiswa)
                     <div class="text-3xl font-black text-blue-600 mb-1">
                         {{ $item->total_poin }} <span class="text-xs font-normal text-gray-500">Poin</span>
                     </div>
+                    @endif
 
                     <div class="text-xs text-gray-600 font-medium">
                         @php
@@ -364,8 +366,10 @@
                         <th class="px-4 py-3.5">Jurusan</th>
                         <th class="px-4 py-3.5">Materi &amp; Quiz</th>
                         <th class="px-4 py-3.5 text-center">Tipe Test</th>
+                        @if (!$isSiswa)
                         <th class="px-4 py-3.5 text-center">Total Poin</th>
                         <th class="px-4 py-3.5 text-right">Waktu Selesai</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -432,24 +436,28 @@
                                         default => 'Semua Test',
                                     };
                                 @endphp
-                                <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ strtolower($badgeTest) === 'pretest' ? 'bg-amber-100 text-amber-800 border border-amber-200' : (strtolower($badgeTest) === 'posttest' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-blue-100 text-blue-800 border border-blue-200') }}">
+                                <span class="whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold {{ strtolower($badgeTest) === 'pretest' ? 'bg-amber-100 text-amber-800 border border-amber-200' : (strtolower($badgeTest) === 'posttest' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-blue-100 text-blue-800 border border-blue-200') }}">
                                     {{ $badgeLabel }}
                                 </span>
                             </td>
 
                             {{-- Total Poin --}}
+                            @if (!$isSiswa)
                             <td class="px-4 py-3.5 text-center font-black text-blue-600 text-base">
                                 {{ $row->total_poin }}
                             </td>
+                            @endif
 
                             {{-- Waktu Selesai --}}
+                            @if (!$isSiswa)
                             <td class="px-4 py-3.5 text-right text-xs text-gray-500">
                                 {{ $row->updated_at ? \Carbon\Carbon::parse($row->updated_at)->diffForHumans() : '-' }}
                             </td>
+                            @endif
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="px-4 py-12 text-center text-gray-400">
+                            <td colspan="{{ $isSiswa ? 7 : 9 }}" class="px-4 py-12 text-center text-gray-400">
                                 <div class="max-w-md mx-auto space-y-2">
                                     <div class="text-3xl">📊</div>
                                     <p class="font-medium text-gray-600">Belum ada riwayat nilai kuis untuk filter ini.</p>

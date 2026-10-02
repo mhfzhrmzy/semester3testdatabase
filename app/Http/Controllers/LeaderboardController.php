@@ -95,37 +95,57 @@ class LeaderboardController extends Controller
             }
         }
 
-        // Untuk Guru: jika mode permateri dan materi dipilih tetapi tipe_test belum dipilih, default ke posttest
-        if (! $isSiswa && $tipeLeaderboard === 'permateri' && $selectedMateri && ! $filterTest) {
-            $filterTest = 'posttest';
-        }
+        // Untuk Guru: jika mode permateri dan materi dipilih, null berarti "Semua (Pre & Post)" — biarkan apa adanya
 
         // 5. Query Leaderboard
         if ($tipeLeaderboard === 'permateri') {
             // Leaderboard per materi
             if ($selectedMateri) {
-                $query = Leaderboard::with(['quiz.materi', 'pengguna'])
-                    ->whereHas('quiz', function ($q) use ($selectedMateri, $filterTest) {
-                        $q->where('id_materi', $selectedMateri->id_materi);
-                        if ($filterTest) {
+                if (! $filterTest) {
+                    // "Semua (Pre & Post)": akumulasi poin pre-test + post-test per siswa untuk materi ini
+                    $query = Leaderboard::with('pengguna')
+                        ->whereHas('quiz', fn ($q) => $q->where('id_materi', $selectedMateri->id_materi));
+
+                    if ($kelas || $jurusan) {
+                        $query->whereHas('pengguna', function ($q) use ($kelas, $jurusan) {
+                            if ($kelas) {
+                                $q->where('kelas', $kelas);
+                            }
+                            if ($jurusan) {
+                                $q->where('jurusan', $jurusan);
+                            }
+                        });
+                    }
+
+                    $leaderboards = $query
+                        ->selectRaw('nisn, SUM(total_poin) as total_poin, COUNT(id_quiz) as total_kuis, MAX(updated_at) as updated_at')
+                        ->groupBy('nisn')
+                        ->orderByDesc('total_poin')
+                        ->orderBy('updated_at')
+                        ->get();
+                } else {
+                    // Tipe test spesifik (pretest / posttest): tampilkan baris per kuis
+                    $query = Leaderboard::with(['quiz.materi', 'pengguna'])
+                        ->whereHas('quiz', function ($q) use ($selectedMateri, $filterTest) {
+                            $q->where('id_materi', $selectedMateri->id_materi);
                             $q->where('tipe_test', $filterTest);
-                        }
-                    });
+                        });
 
-                if ($kelas || $jurusan) {
-                    $query->whereHas('pengguna', function ($q) use ($kelas, $jurusan) {
-                        if ($kelas) {
-                            $q->where('kelas', $kelas);
-                        }
-                        if ($jurusan) {
-                            $q->where('jurusan', $jurusan);
-                        }
-                    });
+                    if ($kelas || $jurusan) {
+                        $query->whereHas('pengguna', function ($q) use ($kelas, $jurusan) {
+                            if ($kelas) {
+                                $q->where('kelas', $kelas);
+                            }
+                            if ($jurusan) {
+                                $q->where('jurusan', $jurusan);
+                            }
+                        });
+                    }
+
+                    $leaderboards = $query->orderBy('total_poin', 'desc')
+                        ->orderBy('updated_at', 'asc')
+                        ->get();
                 }
-
-                $leaderboards = $query->orderBy('total_poin', 'desc')
-                    ->orderBy('updated_at', 'asc')
-                    ->get();
             } else {
                 $leaderboards = collect();
             }
