@@ -61,7 +61,7 @@ class AuthTest extends TestCase
         $response = $this->post('/logout/guru');
 
         $this->assertGuest('admin');
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('siswa.login'));
     }
 
     public function test_siswa_register_screen_is_not_accessible(): void
@@ -117,6 +117,6 @@ class AuthTest extends TestCase
         $response = $this->post('/logout/siswa');
 
         $this->assertGuest('siswa');
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('siswa.login'));
     }
 }

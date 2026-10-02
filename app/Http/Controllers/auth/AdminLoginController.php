@@ -56,6 +56,6 @@ class AdminLoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('home')->with('success', 'Anda telah berhasil logout.');
+        return redirect()->route('siswa.login')->with('success', 'Anda telah berhasil logout.');
     }
 }

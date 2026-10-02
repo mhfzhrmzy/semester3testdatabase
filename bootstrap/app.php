@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\EnsureGuru;
+use App\Http\Middleware\EnsureSiswa;
 use App\Http\Middleware\EnsureSuperadmin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -15,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'superadmin' => EnsureSuperadmin::class,
+            'guru' => EnsureGuru::class,
+            'siswa' => EnsureSiswa::class,
+            'role' => CheckRole::class,
         ]);
 
         $middleware->redirectGuestsTo(function (Request $request) {

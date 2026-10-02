@@ -76,9 +76,8 @@
             </div>
 
             <!-- Footer -->
-            <div class="text-xs text-slate-400 border-t border-slate-100 pt-4 flex justify-between items-center">
+            <div class="text-xs text-slate-400 border-t border-slate-100 pt-4">
                 <span>&copy; 2026 SMKN 2 Jember</span>
-                <a href="{{ route('home') }}" class="text-slate-500 hover:text-slate-800 font-medium">Halaman Utama</a>
             </div>
         </div>
     </div>

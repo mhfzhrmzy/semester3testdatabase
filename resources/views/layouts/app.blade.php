@@ -20,11 +20,11 @@
 
                         <a href="{{ route('materi.index') }}"
                            class="hover:text-gray-300 {{ request()->routeIs('materi.*') ? 'text-blue-400 font-semibold' : '' }}">
-                            Materi
+                            Bahan  Ajar
                         </a>
                         <a href="{{ route('admin.quiz.index') }}"
                            class="hover:text-gray-300 {{ request()->routeIs('admin.quiz.*') || request()->routeIs('admin.soal.*') ? 'text-blue-400 font-semibold' : '' }}">
-                            Quiz &amp; Soal
+                            Kelola Quiz
                         </a>
                         <a href="{{ route('sertifikat.index') }}"
                            class="hover:text-gray-300 {{ request()->routeIs('sertifikat.*') ? 'text-blue-400 font-semibold' : '' }}">
