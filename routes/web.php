@@ -88,12 +88,13 @@ Route::middleware('guru')->group(function () {
         // Profil Guru
         Route::get('/profil', [AdminProfilController::class, 'show'])->name('profil');
         Route::post('/profil/foto', [AdminProfilController::class, 'updateFoto'])->name('profil.foto');
-        Route::post('/profil/password', [AdminProfilController::class, 'updatePassword'])->name('profil.password');
-    });
-});
-// Area Superadmin (guard terpisah, tabel super_admin)
-Route::middleware('superadmin')->group(function () {
-    Route::controller(AdminGuruController::class)->group(function () {
+        Route::delete('/profil/foto', [AdminProfilController::class, 'hapusFoto'])->name('profil.foto.hapus');
+        Route::post('/profil/password', [AdminProfilController::class, 'updatePassword'])->name('profil.password');});
+        });
+
+        // Area Superadmin (guard terpisah, tabel super_admin)
+        Route::middleware('superadmin')->group(function () {
+            Route::controller(AdminGuruController::class)->group(function () {
         Route::get('/admin', 'index')->name('admin.index');
         Route::post('/admin', 'store')->name('admin.store');
         Route::post('/admin/import', 'importCsv')->name('admin.import');
@@ -101,8 +102,9 @@ Route::middleware('superadmin')->group(function () {
         Route::get('/admin/{guru}/edit', 'edit')->name('admin.edit');
         Route::put('/admin/{guru}', 'update')->name('admin.update');
         Route::delete('/admin/{guru}', 'destroy')->name('admin.destroy');
-    });
-
+        });
+        
+        
     Route::controller(PenggunaSiswaController::class)->group(function () {
         Route::get('/siswa', 'index')->name('siswa.index');
         Route::post('/siswa', 'store')->name('siswa.store');

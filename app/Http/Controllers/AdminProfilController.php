@@ -33,6 +33,21 @@ class AdminProfilController extends Controller
         return back()->with('success', 'Foto profil berhasil diperbarui.');
     }
 
+        public function hapusFoto()
+    {
+        /** @var AdminGuru $admin */
+        $admin = auth('admin')->user();
+
+        if ($admin->foto_profile) {
+            Storage::disk('public')->delete($admin->foto_profile);
+        }
+
+        $admin->foto_profile = null;
+        $admin->save();
+
+        return back()->with('success', 'Foto profil berhasil dihapus.');
+    }
+
     public function updatePassword(Request $request)
     {
         $request->validate([

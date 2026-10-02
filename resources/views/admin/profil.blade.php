@@ -16,13 +16,28 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.profil.foto') }}" method="POST" enctype="multipart/form-data" class="mt-2">
-            @csrf
-            <input type="file" name="foto" id="foto" accept="image/*" class="hidden" onchange="this.form.submit()">
-            <label for="foto" class="cursor-pointer inline-block bg-gray-900 text-white text-[10px] px-2 py-0.5 rounded">
-                Upload Foto
-            </label>
-        </form>
+                <div class="mt-2 flex items-center justify-center gap-2">
+            {{-- Ubah / Upload Foto --}}
+            <form action="{{ route('admin.profil.foto') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <input type="file" name="foto" id="foto" accept="image/*" class="hidden" onchange="this.form.submit()">
+                <label for="foto" class="cursor-pointer inline-block bg-gray-900 text-white text-[10px] px-3 py-1 rounded-full">
+                    {{ $admin->foto_profile ? 'Ubah Foto' : 'Upload Foto' }}
+                </label>
+            </form>
+
+            {{-- Hapus Foto (hanya tampil jika sudah ada foto) --}}
+            @if($admin->foto_profile)
+                <form action="{{ route('admin.profil.foto.hapus') }}" method="POST"
+                      onsubmit="return confirm('Yakin ingin menghapus foto profil?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="bg-red-600 text-white text-[10px] px-3 py-1 rounded-full">
+                        Hapus Foto
+                    </button>
+                </form>
+            @endif
+        </div>
 
         <h2 class="font-bold text-lg mt-2">{{ $admin->nama_lengkap }}</h2>
         <p class="text-xs text-gray-500">NIP: {{ $admin->nip }}</p>
@@ -40,7 +55,7 @@
     </div>
 
     <div class="border rounded-lg p-5">
-        <h3 class="font-bold mb-3">Data Pokok Guru</h3>
+        <h3 class="font-bold mb-3">Informasi Pribadi Guru</h3>
 
         <label class="block text-xs text-gray-600 mt-3">NIP</label>
         <div class="bg-blue-50 rounded px-3 py-2 text-sm">{{ $admin->nip }}</div>
