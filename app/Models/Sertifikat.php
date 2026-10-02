@@ -8,6 +8,8 @@ class Sertifikat extends Model
 {
     protected $table = 'sertifikat';
 
+    protected $primaryKey = 'id_sertifikat';
+
     protected $fillable = [
         'nisn', 'nip', 'id_materi',
         'judul_sertifikat', 'kategori', 'penerbit', 'deskripsi',
