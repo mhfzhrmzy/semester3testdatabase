@@ -94,9 +94,11 @@
                 <input type="file" name="upload_file" class="w-full text-sm text-gray-500 mb-2">
 
                 @if($materi->upload_file)
-                    <div class="p-3 bg-gray-50 border rounded text-xs text-gray-600 flex items-center justify-between">
+                    <div class="p-3 bg-gray-50 border rounded text-xs text-gray-600 flex items-center justify-between flex-wrap gap-2">
                         <span>File Terpasang: <strong>{{ basename($materi->upload_file) }}</strong></span>
-                        <a href="{{ route('portal.materi.show', $materi) }}" target="_blank" class="text-blue-600 hover:underline">Preview File</a>
+                        <a href="{{ route('materi.show', $materi) }}" target="_blank" class="text-blue-600 hover:underline font-semibold">
+                            📄 Lihat File Modul
+                        </a>
                     </div>
                     <p class="text-xs text-gray-400 mt-1">* Biarkan kosong jika tidak ingin mengganti file yang ada.</p>
                 @endif
