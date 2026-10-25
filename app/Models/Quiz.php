@@ -10,10 +10,11 @@ class Quiz extends Model
 
     protected $primaryKey = 'id_quiz';
 
-    protected $fillable = ['nip', 'id_materi', 'tipe_test', 'poin', 'timer', 'tanggal'];
+    protected $fillable = ['nip', 'id_materi', 'tipe_test', 'poin', 'timer', 'tanggal', 'is_shuffle'];
 
     protected $casts = [
         'tanggal' => 'date',
+        'is_shuffle' => 'boolean',
     ];
 
     public function adminGuru()

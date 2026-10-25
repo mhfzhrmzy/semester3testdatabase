@@ -32,6 +32,68 @@ class QuizSiswaController extends Controller
     public function kerjakan(Quiz $quiz)
     {
         $quiz->load('soal', 'materi');
+        $soals = $quiz->soal;
+
+        if ($quiz->is_shuffle && $soals->isNotEmpty()) {
+            $siswaId = auth('siswa')->id();
+            $sessionKey = 'quiz_shuffle_'.$quiz->id_quiz.'_'.$siswaId;
+            $shuffledData = session($sessionKey);
+
+            if (! $shuffledData) {
+                // Acak urutan soal secara unik untuk siswa ini
+                $shuffledSoals = $soals->shuffle()->values();
+                $shuffledData = [];
+
+                foreach ($shuffledSoals as $soal) {
+                    $choices = [
+                        'a' => $soal->pilihan_a,
+                        'b' => $soal->pilihan_b,
+                        'c' => $soal->pilihan_c,
+                        'd' => $soal->pilihan_d,
+                    ];
+
+                    // Acak urutan pilihan jawaban
+                    $keys = array_keys($choices);
+                    shuffle($keys);
+
+                    $shuffledChoices = [];
+                    foreach ($keys as $k) {
+                        $shuffledChoices[$k] = $choices[$k];
+                    }
+
+                    $shuffledData[] = [
+                        'id_soal' => $soal->id_soal,
+                        'choices' => $shuffledChoices,
+                    ];
+                }
+
+                session([$sessionKey => $shuffledData]);
+            }
+
+            // Terapkan susunan urutan soal & pilihan jawaban dari session
+            $soalMap = $soals->keyBy('id_soal');
+            $orderedSoals = collect();
+
+            foreach ($shuffledData as $item) {
+                if (isset($soalMap[$item['id_soal']])) {
+                    $s = clone $soalMap[$item['id_soal']];
+                    $s->display_choices = $item['choices'];
+                    $orderedSoals->push($s);
+                }
+            }
+
+            $quiz->setRelation('soal', $orderedSoals);
+        } else {
+            // Urutan normal (tidak diacak)
+            foreach ($quiz->soal as $s) {
+                $s->display_choices = [
+                    'a' => $s->pilihan_a,
+                    'b' => $s->pilihan_b,
+                    'c' => $s->pilihan_c,
+                    'd' => $s->pilihan_d,
+                ];
+            }
+        }
 
         return view('siswa.quiz.kerjakan', compact('quiz'));
     }
@@ -57,6 +119,10 @@ class QuizSiswaController extends Controller
             ['id_quiz' => $quiz->id_quiz, 'nisn' => auth('siswa')->id()],
             ['total_poin' => $totalPoin]
         );
+
+        // Hapus session acak setelah kuis berhasil disubmit
+        $sessionKey = 'quiz_shuffle_'.$quiz->id_quiz.'_'.auth('siswa')->id();
+        session()->forget($sessionKey);
 
         return view('siswa.quiz.hasil', [
             'quiz' => $quiz,

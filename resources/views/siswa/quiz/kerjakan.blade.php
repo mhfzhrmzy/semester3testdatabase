@@ -71,23 +71,37 @@
 
                     {{-- Answer choices --}}
                     <div class="space-y-3 mb-6" id="choices-{{ $index }}">
-                        @foreach (['a', 'b', 'c', 'd'] as $opt)
+                        @php
+                            $optionLabels = ['A', 'B', 'C', 'D'];
+                            $optIdx = 0;
+                            $choices = $soal->display_choices ?? [
+                                'a' => $soal->pilihan_a,
+                                'b' => $soal->pilihan_b,
+                                'c' => $soal->pilihan_c,
+                                'd' => $soal->pilihan_d,
+                            ];
+                        @endphp
+                        @foreach ($choices as $origKey => $choiceText)
+                            @php
+                                $displayLetter = $optionLabels[$optIdx] ?? strtoupper($origKey);
+                                $optIdx++;
+                            @endphp
                             <label class="answer-label flex items-start gap-3 p-4 border-2 border-gray-200 rounded-xl cursor-pointer
                                           hover:border-blue-400 hover:bg-blue-50 transition-all duration-150 group"
-                                   id="label-{{ $index }}-{{ $opt }}">
+                                   id="label-{{ $index }}-{{ $origKey }}">
                                 <input type="radio"
                                        name="jawaban[{{ $soal->id_soal }}]"
-                                       value="{{ $opt }}"
+                                       value="{{ $origKey }}"
                                        class="hidden answer-radio"
-                                       id="radio-{{ $index }}-{{ $opt }}">
+                                       id="radio-{{ $index }}-{{ $origKey }}">
                                 <span class="flex-shrink-0 w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center
                                              text-xs font-bold text-gray-500 group-hover:border-blue-500 group-hover:text-blue-600
                                              transition-all duration-150 choice-circle"
-                                      id="circle-{{ $index }}-{{ $opt }}">
-                                    {{ strtoupper($opt) }}
+                                      id="circle-{{ $index }}-{{ $origKey }}">
+                                    {{ $displayLetter }}
                                 </span>
                                 <span class="text-sm text-gray-700 group-hover:text-gray-900 pt-0.5 leading-relaxed">
-                                    {{ $soal->{'pilihan_' . $opt} }}
+                                    {{ $choiceText }}
                                 </span>
                             </label>
                         @endforeach

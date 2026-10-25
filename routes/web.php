@@ -79,6 +79,7 @@ Route::middleware('role:guru')->group(function () {
         Route::controller(GuruSoalController::class)->group(function () {
             Route::get('/quiz/{quiz}/soal', 'index')->name('soal.index');
             Route::post('/quiz/{quiz}/soal', 'store')->name('soal.store');
+            Route::patch('/quiz/{quiz}/toggle-shuffle', 'toggleShuffle')->name('quiz.toggle-shuffle');
             Route::post('/quiz/{quiz}/soal/import', 'importCsv')->name('soal.import');
             Route::get('/soal/template', 'downloadTemplate')->name('soal.template');
             Route::get('/soal/{soal}/edit', 'edit')->name('soal.edit');

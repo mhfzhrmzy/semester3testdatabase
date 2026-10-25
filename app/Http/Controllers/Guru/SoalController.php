@@ -217,4 +217,18 @@ class SoalController extends Controller
 
         return redirect()->route('admin.soal.index', $idQuiz)->with('success', 'Soal berhasil dihapus.');
     }
+
+    /**
+     * Mengaktifkan atau menonaktifkan pengacakan soal & jawaban untuk kuis.
+     */
+    public function toggleShuffle(Quiz $quiz): RedirectResponse
+    {
+        $quiz->update([
+            'is_shuffle' => ! $quiz->is_shuffle,
+        ]);
+
+        $status = $quiz->is_shuffle ? 'diaktifkan' : 'dinonaktifkan';
+
+        return redirect()->route('admin.soal.index', $quiz)->with('success', "Fitur acak soal & jawaban untuk siswa berhasil {$status}.");
+    }
 }

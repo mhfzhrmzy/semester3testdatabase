@@ -91,8 +91,39 @@
         </div>
     </form>
 
-    <!-- Daftar Soal -->
-    <h3 class="text-md font-semibold text-gray-800 mb-3">Daftar Soal yang Sudah Ada ({{ $soals->count() }})</h3>
+    <!-- Daftar Soal Header & Tombol Acak/Shuffle -->
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div class="flex flex-wrap items-center gap-3">
+            <h3 class="text-md font-semibold text-gray-800">Daftar Soal yang Sudah Ada ({{ $soals->count() }})</h3>
+            
+            {{-- Tombol Toggle Shuffle/Acak Soal --}}
+            <form action="{{ route('admin.quiz.toggle-shuffle', $quiz) }}" method="POST" class="inline">
+                @csrf
+                @method('PATCH')
+                @if($quiz->is_shuffle)
+                    <button type="submit" 
+                            title="Klik untuk menonaktifkan acak soal & jawaban bagi siswa"
+                            class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm transition duration-150">
+                        <span class="w-2 h-2 rounded-full bg-emerald-200 animate-ping"></span>
+                        🔀 Soal &amp; Jawaban Diacak (Aktif)
+                    </button>
+                @else
+                    <button type="submit" 
+                            title="Klik untuk mengaktifkan acak soal & jawaban bagi siswa"
+                            class="inline-flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm transition duration-150">
+                        <span class="w-2 h-2 rounded-full bg-gray-400"></span>
+                        🔀 Acak Soal: Nonaktif (Klik untuk Acak)
+                    </button>
+                @endif
+            </form>
+        </div>
+
+        @if($quiz->is_shuffle)
+            <span class="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-md font-medium">
+                ✨ Setiap siswa akan menerima urutan soal &amp; pilihan jawaban yang diacak secara otomatis.
+            </span>
+        @endif
+    </div>
     <table class="w-full text-sm text-left border rounded-lg">
         <thead>
             <tr class="border-b bg-gray-100 text-gray-700">

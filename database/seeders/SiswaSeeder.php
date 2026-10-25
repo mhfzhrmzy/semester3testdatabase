@@ -20,6 +20,14 @@ class SiswaSeeder extends Seeder
                 'poin' => 100,
             ],
             [
+                'nisn' => '0051234571',
+                'nama_lengkap' => 'Andi sultan',
+                'kelas' => '10',
+                'jurusan' => 'Teknik Komputer & Jaringan',
+                'password' => Hash::make('password123'),
+                'poin' => 100,
+            ],
+            [
                 'nisn' => '0051234562',
                 'nama_lengkap' => 'Dewi Lestari',
                 'kelas' => '11',
