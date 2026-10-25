@@ -41,12 +41,13 @@ class QuizController extends Controller
                 'in:pretest,posttest',
                 Rule::unique('quiz')->where(fn ($query) => $query->where('id_materi', $request->id_materi)),
             ],
-            'poin' => ['required', 'integer', 'min:1', 'max:100'],
+            'poin' => ['nullable', 'integer', 'min:1'],
             'timer' => ['required', 'integer', 'min:1', 'max:120'],
         ], [
             'tipe_test.unique' => 'Quiz tipe ini sudah ada untuk materi yang dipilih. Setiap materi hanya boleh memiliki satu pre-test dan satu post-test.',
         ]);
 
+        $validated['poin'] = 100; // Otomatis total 100 poin (poin per soal = 100 / jumlah soal)
         $validated['tanggal'] = now()->toDateString();
         $validated['nip'] = auth('admin')->id();
 

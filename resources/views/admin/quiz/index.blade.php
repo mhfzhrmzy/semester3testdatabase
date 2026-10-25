@@ -12,7 +12,7 @@
     <!-- Form Buat Quiz -->
     <div class="bg-blue-50 border border-blue-200 rounded-lg p-5 mb-8">
         <h3 class="text-md font-semibold text-blue-900 mb-3">➕ Buat Quiz Baru</h3>
-        <form action="{{ route('admin.quiz.store') }}" method="POST" class="grid grid-cols-1 md:grid-cols-5 gap-3">
+        <form action="{{ route('admin.quiz.store') }}" method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-3">
             @csrf
             <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Pilih Materi</label>
@@ -38,11 +38,6 @@
                 <p id="tipe-info" class="text-xs text-amber-600 mt-1 hidden"></p>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Poin / Soal</label>
-                <input type="number" name="poin" value="{{ old('poin', 10) }}" min="1" max="100" required placeholder="Contoh: 10" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
-                <p class="text-xs text-gray-400 mt-1">Maks. 100 poin</p>
-            </div>
-            <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Timer Total (Menit)</label>
                 <input type="number" name="timer" value="{{ old('timer', 30) }}" min="1" max="120" required placeholder="Contoh: 30" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
                 <p class="text-xs text-gray-400 mt-1">Maks. 120 menit</p>
@@ -52,10 +47,10 @@
                 <input type="date" value="{{ date('Y-m-d') }}" readonly class="w-full rounded-md border border-gray-200 px-3 py-2 text-sm font-semibold bg-gray-100 text-gray-500 cursor-not-allowed">
                 <p class="text-xs text-gray-400 mt-1">Otomatis, tidak dapat diubah</p>
             </div>
-            <div class="md:col-span-5 bg-amber-50 border border-amber-200 rounded-md px-4 py-2 text-xs text-amber-800">
-                ℹ️ Setiap materi hanya dapat memiliki <strong>1 pre-test</strong> dan <strong>1 post-test</strong>. Tipe yang sudah ada tidak dapat dibuat ulang.
+            <div class="md:col-span-4 bg-amber-50 border border-amber-200 rounded-md px-4 py-2 text-xs text-amber-800">
+                ℹ️ Setiap quiz otomatis bernilai total <strong>100 Poin</strong> (poin per soal dihitung dari 100 dibagi total soal). Setiap materi hanya dapat memiliki <strong>1 pre-test</strong> dan <strong>1 post-test</strong>.
             </div>
-            <button type="submit" id="btn-submit" class="md:col-span-5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-md transition duration-150">
+            <button type="submit" id="btn-submit" class="md:col-span-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-md transition duration-150">
                 Simpan &amp; Buat Quiz
             </button>
         </form>
@@ -68,7 +63,7 @@
             <tr class="border-b bg-gray-100 text-gray-700">
                 <th class="px-3 py-2.5">Materi</th>
                 <th class="px-3 py-2.5">Tipe Test</th>
-                <th class="px-3 py-2.5">Poin / Soal</th>
+                <th class="px-3 py-2.5">Total Poin</th>
                 <th class="px-3 py-2.5">Tanggal Dibuat</th>
                 <th class="px-3 py-2.5">Jumlah Soal</th>
                 <th class="px-3 py-2.5 text-right">Aksi</th>
@@ -83,7 +78,14 @@
                             {{ ucfirst($quiz->tipe_test) }}
                         </span>
                     </td>
-                    <td class="px-3 py-2.5 font-semibold text-blue-600">{{ $quiz->poin }} Poin</td>
+                    <td class="px-3 py-2.5">
+                        <span class="font-semibold text-blue-600">100 Poin</span>
+                        @if($quiz->soal->count() > 0)
+                            <span class="block text-[11px] text-gray-400 font-normal">({{ round(100 / $quiz->soal->count(), 2) }} / soal)</span>
+                        @else
+                            <span class="block text-[11px] text-gray-400 font-normal">(0 soal)</span>
+                        @endif
+                    </td>
                     <td class="px-3 py-2.5 text-gray-600">{{ \Carbon\Carbon::parse($quiz->tanggal)->format('d M Y') }}</td>
                     <td class="px-3 py-2.5 font-bold">{{ $quiz->soal->count() }} Soal</td>
                     <td class="px-3 py-2.5 text-right">

@@ -113,7 +113,9 @@ class QuizSiswaController extends Controller
             }
         }
 
-        $totalPoin = $benar * $quiz->poin;
+        $totalSoal = $soals->count();
+        $poinPerSoal = $totalSoal > 0 ? (100 / $totalSoal) : 0;
+        $totalPoin = $totalSoal > 0 ? (int) round($benar * $poinPerSoal) : 0;
 
         Leaderboard::updateOrCreate(
             ['id_quiz' => $quiz->id_quiz, 'nisn' => auth('siswa')->id()],
@@ -127,7 +129,7 @@ class QuizSiswaController extends Controller
         return view('siswa.quiz.hasil', [
             'quiz' => $quiz,
             'benar' => $benar,
-            'total' => $soals->count(),
+            'total' => $totalSoal,
             'totalPoin' => $totalPoin,
         ]);
     }

@@ -13,8 +13,11 @@
                 <h1 class="text-xl font-bold text-gray-800 mt-2">{{ $quiz->materi->judul_materi ?? 'Quiz' }}</h1>
             </div>
             <div class="text-right shrink-0">
-                <div class="text-xs text-gray-400 mb-0.5">Poin per soal benar</div>
-                <div class="text-2xl font-black text-blue-600">{{ $quiz->poin }} <span class="text-sm font-semibold text-gray-400">Poin</span></div>
+                <div class="text-xs text-gray-400 mb-0.5">Total Bobot Nilai</div>
+                <div class="text-2xl font-black text-blue-600">100 <span class="text-sm font-semibold text-gray-400">Poin</span></div>
+                @if($quiz->soal->count() > 0)
+                    <div class="text-[11px] text-gray-400 font-medium">±{{ round(100 / $quiz->soal->count(), 2) }} poin / soal</div>
+                @endif
             </div>
         </div>
 

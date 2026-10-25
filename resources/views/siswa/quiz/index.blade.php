@@ -83,9 +83,11 @@
 
                                     <div class="flex flex-wrap gap-4 text-xs text-gray-500">
                                         <span>📝 {{ $quiz->soal->count() }} Soal</span>
-                                        <span>⭐ {{ $quiz->poin }} Poin/Soal</span>
+                                        <span>⭐ 100 Poin Total</span>
                                         <span>⏱ Timer per soal aktif</span>
-                                        <span>🎯 Maks {{ $quiz->soal->count() * $quiz->poin }} Poin</span>
+                                        @if($quiz->soal->count() > 0)
+                                            <span>🎯 ±{{ round(100 / $quiz->soal->count(), 2) }} Poin/Soal</span>
+                                        @endif
                                     </div>
 
                                     @if ($attempted)
@@ -148,9 +150,11 @@
 
                                     <div class="flex flex-wrap gap-4 text-xs text-gray-500">
                                         <span>📝 {{ $quiz->soal->count() }} Soal</span>
-                                        <span>⭐ {{ $quiz->poin }} Poin/Soal</span>
+                                        <span>⭐ 100 Poin Total</span>
                                         <span>⏱ Timer per soal aktif</span>
-                                        <span>🎯 Maks {{ $quiz->soal->count() * $quiz->poin }} Poin</span>
+                                        @if($quiz->soal->count() > 0)
+                                            <span>🎯 ±{{ round(100 / $quiz->soal->count(), 2) }} Poin/Soal</span>
+                                        @endif
                                     </div>
 
                                     @if ($attempted)
