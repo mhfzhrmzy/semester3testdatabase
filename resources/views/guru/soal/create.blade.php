@@ -78,38 +78,45 @@
                           class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"></textarea>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 mb-3">
-                <div>
-                    <label class="block text-xs font-medium mb-1">Pilihan A</label>
-                    <input type="text" name="soals[${idx}][pilihan_a]" required
-                           class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
+            <div class="mb-3">
+                <div class="flex items-center justify-between mb-1.5">
+                    <label class="block text-xs font-semibold text-gray-700">Pilihan Jawaban &amp; Kunci Jawaban</label>
+                    <span class="text-[11px] text-gray-500">Klik buletan di samping opsi untuk jawaban benar</span>
                 </div>
-                <div>
-                    <label class="block text-xs font-medium mb-1">Pilihan B</label>
-                    <input type="text" name="soals[${idx}][pilihan_b]" required
-                           class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                    <div class="flex items-center bg-white rounded-md border border-gray-300 has-[:checked]:border-emerald-500 has-[:checked]:ring-1 has-[:checked]:ring-emerald-500 has-[:checked]:bg-emerald-50/20 transition-all shadow-sm">
+                        <label class="flex items-center gap-1.5 cursor-pointer px-3 py-2 bg-gray-50 border-r border-gray-200 rounded-l-md hover:bg-emerald-50 transition-colors select-none" title="Pilih Opsi A sebagai jawaban benar">
+                            <input type="radio" name="soals[${idx}][jawaban_benar]" value="a" checked required class="w-4 h-4 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                            <span class="text-xs font-bold text-gray-700">A</span>
+                        </label>
+                        <input type="text" name="soals[${idx}][pilihan_a]" required placeholder="Pilihan A" class="flex-1 rounded-r-md border-0 px-3 py-2 text-sm text-gray-800 focus:ring-0 focus:outline-none">
+                    </div>
+                    <div class="flex items-center bg-white rounded-md border border-gray-300 has-[:checked]:border-emerald-500 has-[:checked]:ring-1 has-[:checked]:ring-emerald-500 has-[:checked]:bg-emerald-50/20 transition-all shadow-sm">
+                        <label class="flex items-center gap-1.5 cursor-pointer px-3 py-2 bg-gray-50 border-r border-gray-200 rounded-l-md hover:bg-emerald-50 transition-colors select-none" title="Pilih Opsi B sebagai jawaban benar">
+                            <input type="radio" name="soals[${idx}][jawaban_benar]" value="b" required class="w-4 h-4 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                            <span class="text-xs font-bold text-gray-700">B</span>
+                        </label>
+                        <input type="text" name="soals[${idx}][pilihan_b]" required placeholder="Pilihan B" class="flex-1 rounded-r-md border-0 px-3 py-2 text-sm text-gray-800 focus:ring-0 focus:outline-none">
+                    </div>
+                    <div class="flex items-center bg-white rounded-md border border-gray-300 has-[:checked]:border-emerald-500 has-[:checked]:ring-1 has-[:checked]:ring-emerald-500 has-[:checked]:bg-emerald-50/20 transition-all shadow-sm">
+                        <label class="flex items-center gap-1.5 cursor-pointer px-3 py-2 bg-gray-50 border-r border-gray-200 rounded-l-md hover:bg-emerald-50 transition-colors select-none" title="Pilih Opsi C sebagai jawaban benar">
+                            <input type="radio" name="soals[${idx}][jawaban_benar]" value="c" required class="w-4 h-4 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                            <span class="text-xs font-bold text-gray-700">C</span>
+                        </label>
+                        <input type="text" name="soals[${idx}][pilihan_c]" required placeholder="Pilihan C" class="flex-1 rounded-r-md border-0 px-3 py-2 text-sm text-gray-800 focus:ring-0 focus:outline-none">
+                    </div>
+                    <div class="flex items-center bg-white rounded-md border border-gray-300 has-[:checked]:border-emerald-500 has-[:checked]:ring-1 has-[:checked]:ring-emerald-500 has-[:checked]:bg-emerald-50/20 transition-all shadow-sm">
+                        <label class="flex items-center gap-1.5 cursor-pointer px-3 py-2 bg-gray-50 border-r border-gray-200 rounded-l-md hover:bg-emerald-50 transition-colors select-none" title="Pilih Opsi D sebagai jawaban benar">
+                            <input type="radio" name="soals[${idx}][jawaban_benar]" value="d" required class="w-4 h-4 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                            <span class="text-xs font-bold text-gray-700">D</span>
+                        </label>
+                        <input type="text" name="soals[${idx}][pilihan_d]" required placeholder="Pilihan D" class="flex-1 rounded-r-md border-0 px-3 py-2 text-sm text-gray-800 focus:ring-0 focus:outline-none">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-medium mb-1">Pilihan C</label>
-                    <input type="text" name="soals[${idx}][pilihan_c]" required
-                           class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium mb-1">Pilihan D</label>
-                    <input type="text" name="soals[${idx}][pilihan_d]" required
-                           class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-xs font-medium mb-1">Jawaban Benar</label>
-                <select name="soals[${idx}][jawaban_benar]" required
-                        class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
-                    <option value="a">A</option>
-                    <option value="b">B</option>
-                    <option value="c">C</option>
-                    <option value="d">D</option>
-                </select>
+                <p class="text-[11px] text-gray-500 mt-2 flex items-center gap-1.5">
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>Buletan yang dicentang menandakan opsi tersebut <strong>jawaban benar</strong> (lainnya otomatis salah).</span>
+                </p>
             </div>
         `;
         container.appendChild(div);

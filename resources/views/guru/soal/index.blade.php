@@ -197,26 +197,60 @@ function tambahSoal() {
             oninput="checkDuplicates()"
             class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
         <div id="dup-hint-${i}" class="hidden text-xs text-red-600 font-medium"></div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <input type="text" name="soals[${i}][pilihan_a]" placeholder="Opsi A" required class="rounded-md border border-gray-300 px-3 py-2 text-sm">
-            <input type="text" name="soals[${i}][pilihan_b]" placeholder="Opsi B" required class="rounded-md border border-gray-300 px-3 py-2 text-sm">
-            <input type="text" name="soals[${i}][pilihan_c]" placeholder="Opsi C" required class="rounded-md border border-gray-300 px-3 py-2 text-sm">
-            <input type="text" name="soals[${i}][pilihan_d]" placeholder="Opsi D" required class="rounded-md border border-gray-300 px-3 py-2 text-sm">
-        </div>
-        <div class="flex items-center gap-4 pt-1">
-            <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">Jawaban Benar</label>
-                <select name="soals[${i}][jawaban_benar]" class="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-bold text-blue-600">
-                    <option value="a">Opsi A</option>
-                    <option value="b">Opsi B</option>
-                    <option value="c">Opsi C</option>
-                    <option value="d">Opsi D</option>
-                </select>
+        <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+                <label class="block text-xs font-semibold text-gray-700">Pilihan Jawaban</label>
+                <span class="text-[11px] text-gray-500">Klik buletan di samping opsi (A/B/C/D) untuk jawaban benar</span>
             </div>
-            <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">Timer per Soal (Detik, Maks. 300)</label>
-                <input type="number" name="soals[${i}][timer_per_soal]" value="60" min="5" max="300" required class="w-36 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-semibold">
-                <p class="text-[10px] text-gray-400 mt-0.5">Maks. 300 detik (5 menit)</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                <!-- Opsi A -->
+                <div class="flex items-center bg-white rounded-md border border-gray-300 has-[:checked]:border-emerald-500 has-[:checked]:ring-1 has-[:checked]:ring-emerald-500 has-[:checked]:bg-emerald-50/20 transition-all shadow-sm">
+                    <label class="flex items-center gap-1.5 cursor-pointer px-3 py-2 bg-gray-50 border-r border-gray-200 rounded-l-md hover:bg-emerald-50 transition-colors select-none" title="Pilih Opsi A sebagai jawaban benar">
+                        <input type="radio" name="soals[${i}][jawaban_benar]" value="a" checked required class="w-4 h-4 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                        <span class="text-xs font-bold text-gray-700">A</span>
+                    </label>
+                    <input type="text" name="soals[${i}][pilihan_a]" placeholder="Tuliskan pilihan jawaban A..." required class="flex-1 rounded-r-md border-0 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:ring-0 focus:outline-none">
+                </div>
+
+                <!-- Opsi B -->
+                <div class="flex items-center bg-white rounded-md border border-gray-300 has-[:checked]:border-emerald-500 has-[:checked]:ring-1 has-[:checked]:ring-emerald-500 has-[:checked]:bg-emerald-50/20 transition-all shadow-sm">
+                    <label class="flex items-center gap-1.5 cursor-pointer px-3 py-2 bg-gray-50 border-r border-gray-200 rounded-l-md hover:bg-emerald-50 transition-colors select-none" title="Pilih Opsi B sebagai jawaban benar">
+                        <input type="radio" name="soals[${i}][jawaban_benar]" value="b" required class="w-4 h-4 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                        <span class="text-xs font-bold text-gray-700">B</span>
+                    </label>
+                    <input type="text" name="soals[${i}][pilihan_b]" placeholder="Tuliskan pilihan jawaban B..." required class="flex-1 rounded-r-md border-0 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:ring-0 focus:outline-none">
+                </div>
+
+                <!-- Opsi C -->
+                <div class="flex items-center bg-white rounded-md border border-gray-300 has-[:checked]:border-emerald-500 has-[:checked]:ring-1 has-[:checked]:ring-emerald-500 has-[:checked]:bg-emerald-50/20 transition-all shadow-sm">
+                    <label class="flex items-center gap-1.5 cursor-pointer px-3 py-2 bg-gray-50 border-r border-gray-200 rounded-l-md hover:bg-emerald-50 transition-colors select-none" title="Pilih Opsi C sebagai jawaban benar">
+                        <input type="radio" name="soals[${i}][jawaban_benar]" value="c" required class="w-4 h-4 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                        <span class="text-xs font-bold text-gray-700">C</span>
+                    </label>
+                    <input type="text" name="soals[${i}][pilihan_c]" placeholder="Tuliskan pilihan jawaban C..." required class="flex-1 rounded-r-md border-0 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:ring-0 focus:outline-none">
+                </div>
+
+                <!-- Opsi D -->
+                <div class="flex items-center bg-white rounded-md border border-gray-300 has-[:checked]:border-emerald-500 has-[:checked]:ring-1 has-[:checked]:ring-emerald-500 has-[:checked]:bg-emerald-50/20 transition-all shadow-sm">
+                    <label class="flex items-center gap-1.5 cursor-pointer px-3 py-2 bg-gray-50 border-r border-gray-200 rounded-l-md hover:bg-emerald-50 transition-colors select-none" title="Pilih Opsi D sebagai jawaban benar">
+                        <input type="radio" name="soals[${i}][jawaban_benar]" value="d" required class="w-4 h-4 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                        <span class="text-xs font-bold text-gray-700">D</span>
+                    </label>
+                    <input type="text" name="soals[${i}][pilihan_d]" placeholder="Tuliskan pilihan jawaban D..." required class="flex-1 rounded-r-md border-0 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:ring-0 focus:outline-none">
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-gray-200">
+            <div class="text-xs text-gray-500 flex items-center gap-1.5">
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Buletan yang dicentang menandakan opsi tersebut <strong>jawaban benar</strong> (lainnya otomatis salah).</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <label class="text-xs font-semibold text-gray-600 whitespace-nowrap">Timer per Soal:</label>
+                <div class="flex items-center gap-1">
+                    <input type="number" name="soals[${i}][timer_per_soal]" value="60" min="5" max="300" required class="w-20 rounded-md border border-gray-300 px-2 py-1 text-sm font-semibold text-center">
+                    <span class="text-xs text-gray-500">Detik</span>
+                </div>
             </div>
         </div>`;
     c.appendChild(div);
