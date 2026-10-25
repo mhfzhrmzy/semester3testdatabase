@@ -80,8 +80,21 @@
             </div>
 
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Judul Materi</label>
-                <input type="text" name="judul_materi" value="{{ old('judul_materi', $materi->judul_materi) }}" class="w-full border rounded px-3 py-2 text-gray-700" required>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Judul Materi <span class="text-red-500">*</span></label>
+                <input type="text"
+                       name="judul_materi"
+                       id="judul_materi"
+                       value="{{ old('judul_materi', $materi->judul_materi) }}"
+                       pattern="[a-zA-Z0-9 ]+"
+                       oninput="this.value = this.value.replace(/[^a-zA-Z0-9 ]/g, '')"
+                       placeholder="Contoh: Pemrograman Web Dasar 1"
+                       class="w-full border rounded px-3 py-2 text-gray-700 {{ $errors->has('judul_materi') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}"
+                       required>
+                @error('judul_materi')
+                    <p class="text-red-600 text-xs mt-1 font-medium">{{ $message }}</p>
+                @else
+                    <p class="text-gray-400 text-xs mt-1">Hanya huruf dan angka yang diperbolehkan.</p>
+                @enderror
             </div>
 
             <div class="mb-4">

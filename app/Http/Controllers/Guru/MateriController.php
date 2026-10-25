@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class MateriController extends Controller
@@ -31,13 +32,22 @@ class MateriController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'judul_materi' => 'required|string|max:255',
+            'judul_materi' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[a-zA-Z0-9 ]+$/',
+                'unique:materi,judul_materi',
+            ],
             'nip' => 'nullable|exists:admin_guru,nip',
             'kelas' => 'required|in:10,11,12',
             'jurusan' => 'required|in:Teknik Alat Berat,Teknik Kendaraan Ringan,Teknik Sepeda Motor,Teknik Pemesinan,Teknik Instalasi Listrik,Teknik Pembangkit Listrik,Teknik Mekatronika,Teknik Audio Video,Teknik Komputer & Jaringan,Teknik Konstruksi & Perumahan,Desain Permodelan & Informasi Bangunan,Desain Komunikasi Visual',
             'isi_materi' => 'nullable|string',
             'upload_file' => 'required|mimes:pdf,pptx,ppt,doc,docx|max:25600',
         ], [
+            'judul_materi.required' => 'Judul materi wajib diisi.',
+            'judul_materi.regex' => 'Judul materi hanya boleh berisi huruf dan angka.',
+            'judul_materi.unique' => 'Judul materi sudah ada, tidak boleh sama dengan judul bahan ajar lainnya.',
             'kelas.required' => 'Kelas wajib dipilih.',
             'jurusan.required' => 'Jurusan wajib dipilih.',
             'upload_file.required' => 'File modul materi wajib diupload.',
@@ -92,13 +102,22 @@ class MateriController extends Controller
     public function update(Request $request, Materi $materi): RedirectResponse
     {
         $request->validate([
-            'judul_materi' => 'required|string|max:255',
+            'judul_materi' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[a-zA-Z0-9 ]+$/',
+                Rule::unique('materi', 'judul_materi')->ignore($materi->id_materi, 'id_materi'),
+            ],
             'nip' => 'nullable|exists:admin_guru,nip',
             'kelas' => 'required|in:10,11,12',
             'jurusan' => 'required|in:Teknik Alat Berat,Teknik Kendaraan Ringan,Teknik Sepeda Motor,Teknik Pemesinan,Teknik Instalasi Listrik,Teknik Pembangkit Listrik,Teknik Mekatronika,Teknik Audio Video,Teknik Komputer & Jaringan,Teknik Konstruksi & Perumahan,Desain Permodelan & Informasi Bangunan,Desain Komunikasi Visual',
             'isi_materi' => 'nullable|string',
             'upload_file' => 'nullable|mimes:pdf,pptx,ppt,doc,docx|max:25600',
         ], [
+            'judul_materi.required' => 'Judul materi wajib diisi.',
+            'judul_materi.regex' => 'Judul materi hanya boleh berisi huruf dan angka.',
+            'judul_materi.unique' => 'Judul materi sudah ada, tidak boleh sama dengan judul bahan ajar lainnya.',
             'kelas.required' => 'Kelas wajib dipilih.',
             'jurusan.required' => 'Jurusan wajib dipilih.',
         ]);

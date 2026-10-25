@@ -84,8 +84,21 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Judul Materi</label>
-                    <input type="text" name="judul_materi" value="{{ old('judul_materi') }}" class="w-full border rounded px-3 py-2 text-gray-700" required>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Judul Materi <span class="text-red-500">*</span></label>
+                    <input type="text"
+                           name="judul_materi"
+                           id="judul_materi"
+                           value="{{ old('judul_materi') }}"
+                           pattern="[a-zA-Z0-9 ]+"
+                           oninput="this.value = this.value.replace(/[^a-zA-Z0-9 ]/g, '')"
+                           placeholder="Contoh: Pemrograman Web Dasar 1"
+                           class="w-full border rounded px-3 py-2 text-gray-700 {{ $errors->has('judul_materi') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}"
+                           required>
+                    @error('judul_materi')
+                        <p class="text-red-600 text-xs mt-1 font-medium">{{ $message }}</p>
+                    @else
+                        <p class="text-gray-400 text-xs mt-1">Hanya huruf dan angka yang diperbolehkan.</p>
+                    @enderror
                 </div>
 
                 <div class="mb-4">
@@ -120,6 +133,7 @@
                     <thead>
                         <tr class="bg-gray-100 border-b">
                             <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Judul</th>
+                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Deskripsi</th>
                             <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Diampu Oleh</th>
                             <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Kelas</th>
                             <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Jurusan</th>
@@ -130,7 +144,16 @@
                     <tbody>
                         @forelse($materis ?? $materi ?? [] as $item)
                             <tr class="border-b hover:bg-gray-50">
-                                <td class="py-3 px-4">{{ $item->judul_materi ?? $item->judul }}</td>
+                                <td class="py-3 px-4 font-semibold text-gray-800">{{ $item->judul_materi ?? $item->judul }}</td>
+                                <td class="py-3 px-4 text-sm text-gray-600 max-w-xs">
+                                    @if(!empty($item->isi_materi))
+                                        <div class="line-clamp-2" title="{{ $item->isi_materi }}">
+                                            {{ $item->isi_materi }}
+                                        </div>
+                                    @else
+                                        <span class="text-gray-400 italic text-xs">Tidak ada deskripsi</span>
+                                    @endif
+                                </td>
                                 <td class="py-3 px-4">{{ $item->adminGuru->nama_lengkap ?? '-' }}</td>
                                 <td class="py-3 px-4">
                                     @if($item->kelas)
@@ -169,7 +192,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4 text-gray-500">Belum ada data materi.</td>
+                                <td colspan="7" class="text-center py-4 text-gray-500">Belum ada data materi.</td>
                             </tr>
                         @endforelse
                     </tbody>
