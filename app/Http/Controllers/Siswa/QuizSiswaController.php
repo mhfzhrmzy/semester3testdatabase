@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Portal;
+namespace App\Http\Controllers\Siswa;
 
 use App\Http\Controllers\Controller;
 use App\Models\Leaderboard;
@@ -8,8 +8,11 @@ use App\Models\Materi;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
 
-class QuizController extends Controller
+class QuizSiswaController extends Controller
 {
+    /**
+     * Menampilkan daftar kuis untuk materi tertentu beserta status pengerjaan siswa.
+     */
     public function index(Materi $materi)
     {
         $materi->load('adminGuru');
@@ -20,16 +23,22 @@ class QuizController extends Controller
             ->whereIn('id_quiz', $quizzes->pluck('id_quiz'))
             ->pluck('total_poin', 'id_quiz');
 
-        return view('portal.quiz.index', compact('materi', 'quizzes', 'attemptedIds'));
+        return view('siswa.quiz.index', compact('materi', 'quizzes', 'attemptedIds'));
     }
 
+    /**
+     * Menampilkan halaman pengerjaan kuis.
+     */
     public function kerjakan(Quiz $quiz)
     {
         $quiz->load('soal', 'materi');
 
-        return view('portal.quiz.kerjakan', compact('quiz'));
+        return view('siswa.quiz.kerjakan', compact('quiz'));
     }
 
+    /**
+     * Memproses dan menyimpan jawaban kuis siswa ke leaderboard.
+     */
     public function submit(Request $request, Quiz $quiz)
     {
         $soals = $quiz->soal;
@@ -49,7 +58,7 @@ class QuizController extends Controller
             ['total_poin' => $totalPoin]
         );
 
-        return view('portal.quiz.hasil', [
+        return view('siswa.quiz.hasil', [
             'quiz' => $quiz,
             'benar' => $benar,
             'total' => $soals->count(),

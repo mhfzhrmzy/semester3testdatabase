@@ -8,13 +8,20 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class AdminLoginController extends Controller
+class GuruLoginController extends Controller
 {
+    /**
+     * Menampilkan halaman login untuk Guru dan Superadmin.
+     */
     public function create(): View
     {
-        return view('auth.admin-login');
+        return view('auth.guru-login');
     }
 
+    /**
+     * Memproses percobaan login Guru atau Superadmin.
+     * Login superadmin diprioritaskan terlebih dahulu.
+     */
     public function store(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
@@ -49,6 +56,9 @@ class AdminLoginController extends Controller
             ->withErrors(['nip' => 'NIP atau password salah.']);
     }
 
+    /**
+     * Melakukan logout untuk semua guard (superadmin & guru).
+     */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('superadmin')->logout();

@@ -1,9 +1,6 @@
 <?php
 
 use App\Http\Middleware\CheckRole;
-use App\Http\Middleware\EnsureGuru;
-use App\Http\Middleware\EnsureSiswa;
-use App\Http\Middleware\EnsureSuperadmin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,10 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // CheckRole adalah satu-satunya middleware guard yang diperlukan.
+        // Gunakan di routes sebagai: middleware('role:guru'), middleware('role:siswa'), middleware('role:superadmin')
         $middleware->alias([
-            'superadmin' => EnsureSuperadmin::class,
-            'guru' => EnsureGuru::class,
-            'siswa' => EnsureSiswa::class,
             'role' => CheckRole::class,
         ]);
 

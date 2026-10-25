@@ -1,31 +1,30 @@
 <?php
 
-use App\Http\Controllers\Admin\QuizController as AdminQuizController;
-use App\Http\Controllers\Admin\SoalController as AdminSoalController;
-use App\Http\Controllers\AdminGuruController;
-use App\Http\Controllers\Auth\AdminLoginController;
-use App\Http\Controllers\Auth\SiswaLoginController;
-use App\Http\Controllers\LeaderboardController;
-use App\Http\Controllers\MateriController;
-use App\Http\Controllers\PenggunaSiswaController;
-use App\Http\Controllers\Portal\MateriController as PortalMateriController;
-use App\Http\Controllers\Portal\QuizController as PortalQuizController;
-use App\Http\Controllers\SertifikatController;
-use App\Http\Controllers\Siswa\ProfilSiswaController;
-use App\Http\Controllers\Siswa\SertifikatSiswaController;
-use App\Http\Controllers\SuperadminController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminProfilController;
+use App\Http\Controllers\Auth\GuruLoginController;
+use App\Http\Controllers\Auth\SiswaLoginController;
+use App\Http\Controllers\Guru\MateriController;
+use App\Http\Controllers\Guru\QuizController as GuruQuizController;
+use App\Http\Controllers\Guru\SertifikatController;
+use App\Http\Controllers\Guru\SoalController as GuruSoalController;
+use App\Http\Controllers\LeaderboardController;
+use App\Http\Controllers\Siswa\MateriSiswaController;
+use App\Http\Controllers\Siswa\ProfilSiswaController;
+use App\Http\Controllers\Siswa\QuizSiswaController;
+use App\Http\Controllers\Siswa\SertifikatSiswaController;
+use App\Http\Controllers\Superadmin\GuruManajemenController;
+use App\Http\Controllers\Superadmin\SiswaManajemenController;
+use App\Http\Controllers\Superadmin\SuperadminController;
+use Illuminate\Support\Facades\Route;
 
+// ─── Halaman Utama ────────────────────────────────────────────────────────────
 Route::get('/', function () {
     if (auth('superadmin')->check()) {
         return redirect()->route('superadmin.index');
     }
-
     if (auth('admin')->check()) {
         return redirect()->route('materi.index');
     }
-
     if (auth('siswa')->check()) {
         return redirect()->route('portal.materi.index');
     }
@@ -33,21 +32,23 @@ Route::get('/', function () {
     return redirect()->route('siswa.login');
 })->name('home');
 
+// ─── Leaderboard Publik ───────────────────────────────────────────────────────
 Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
 
-// Autentikasi Guru / Admin (halaman login sama untuk guru & superadmin)
-Route::get('/login/guru', [AdminLoginController::class, 'create'])->name('admin.login');
-Route::post('/login/guru', [AdminLoginController::class, 'store'])->name('admin.login.attempt');
-Route::post('/logout/guru', [AdminLoginController::class, 'destroy'])->name('admin.logout');
+// ─── Autentikasi Guru & Superadmin ───────────────────────────────────────────
+Route::get('/login/guru', [GuruLoginController::class, 'create'])->name('admin.login');
+Route::post('/login/guru', [GuruLoginController::class, 'store'])->name('admin.login.attempt');
+Route::post('/logout/guru', [GuruLoginController::class, 'destroy'])->name('admin.logout');
 
-// Autentikasi Siswa
+// ─── Autentikasi Siswa ────────────────────────────────────────────────────────
 Route::get('/login/siswa', [SiswaLoginController::class, 'create'])->name('siswa.login');
 Route::post('/login/siswa', [SiswaLoginController::class, 'store'])->name('siswa.login.attempt');
 Route::post('/logout/siswa', [SiswaLoginController::class, 'destroy'])->name('siswa.logout');
 
-// Area Guru
-Route::middleware('guru')->group(function () {
+// ─── Area Guru ────────────────────────────────────────────────────────────────
+Route::middleware('role:guru')->group(function () {
 
+    // Manajemen Materi
     Route::controller(MateriController::class)->group(function () {
         Route::get('/materi', 'index')->name('materi.index');
         Route::post('/materi', 'store')->name('materi.store');
@@ -60,20 +61,22 @@ Route::middleware('guru')->group(function () {
     // Manajemen Sertifikat oleh Guru
     Route::controller(SertifikatController::class)->group(function () {
         Route::get('/sertifikat', 'index')->name('sertifikat.index');
-        Route::get('/sertifikat/siswa', 'siswaJson')->name('sertifikat.siswa-json');
+        Route::get('/sertifikat/siswa', 'getSiswaByFilter')->name('sertifikat.siswa-json');
         Route::post('/sertifikat/create', 'create')->name('sertifikat.create');
         Route::post('/sertifikat', 'store')->name('sertifikat.store');
         Route::delete('/sertifikat/{sertifikat}', 'destroy')->name('sertifikat.destroy');
     });
 
     Route::prefix('admin')->name('admin.')->group(function () {
-        Route::controller(AdminQuizController::class)->group(function () {
+        // Manajemen Quiz
+        Route::controller(GuruQuizController::class)->group(function () {
             Route::get('/quiz', 'index')->name('quiz.index');
             Route::post('/quiz', 'store')->name('quiz.store');
             Route::delete('/quiz/{quiz}', 'destroy')->name('quiz.destroy');
         });
 
-        Route::controller(AdminSoalController::class)->group(function () {
+        // Manajemen Soal
+        Route::controller(GuruSoalController::class)->group(function () {
             Route::get('/quiz/{quiz}/soal', 'index')->name('soal.index');
             Route::post('/quiz/{quiz}/soal', 'store')->name('soal.store');
             Route::post('/quiz/{quiz}/soal/import', 'importCsv')->name('soal.import');
@@ -89,12 +92,17 @@ Route::middleware('guru')->group(function () {
         Route::get('/profil', [AdminProfilController::class, 'show'])->name('profil');
         Route::post('/profil/foto', [AdminProfilController::class, 'updateFoto'])->name('profil.foto');
         Route::delete('/profil/foto', [AdminProfilController::class, 'hapusFoto'])->name('profil.foto.hapus');
-        Route::post('/profil/password', [AdminProfilController::class, 'updatePassword'])->name('profil.password');});
-        });
+        Route::post('/profil/password', [AdminProfilController::class, 'updatePassword'])->name('profil.password');
+    });
+});
 
-        // Area Superadmin (guard terpisah, tabel super_admin)
-        Route::middleware('superadmin')->group(function () {
-            Route::controller(AdminGuruController::class)->group(function () {
+// ─── Area Superadmin ──────────────────────────────────────────────────────────
+Route::middleware('role:superadmin')->group(function () {
+
+    Route::get('/superadmin', [SuperadminController::class, 'index'])->name('superadmin.index');
+
+    // Manajemen Guru
+    Route::controller(GuruManajemenController::class)->group(function () {
         Route::get('/admin', 'index')->name('admin.index');
         Route::post('/admin', 'store')->name('admin.store');
         Route::post('/admin/import', 'importCsv')->name('admin.import');
@@ -102,10 +110,10 @@ Route::middleware('guru')->group(function () {
         Route::get('/admin/{guru}/edit', 'edit')->name('admin.edit');
         Route::put('/admin/{guru}', 'update')->name('admin.update');
         Route::delete('/admin/{guru}', 'destroy')->name('admin.destroy');
-        });
-        
-        
-    Route::controller(PenggunaSiswaController::class)->group(function () {
+    });
+
+    // Manajemen Siswa
+    Route::controller(SiswaManajemenController::class)->group(function () {
         Route::get('/siswa', 'index')->name('siswa.index');
         Route::post('/siswa', 'store')->name('siswa.store');
         Route::post('/siswa/import', 'importCsv')->name('siswa.import');
@@ -114,12 +122,10 @@ Route::middleware('guru')->group(function () {
         Route::put('/siswa/{siswa}', 'update')->name('siswa.update');
         Route::delete('/siswa/{siswa}', 'destroy')->name('siswa.destroy');
     });
-
-    Route::get('/superadmin', [SuperadminController::class, 'index'])->name('superadmin.index');
 });
 
-// Area Siswa
-Route::middleware('siswa')->group(function () {
+// ─── Area Siswa ───────────────────────────────────────────────────────────────
+Route::middleware('role:siswa')->group(function () {
 
     // Profil Siswa
     Route::get('/siswa/profil', [ProfilSiswaController::class, 'index'])->name('siswa.profil');
@@ -129,13 +135,13 @@ Route::middleware('siswa')->group(function () {
 
     // Materi & Quiz Siswa
     Route::prefix('portal')->name('portal.')->group(function () {
-        Route::get('/materi', [PortalMateriController::class, 'index'])->name('materi.index');
-        Route::get('/materi/{materi}', [PortalMateriController::class, 'show'])->name('materi.show');
-        Route::get('/materi/{materi}/file', [PortalMateriController::class, 'serveFile'])->name('materi.file');
+        Route::get('/materi', [MateriSiswaController::class, 'index'])->name('materi.index');
+        Route::get('/materi/{materi}', [MateriSiswaController::class, 'show'])->name('materi.show');
+        Route::get('/materi/{materi}/file', [MateriSiswaController::class, 'serveFile'])->name('materi.file');
 
-        Route::get('/materi/{materi}/quiz', [PortalQuizController::class, 'index'])->name('quiz.index');
-        Route::get('/quiz/{quiz}', [PortalQuizController::class, 'kerjakan'])->name('quiz.kerjakan');
-        Route::post('/quiz/{quiz}', [PortalQuizController::class, 'submit'])->name('quiz.submit');
+        Route::get('/materi/{materi}/quiz', [QuizSiswaController::class, 'index'])->name('quiz.index');
+        Route::get('/quiz/{quiz}', [QuizSiswaController::class, 'kerjakan'])->name('quiz.kerjakan');
+        Route::post('/quiz/{quiz}', [QuizSiswaController::class, 'submit'])->name('quiz.submit');
     });
 
     // Sertifikat Siswa

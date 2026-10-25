@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Superadmin;
 
+use App\Http\Controllers\Controller;
 use App\Models\AdminGuru;
 use App\Models\Materi;
 use App\Models\PenggunaSiswa;
@@ -12,6 +13,9 @@ use Illuminate\Support\Facades\Auth;
 
 class SuperadminController extends Controller
 {
+    /**
+     * Menampilkan dashboard utama superadmin beserta data guru dan siswa.
+     */
     public function index(Request $request)
     {
         $search = trim($request->query('search', ''));
@@ -46,6 +50,15 @@ class SuperadminController extends Controller
         $sertifikatCount = Sertifikat::count();
         $superadmin = Auth::guard('superadmin')->user();
 
-        return view('superadmin.index', compact('gurus', 'siswas', 'materiCount', 'quizCount', 'sertifikatCount', 'menu', 'superadmin', 'search'));
+        return view('superadmin.index', compact(
+            'gurus',
+            'siswas',
+            'materiCount',
+            'quizCount',
+            'sertifikatCount',
+            'menu',
+            'superadmin',
+            'search'
+        ));
     }
 }

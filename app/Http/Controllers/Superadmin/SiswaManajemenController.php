@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Superadmin;
 
+use App\Http\Controllers\Controller;
 use App\Models\PenggunaSiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -9,8 +10,20 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class PenggunaSiswaController extends Controller
+class SiswaManajemenController extends Controller
 {
+    /** Daftar jurusan yang tersedia di SMK. */
+    private const DAFTAR_JURUSAN = [
+        'Teknik Alat Berat', 'Teknik Kendaraan Ringan', 'Teknik Sepeda Motor',
+        'Teknik Pemesinan', 'Teknik Instalasi Listrik', 'Teknik Pembangkit Listrik',
+        'Teknik Mekatronika', 'Teknik Audio Video', 'Teknik Komputer & Jaringan',
+        'Teknik Konstruksi & Perumahan', 'Desain Permodelan & Informasi Bangunan',
+        'Desain Komunikasi Visual',
+    ];
+
+    /**
+     * Menampilkan daftar akun siswa (digunakan dari halaman standalone /siswa).
+     */
     public function index()
     {
         $siswas = PenggunaSiswa::latest()->get();
@@ -18,26 +31,24 @@ class PenggunaSiswaController extends Controller
         return view('siswa.index', compact('siswas'));
     }
 
+    /**
+     * Menampilkan form edit akun siswa.
+     */
     public function edit(PenggunaSiswa $siswa)
     {
         return view('siswa.edit', compact('siswa'));
     }
 
+    /**
+     * Menyimpan akun siswa baru ke database.
+     */
     public function store(Request $request)
     {
-        $jurusanList = [
-            'Teknik Alat Berat', 'Teknik Kendaraan Ringan', 'Teknik Sepeda Motor',
-            'Teknik Pemesinan', 'Teknik Instalasi Listrik', 'Teknik Pembangkit Listrik',
-            'Teknik Mekatronika', 'Teknik Audio Video', 'Teknik Komputer & Jaringan',
-            'Teknik Konstruksi & Perumahan', 'Desain Permodelan & Informasi Bangunan',
-            'Desain Komunikasi Visual',
-        ];
-
         $validated = $request->validate([
             'nisn' => ['required', 'digits:10', 'unique:pengguna_siswa,nisn'],
             'nama_lengkap' => ['required', 'string', 'max:60', 'regex:/^[a-zA-Z\s]+$/'],
             'kelas' => ['required', 'in:10,11,12'],
-            'jurusan' => ['required', 'in:'.implode(',', $jurusanList)],
+            'jurusan' => ['required', 'in:'.implode(',', self::DAFTAR_JURUSAN)],
             'password' => ['required', 'string', 'min:6'],
             'foto_profile' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
         ], [
@@ -63,21 +74,16 @@ class PenggunaSiswaController extends Controller
         return redirect()->route($redirectRoute, $redirectParameters)->with('success', 'Akun siswa berhasil ditambahkan.');
     }
 
+    /**
+     * Memperbarui data akun siswa.
+     */
     public function update(Request $request, PenggunaSiswa $siswa)
     {
-        $jurusanList = [
-            'Teknik Alat Berat', 'Teknik Kendaraan Ringan', 'Teknik Sepeda Motor',
-            'Teknik Pemesinan', 'Teknik Instalasi Listrik', 'Teknik Pembangkit Listrik',
-            'Teknik Mekatronika', 'Teknik Audio Video', 'Teknik Komputer & Jaringan',
-            'Teknik Konstruksi & Perumahan', 'Desain Permodelan & Informasi Bangunan',
-            'Desain Komunikasi Visual',
-        ];
-
         $validated = $request->validate([
             'nisn' => ['required', 'digits:10', Rule::unique('pengguna_siswa', 'nisn')->ignore($siswa->nisn, 'nisn')],
             'nama_lengkap' => ['required', 'string', 'max:60', 'regex:/^[a-zA-Z\s]+$/'],
             'kelas' => ['required', 'in:10,11,12'],
-            'jurusan' => ['required', 'in:'.implode(',', $jurusanList)],
+            'jurusan' => ['required', 'in:'.implode(',', self::DAFTAR_JURUSAN)],
             'password' => ['nullable', 'string', 'min:6'],
             'foto_profile' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
         ], [
@@ -109,6 +115,9 @@ class PenggunaSiswaController extends Controller
         return redirect()->route($redirectRoute, $redirectParameters)->with('success', 'Akun siswa berhasil diperbarui.');
     }
 
+    /**
+     * Menghapus akun siswa beserta foto profilnya.
+     */
     public function destroy(PenggunaSiswa $siswa)
     {
         if ($siswa->foto_profile) {
@@ -123,6 +132,9 @@ class PenggunaSiswaController extends Controller
         return redirect()->route($redirectRoute, $redirectParameters)->with('success', 'Akun siswa berhasil dihapus.');
     }
 
+    /**
+     * Mengimpor data siswa dari file CSV.
+     */
     public function importCsv(Request $request)
     {
         $request->validate([
@@ -139,24 +151,17 @@ class PenggunaSiswaController extends Controller
             return back()->with('error', 'Gagal membaca file CSV.');
         }
 
-        $header = fgetcsv($handle, 2000, ',');
+        $firstRow = fgetcsv($handle, 2000, ',');
 
-        if ($header && count($header) === 1 && str_contains($header[0], ';')) {
+        if ($firstRow && count($firstRow) === 1 && str_contains($firstRow[0], ';')) {
             rewind($handle);
-            $header = fgetcsv($handle, 2000, ';');
+            fgetcsv($handle, 2000, ';');
             $delimiter = ';';
         } else {
             $delimiter = ',';
         }
 
         $importedCount = 0;
-        $jurusanList = [
-            'Teknik Alat Berat', 'Teknik Kendaraan Ringan', 'Teknik Sepeda Motor',
-            'Teknik Pemesinan', 'Teknik Instalasi Listrik', 'Teknik Pembangkit Listrik',
-            'Teknik Mekatronika', 'Teknik Audio Video', 'Teknik Komputer & Jaringan',
-            'Teknik Konstruksi & Perumahan', 'Desain Permodelan & Informasi Bangunan',
-            'Desain Komunikasi Visual',
-        ];
 
         while (($row = fgetcsv($handle, 2000, $delimiter)) !== false) {
             if (empty(array_filter($row))) {
@@ -179,8 +184,7 @@ class PenggunaSiswaController extends Controller
                 if (! in_array($kelas, ['10', '11', '12'], true)) {
                     $kelas = '10';
                 }
-
-                if (! in_array($jurusan, $jurusanList, true)) {
+                if (! in_array($jurusan, self::DAFTAR_JURUSAN, true)) {
                     $jurusan = 'Teknik Komputer & Jaringan';
                 }
 
@@ -188,13 +192,7 @@ class PenggunaSiswaController extends Controller
 
                 PenggunaSiswa::updateOrCreate(
                     ['nisn' => $nisn],
-                    [
-                        'nama_lengkap' => $namaLengkap,
-                        'kelas' => $kelas,
-                        'jurusan' => $jurusan,
-                        'password' => $password,
-                        'poin' => 0,
-                    ]
+                    ['nama_lengkap' => $namaLengkap, 'kelas' => $kelas, 'jurusan' => $jurusan, 'password' => $password, 'poin' => 0]
                 );
 
                 $importedCount++;
@@ -210,6 +208,9 @@ class PenggunaSiswaController extends Controller
             ->with('success', "Berhasil meng-import {$importedCount} data akun siswa dari file CSV.");
     }
 
+    /**
+     * Mengunduh template CSV kosong untuk pengisian data siswa.
+     */
     public function downloadTemplate(): StreamedResponse
     {
         $headers = [

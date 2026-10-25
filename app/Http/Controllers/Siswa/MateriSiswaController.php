@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Portal;
+namespace App\Http\Controllers\Siswa;
 
 use App\Http\Controllers\Controller;
 use App\Models\Leaderboard;
@@ -10,26 +10,30 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class MateriController extends Controller
+class MateriSiswaController extends Controller
 {
-    public function index()
+    /**
+     * Menampilkan daftar materi sesuai kelas dan jurusan siswa yang login.
+     */
+    public function index(): View
     {
         $siswa = auth('siswa')->user();
-
         $materis = Materi::with(['adminGuru', 'quiz'])
             ->where('kelas', $siswa->kelas)
             ->where('jurusan', $siswa->jurusan)
             ->latest()
             ->get();
 
-        return view('portal.materi.index', compact('materis'));
+        return view('siswa.materi.index', compact('materis'));
     }
 
+    /**
+     * Menampilkan detail materi beserta info akses pre-test.
+     */
     public function show(Materi $materi): View|RedirectResponse
     {
         $siswa = auth('siswa')->user();
 
-        // Pastikan materi ini memang untuk kelas & jurusan siswa
         if ($materi->kelas !== $siswa->kelas || $materi->jurusan !== $siswa->jurusan) {
             return redirect()
                 ->route('portal.materi.index')
@@ -38,43 +42,35 @@ class MateriController extends Controller
 
         $materi->load(['adminGuru', 'quiz.soal']);
 
-        // Cek apakah ada pre-test untuk materi ini
         $pretests = $materi->quiz->where('tipe_test', 'pretest');
         $hasPretests = $pretests->isNotEmpty();
-
-        // Cek apakah siswa sudah mengerjakan minimal satu pre-test
         $pretestCompleted = false;
+
         if ($hasPretests) {
             $pretestIds = $pretests->pluck('id_quiz');
             $pretestCompleted = Leaderboard::where('nisn', $siswa->nisn)
                 ->whereIn('id_quiz', $pretestIds)
                 ->exists();
         } else {
-            // Tidak ada pre-test → langsung boleh akses materi
             $pretestCompleted = true;
         }
 
-        return view('portal.materi.show', compact('materi', 'pretestCompleted', 'hasPretests'));
+        return view('siswa.materi.show', compact('materi', 'pretestCompleted', 'hasPretests'));
     }
 
     /**
-     * Melayani file materi untuk siswa.
-     * Siswa hanya bisa mengakses file jika:
-     * 1. Kelas dan jurusannya sesuai dengan materi
-     * 2. Sudah mengerjakan pre-test (atau tidak ada pre-test)
+     * Melayani file materi untuk siswa yang sudah memenuhi syarat akses.
      */
     public function serveFile(Materi $materi): StreamedResponse|RedirectResponse
     {
         $siswa = auth('siswa')->user();
 
-        // Pastikan materi ini memang untuk kelas & jurusan siswa
         if ($materi->kelas !== $siswa->kelas || $materi->jurusan !== $siswa->jurusan) {
             return redirect()
                 ->route('portal.materi.index')
                 ->with('error', 'Kamu tidak memiliki akses ke file materi ini.');
         }
 
-        // Cek keberadaan pre-test dan apakah sudah dikerjakan
         $pretests = $materi->quiz()->where('tipe_test', 'pretest')->get();
         $hasPretests = $pretests->isNotEmpty();
 

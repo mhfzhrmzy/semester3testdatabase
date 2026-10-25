@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Superadmin;
 
+use App\Http\Controllers\Controller;
 use App\Models\AdminGuru;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -9,8 +10,11 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class AdminGuruController extends Controller
+class GuruManajemenController extends Controller
 {
+    /**
+     * Menampilkan daftar akun guru (digunakan dari halaman standalone /admin).
+     */
     public function index()
     {
         $gurus = AdminGuru::latest()->get();
@@ -18,11 +22,17 @@ class AdminGuruController extends Controller
         return view('admin.index', compact('gurus'));
     }
 
+    /**
+     * Menampilkan form edit akun guru.
+     */
     public function edit(AdminGuru $guru)
     {
         return view('admin.edit', ['admin' => $guru]);
     }
 
+    /**
+     * Menyimpan akun guru baru ke database.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -51,6 +61,9 @@ class AdminGuruController extends Controller
         return redirect()->route($redirectRoute, $redirectParameters)->with('success', 'Akun guru berhasil ditambahkan.');
     }
 
+    /**
+     * Memperbarui data akun guru.
+     */
     public function update(Request $request, AdminGuru $guru)
     {
         $validated = $request->validate([
@@ -85,6 +98,9 @@ class AdminGuruController extends Controller
         return redirect()->route($redirectRoute, $redirectParameters)->with('success', 'Akun guru berhasil diperbarui.');
     }
 
+    /**
+     * Menghapus akun guru beserta foto profilnya.
+     */
     public function destroy(AdminGuru $guru)
     {
         if ($guru->foto_profile) {
@@ -99,6 +115,9 @@ class AdminGuruController extends Controller
         return redirect()->route($redirectRoute, $redirectParameters)->with('success', 'Akun guru berhasil dihapus.');
     }
 
+    /**
+     * Mengimpor data guru dari file CSV.
+     */
     public function importCsv(Request $request)
     {
         $request->validate([
@@ -115,11 +134,11 @@ class AdminGuruController extends Controller
             return back()->with('error', 'Gagal membaca file CSV.');
         }
 
-        $header = fgetcsv($handle, 2000, ',');
+        $firstRow = fgetcsv($handle, 2000, ',');
 
-        if ($header && count($header) === 1 && str_contains($header[0], ';')) {
+        if ($firstRow && count($firstRow) === 1 && str_contains($firstRow[0], ';')) {
             rewind($handle);
-            $header = fgetcsv($handle, 2000, ';');
+            fgetcsv($handle, 2000, ';');
             $delimiter = ';';
         } else {
             $delimiter = ',';
@@ -147,10 +166,7 @@ class AdminGuruController extends Controller
 
                 AdminGuru::updateOrCreate(
                     ['nip' => $nip],
-                    [
-                        'nama_lengkap' => $namaLengkap,
-                        'password' => $password,
-                    ]
+                    ['nama_lengkap' => $namaLengkap, 'password' => $password]
                 );
 
                 $importedCount++;
@@ -166,6 +182,9 @@ class AdminGuruController extends Controller
             ->with('success', "Berhasil meng-import {$importedCount} data akun guru dari file CSV.");
     }
 
+    /**
+     * Mengunduh template CSV kosong untuk pengisian data guru.
+     */
     public function downloadTemplate(): StreamedResponse
     {
         $headers = [

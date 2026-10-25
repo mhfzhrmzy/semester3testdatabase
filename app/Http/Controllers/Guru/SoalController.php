@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
 use App\Models\Quiz;
@@ -12,13 +12,19 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SoalController extends Controller
 {
+    /**
+     * Menampilkan daftar soal untuk kuis tertentu.
+     */
     public function index(Quiz $quiz): View
     {
         $soals = $quiz->soal()->latest()->get();
 
-        return view('admin.soal.index', compact('quiz', 'soals'));
+        return view('guru.soal.index', compact('quiz', 'soals'));
     }
 
+    /**
+     * Menyimpan soal-soal baru ke database dengan pengecekan duplikat pertanyaan.
+     */
     public function store(Request $request, Quiz $quiz): RedirectResponse
     {
         $validated = $request->validate([
@@ -35,41 +41,49 @@ class SoalController extends Controller
             'soals.*.timer_per_soal.max' => 'Timer per soal maksimal 300 detik.',
         ]);
 
-        // Kumpulkan pertanyaan yang sudah ada di quiz ini untuk cek duplikat
-        $existingPertanyaans = $quiz->soal()->pluck('pertanyaan')->map(fn ($p) => strtolower(trim($p)))->toArray();
+        // Kumpulkan pertanyaan yang sudah ada untuk cek duplikat
+        $existingPertanyaans = $quiz->soal()
+            ->pluck('pertanyaan')
+            ->map(fn ($p) => strtolower(trim($p)))
+            ->toArray();
 
         $duplicates = [];
         $added = 0;
 
-        foreach ($validated['soals'] as $item) {
-            $normalizedPertanyaan = strtolower(trim($item['pertanyaan']));
+        foreach ($validated['soals'] as $soalData) {
+            $normalizedPertanyaan = strtolower(trim($soalData['pertanyaan']));
 
             if (in_array($normalizedPertanyaan, $existingPertanyaans, true)) {
-                $duplicates[] = $item['pertanyaan'];
+                $duplicates[] = $soalData['pertanyaan'];
 
                 continue;
             }
 
-            $item['jawaban_benar'] = strtolower($item['jawaban_benar']);
-            $item['timer_per_soal'] = $item['timer_per_soal'] ?? 60;
-            $quiz->soal()->create($item);
+            $soalData['jawaban_benar'] = strtolower($soalData['jawaban_benar']);
+            $soalData['timer_per_soal'] = $soalData['timer_per_soal'] ?? 60;
+            $quiz->soal()->create($soalData);
             $existingPertanyaans[] = $normalizedPertanyaan;
             $added++;
         }
 
-        $message = $added > 0 ? "{$added} soal berhasil ditambahkan." : 'Tidak ada soal baru yang ditambahkan.';
+        $message = $added > 0
+            ? "{$added} soal berhasil ditambahkan."
+            : 'Tidak ada soal baru yang ditambahkan.';
 
         if (! empty($duplicates)) {
             $message .= ' '.count($duplicates).' soal dilewati karena pertanyaannya sudah ada: "'.implode('", "', $duplicates).'".';
         }
 
-        return redirect()->route('admin.soal.index', $quiz)
+        return redirect()
+            ->route('admin.soal.index', $quiz)
             ->with($added > 0 ? 'success' : 'error', $message);
     }
 
+    /**
+     * Mengimpor soal dari file CSV. Hanya diizinkan jika quiz belum memiliki soal.
+     */
     public function importCsv(Request $request, Quiz $quiz): RedirectResponse
     {
-        // Import CSV hanya diizinkan jika quiz belum memiliki soal sama sekali
         if ($quiz->soal()->exists()) {
             return back()->with('error', 'Import CSV hanya bisa dilakukan sekali. Quiz ini sudah memiliki soal. Tambahkan soal baru secara manual.');
         }
@@ -88,37 +102,36 @@ class SoalController extends Controller
             return back()->with('error', 'Gagal membaca file CSV.');
         }
 
-        $header = fgetcsv($handle, 2000, ',');
+        $firstRow = fgetcsv($handle, 2000, ',');
 
         // Deteksi pemisah koma atau titik koma
-        if ($header && count($header) === 1 && str_contains($header[0], ';')) {
+        if ($firstRow && count($firstRow) === 1 && str_contains($firstRow[0], ';')) {
             rewind($handle);
-            $header = fgetcsv($handle, 2000, ';');
+            fgetcsv($handle, 2000, ';');
             $delimiter = ';';
         } else {
             $delimiter = ',';
         }
 
         $importedCount = 0;
+
         while (($row = fgetcsv($handle, 2000, $delimiter)) !== false) {
-            // Hindari baris kosong
             if (empty(array_filter($row))) {
                 continue;
             }
 
-            // Kolom: pertanyaan, pilihan_a, pilihan_b, pilihan_c, pilihan_d, jawaban_benar, timer_per_soal
             $pertanyaan = trim($row[0] ?? '');
             $pilihanA = trim($row[1] ?? '');
             $pilihanB = trim($row[2] ?? '');
             $pilihanC = trim($row[3] ?? '');
             $pilihanD = trim($row[4] ?? '');
-            $jawaban = strtolower(trim($row[5] ?? 'a'));
-            $timer = isset($row[6]) && is_numeric($row[6]) ? (int) $row[6] : 60;
-            $timer = max(5, min(300, $timer));
+            $jawabanBenar = strtolower(trim($row[5] ?? 'a'));
+            $timerPerSoal = isset($row[6]) && is_numeric($row[6]) ? (int) $row[6] : 60;
+            $timerPerSoal = max(5, min(300, $timerPerSoal));
 
             if ($pertanyaan !== '' && $pilihanA !== '' && $pilihanB !== '') {
-                if (! in_array($jawaban, ['a', 'b', 'c', 'd'])) {
-                    $jawaban = 'a';
+                if (! in_array($jawabanBenar, ['a', 'b', 'c', 'd'])) {
+                    $jawabanBenar = 'a';
                 }
 
                 $quiz->soal()->create([
@@ -127,8 +140,8 @@ class SoalController extends Controller
                     'pilihan_b' => $pilihanB,
                     'pilihan_c' => $pilihanC,
                     'pilihan_d' => $pilihanD,
-                    'jawaban_benar' => $jawaban,
-                    'timer_per_soal' => $timer,
+                    'jawaban_benar' => $jawabanBenar,
+                    'timer_per_soal' => $timerPerSoal,
                 ]);
 
                 $importedCount++;
@@ -137,10 +150,14 @@ class SoalController extends Controller
 
         fclose($handle);
 
-        return redirect()->route('admin.soal.index', $quiz)
+        return redirect()
+            ->route('admin.soal.index', $quiz)
             ->with('success', "Berhasil meng-import {$importedCount} soal dari file spreadsheet/CSV.");
     }
 
+    /**
+     * Mengunduh template CSV kosong untuk pengisian soal.
+     */
     public function downloadTemplate(): StreamedResponse
     {
         $headers = [
@@ -157,11 +174,17 @@ class SoalController extends Controller
         }, 200, $headers);
     }
 
+    /**
+     * Menampilkan form edit soal.
+     */
     public function edit(Soal $soal): View
     {
-        return view('admin.soal.edit', compact('soal'));
+        return view('guru.soal.edit', compact('soal'));
     }
 
+    /**
+     * Memperbarui data soal yang sudah ada.
+     */
     public function update(Request $request, Soal $soal): RedirectResponse
     {
         $validated = $request->validate([
@@ -184,11 +207,14 @@ class SoalController extends Controller
         return redirect()->route('admin.soal.index', $soal->id_quiz)->with('success', 'Soal berhasil diperbarui.');
     }
 
+    /**
+     * Menghapus soal dari database.
+     */
     public function destroy(Soal $soal): RedirectResponse
     {
-        $quizId = $soal->id_quiz;
+        $idQuiz = $soal->id_quiz;
         $soal->delete();
 
-        return redirect()->route('admin.soal.index', $quizId)->with('success', 'Soal berhasil dihapus.');
+        return redirect()->route('admin.soal.index', $idQuiz)->with('success', 'Soal berhasil dihapus.');
     }
 }

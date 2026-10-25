@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Guru;
 
+use App\Http\Controllers\Controller;
 use App\Models\AdminGuru;
 use App\Models\Materi;
 use Illuminate\Contracts\View\View;
@@ -14,18 +15,18 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 class MateriController extends Controller
 {
     /**
-     * Menampilkan daftar materi di halaman Admin/Guru
+     * Menampilkan daftar materi di halaman Guru.
      */
     public function index(): View
     {
         $materis = Materi::with('adminGuru')->latest()->get();
         $admins = AdminGuru::orderBy('nama_lengkap', 'asc')->get();
 
-        return view('materi.index', compact('materis', 'admins'));
+        return view('guru.materi.index', compact('materis', 'admins'));
     }
 
     /**
-     * Menyimpan materi baru
+     * Menyimpan materi baru ke database.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -64,7 +65,7 @@ class MateriController extends Controller
     }
 
     /**
-     * Menampilkan/mengunduh file materi langsung untuk Admin/Guru
+     * Menampilkan atau mengunduh file materi langsung untuk Guru.
      */
     public function show(Materi $materi): BinaryFileResponse|RedirectResponse
     {
@@ -76,17 +77,17 @@ class MateriController extends Controller
     }
 
     /**
-     * Menampilkan form edit materi
+     * Menampilkan form edit materi.
      */
     public function edit(Materi $materi): View
     {
         $admins = AdminGuru::orderBy('nama_lengkap', 'asc')->get();
 
-        return view('materi.edit', compact('materi', 'admins'));
+        return view('guru.materi.edit', compact('materi', 'admins'));
     }
 
     /**
-     * Memperbarui data materi
+     * Memperbarui data materi yang sudah ada.
      */
     public function update(Request $request, Materi $materi): RedirectResponse
     {
@@ -110,14 +111,10 @@ class MateriController extends Controller
             'isi_materi' => $request->isi_materi ?? '',
         ];
 
-        // Jika mengunggah file baru
         if ($request->hasFile('upload_file')) {
-            // Hapus file lama jika ada
             if ($materi->upload_file && Storage::disk('public')->exists($materi->upload_file)) {
                 Storage::disk('public')->delete($materi->upload_file);
             }
-
-            // Simpan file baru
             $data['upload_file'] = $request->file('upload_file')->store('materi', 'public');
         }
 
@@ -127,7 +124,7 @@ class MateriController extends Controller
     }
 
     /**
-     * Menghapus materi
+     * Menghapus materi beserta file lampirannya.
      */
     public function destroy(Materi $materi): RedirectResponse
     {
