@@ -72,6 +72,7 @@ Route::middleware('role:guru')->group(function () {
         Route::controller(GuruQuizController::class)->group(function () {
             Route::get('/quiz', 'index')->name('quiz.index');
             Route::post('/quiz', 'store')->name('quiz.store');
+            Route::patch('/quiz/{quiz}/jadwal', 'updateJadwal')->name('quiz.jadwal');
             Route::delete('/quiz/{quiz}', 'destroy')->name('quiz.destroy');
         });
 

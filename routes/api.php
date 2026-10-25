@@ -1,10 +1,9 @@
-php
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\LeaderboardController as LeaderboardApiController;
 use App\Http\Controllers\Api\MateriController as MateriApiController;
 use App\Http\Controllers\Api\QuizController as QuizApiController;
-use App\Http\Controllers\Api\LeaderboardController as LeaderboardApiController;
 use App\Http\Controllers\Api\SertifikatController as SertifikatApiController;
 use App\Http\Controllers\Api\TtsController;
 use Illuminate\Support\Facades\Route;

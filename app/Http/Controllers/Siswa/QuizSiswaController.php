@@ -18,6 +18,15 @@ class QuizSiswaController extends Controller
         $materi->load('adminGuru');
         $quizzes = $materi->quiz()->with('soal')->latest()->get();
 
+        // Filter: posttest tanpa jadwal lengkap tidak ditampilkan
+        $quizzes = $quizzes->filter(function (Quiz $quiz) {
+            if ($quiz->tipe_test === 'posttest') {
+                return $quiz->jadwalLengkap();
+            }
+
+            return true;
+        })->values();
+
         $siswa = auth('siswa')->user();
         $attemptedIds = Leaderboard::where('nisn', $siswa->nisn)
             ->whereIn('id_quiz', $quizzes->pluck('id_quiz'))
@@ -32,6 +41,24 @@ class QuizSiswaController extends Controller
     public function kerjakan(Quiz $quiz)
     {
         $quiz->load('soal', 'materi');
+
+        // Penguncian waktu untuk posttest
+        if ($quiz->tipe_test === 'posttest' && $quiz->jadwalLengkap()) {
+            $now = now();
+            $waktuMulai = $quiz->waktuMulai();
+            $waktuSelesai = $quiz->waktuSelesai();
+
+            if ($now->lt($waktuMulai)) {
+                return redirect()->route('portal.quiz.index', $quiz->materi)
+                    ->withErrors(['jadwal' => 'Post-test belum dimulai. Waktu mulai: '.$waktuMulai->translatedFormat('l, d M Y H:i').' WIB']);
+            }
+
+            if ($now->gt($waktuSelesai)) {
+                return redirect()->route('portal.quiz.index', $quiz->materi)
+                    ->withErrors(['jadwal' => 'Waktu pengerjaan post-test sudah habis.']);
+            }
+        }
+
         $soals = $quiz->soal;
 
         if ($quiz->is_shuffle && $soals->isNotEmpty()) {
@@ -95,7 +122,13 @@ class QuizSiswaController extends Controller
             }
         }
 
-        return view('siswa.quiz.kerjakan', compact('quiz'));
+        // Hitung sisa detik untuk posttest (untuk countdown absolut)
+        $sisaDetik = null;
+        if ($quiz->tipe_test === 'posttest' && $quiz->jadwalLengkap()) {
+            $sisaDetik = max(0, (int) now()->diffInSeconds($quiz->waktuSelesai(), false));
+        }
+
+        return view('siswa.quiz.kerjakan', compact('quiz', 'sisaDetik'));
     }
 
     /**
@@ -103,6 +136,24 @@ class QuizSiswaController extends Controller
      */
     public function submit(Request $request, Quiz $quiz)
     {
+        // Penguncian waktu untuk posttest
+        if ($quiz->tipe_test === 'posttest' && $quiz->jadwalLengkap()) {
+            $now = now();
+            $waktuMulai = $quiz->waktuMulai();
+            $waktuSelesai = $quiz->waktuSelesai();
+
+            if ($now->lt($waktuMulai)) {
+                return redirect()->route('portal.quiz.index', $quiz->materi)
+                    ->withErrors(['jadwal' => 'Post-test belum dimulai.']);
+            }
+
+            $batasGrace = $waktuSelesai->copy()->addSeconds(Quiz::GRACE_PERIOD_DETIK);
+            if ($now->gt($batasGrace)) {
+                return redirect()->route('portal.quiz.index', $quiz->materi)
+                    ->withErrors(['jadwal' => 'Waktu pengerjaan sudah habis. Jawaban tidak tersimpan.']);
+            }
+        }
+
         $soals = $quiz->soal;
         $jawaban = $request->input('jawaban', []);
 

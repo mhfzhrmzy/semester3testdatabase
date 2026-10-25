@@ -19,6 +19,15 @@ class QuizController extends Controller
 
         $quizzes = $materi->quiz()->with('soal')->latest()->get();
 
+        // Filter: posttest tanpa jadwal lengkap tidak ditampilkan
+        $quizzes = $quizzes->filter(function (Quiz $quiz) {
+            if ($quiz->tipe_test === 'posttest') {
+                return $quiz->jadwalLengkap();
+            }
+
+            return true;
+        })->values();
+
         $attemptedIds = Leaderboard::where('nisn', $siswa->nisn)
             ->whereIn('id_quiz', $quizzes->pluck('id_quiz'))
             ->get()
@@ -33,7 +42,7 @@ class QuizController extends Controller
         $data = $quizzes->map(function (Quiz $quiz) use ($attemptedIds) {
             $status = $attemptedIds->get($quiz->id_quiz, ['attempted' => false, 'score' => null]);
 
-            return [
+            $item = [
                 'id_quiz' => $quiz->id_quiz,
                 'tipe_test' => $quiz->tipe_test,
                 'poin' => $quiz->poin,
@@ -43,6 +52,16 @@ class QuizController extends Controller
                 'attempted' => $status['attempted'],
                 'score' => $status['score'],
             ];
+
+            // Tambahkan info jadwal untuk posttest
+            if ($quiz->tipe_test === 'posttest' && $quiz->jadwalLengkap()) {
+                $item['jam_mulai'] = $quiz->jam_mulai;
+                $item['waktu_mulai'] = $quiz->waktuMulai()->toDateTimeString();
+                $item['waktu_selesai'] = $quiz->waktuSelesai()->toDateTimeString();
+                $item['status_jadwal'] = $quiz->statusJadwal();
+            }
+
+            return $item;
         });
 
         return response()->json([
@@ -66,6 +85,25 @@ class QuizController extends Controller
             return response()->json([
                 'message' => 'Kamu tidak memiliki akses ke quiz ini.',
             ], 403);
+        }
+
+        // Penguncian waktu untuk posttest
+        if ($quiz->tipe_test === 'posttest' && $quiz->jadwalLengkap()) {
+            $now = now();
+            $waktuMulai = $quiz->waktuMulai();
+            $waktuSelesai = $quiz->waktuSelesai();
+
+            if ($now->lt($waktuMulai)) {
+                return response()->json([
+                    'message' => 'Post-test belum dimulai. Waktu mulai: '.$waktuMulai->translatedFormat('l, d M Y H:i').' WIB',
+                ], 403);
+            }
+
+            if ($now->gt($waktuSelesai)) {
+                return response()->json([
+                    'message' => 'Waktu pengerjaan post-test sudah habis.',
+                ], 403);
+            }
         }
 
         $soals = $quiz->soal;
@@ -131,22 +169,51 @@ class QuizController extends Controller
             ];
         });
 
+        $responseData = [
+            'id_quiz' => $quiz->id_quiz,
+            'tipe_test' => $quiz->tipe_test,
+            'timer' => $quiz->timer,
+            'poin' => $quiz->poin,
+            'judul_materi' => $quiz->materi->judul_materi,
+            'soals' => $soalArray,
+        ];
+
+        // Sisa detik untuk countdown absolut posttest
+        if ($quiz->tipe_test === 'posttest' && $quiz->jadwalLengkap()) {
+            $responseData['sisa_detik'] = max(0, (int) now()->diffInSeconds($quiz->waktuSelesai(), false));
+            $responseData['waktu_selesai'] = $quiz->waktuSelesai()->toDateTimeString();
+        }
+
         return response()->json([
             'message' => 'Detail quiz berhasil diambil.',
-            'data' => [
-                'id_quiz' => $quiz->id_quiz,
-                'tipe_test' => $quiz->tipe_test,
-                'timer' => $quiz->timer,
-                'poin' => $quiz->poin,
-                'judul_materi' => $quiz->materi->judul_materi,
-                'soals' => $soalArray,
-            ],
+            'data' => $responseData,
         ]);
     }
 
     public function submit(Request $request, Quiz $quiz): JsonResponse
     {
         $siswa = $request->user();
+
+        // Penguncian waktu untuk posttest
+        if ($quiz->tipe_test === 'posttest' && $quiz->jadwalLengkap()) {
+            $now = now();
+            $waktuMulai = $quiz->waktuMulai();
+            $waktuSelesai = $quiz->waktuSelesai();
+
+            if ($now->lt($waktuMulai)) {
+                return response()->json([
+                    'message' => 'Post-test belum dimulai.',
+                ], 403);
+            }
+
+            $batasGrace = $waktuSelesai->copy()->addSeconds(Quiz::GRACE_PERIOD_DETIK);
+            if ($now->gt($batasGrace)) {
+                return response()->json([
+                    'message' => 'Waktu pengerjaan sudah habis. Jawaban tidak tersimpan.',
+                ], 403);
+            }
+        }
+
         $soals = $quiz->soal;
         $jawaban = $request->input('jawaban', []);
 

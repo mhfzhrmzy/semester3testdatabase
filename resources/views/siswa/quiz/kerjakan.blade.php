@@ -10,7 +10,15 @@
                 <span class="px-3 py-1 rounded-full text-xs font-bold uppercase {{ $quiz->tipe_test === 'pretest' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800' }}">
                     {{ ucfirst($quiz->tipe_test) }}
                 </span>
+                @if($quiz->tipe_test === 'posttest' && $quiz->jadwalLengkap())
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800 ml-1">Sedang berlangsung</span>
+                @endif
                 <h1 class="text-xl font-bold text-gray-800 mt-2">{{ $quiz->materi->judul_materi ?? 'Quiz' }}</h1>
+                @if($quiz->tipe_test === 'posttest' && $quiz->jadwalLengkap())
+                    <p class="text-xs text-gray-500 mt-1">
+                        📅 {{ $quiz->waktuMulai()->format('H:i') }} – {{ $quiz->waktuSelesai()->format('H:i') }} WIB
+                    </p>
+                @endif
             </div>
             <div class="text-right shrink-0">
                 <div class="text-xs text-gray-400 mb-0.5">Total Bobot Nilai</div>
@@ -28,14 +36,29 @@
                 <span class="text-gray-400">/ {{ $quiz->soal->count() }}</span>
             </div>
 
-            {{-- Timer Badge --}}
-            <div id="timer-box"
-                 class="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-full font-mono text-sm font-bold shadow-sm transition-colors duration-500">
-                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                </svg>
-                <span id="timer-countdown">60</span>
-                <span class="text-xs font-semibold opacity-70">detik</span>
+            <div class="flex items-center gap-3">
+                {{-- Timer per soal --}}
+                <div id="timer-box"
+                     class="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-full font-mono text-sm font-bold shadow-sm transition-colors duration-500">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    <span id="timer-countdown">60</span>
+                    <span class="text-xs font-semibold opacity-70">detik</span>
+                </div>
+
+                {{-- Timer absolut posttest --}}
+                @if(isset($sisaDetik) && $sisaDetik !== null)
+                    <div id="absolute-timer-box"
+                         class="flex items-center gap-2 bg-indigo-50 border border-indigo-200 text-indigo-700 px-4 py-2 rounded-full font-mono text-sm font-bold shadow-sm"
+                         data-sisa-detik="{{ $sisaDetik }}">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <span id="absolute-countdown">{{ gmdate('H:i:s', $sisaDetik) }}</span>
+                        <span class="text-xs font-semibold opacity-70">sisa</span>
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -44,6 +67,15 @@
             <div id="quiz-progress-bar"
                  class="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full transition-all duration-500 ease-out"
                  style="width: 0%;"></div>
+        </div>
+    </div>
+
+    {{-- Overlay waktu habis --}}
+    <div id="waktu-habis-overlay" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center">
+        <div class="bg-white rounded-2xl shadow-xl p-8 text-center max-w-sm mx-4">
+            <div class="text-5xl mb-3">⏳</div>
+            <h3 class="text-lg font-bold text-gray-800 mb-2">Waktu habis</h3>
+            <p class="text-sm text-gray-500">Jawaban sedang dikirim...</p>
         </div>
     </div>
 
@@ -114,7 +146,7 @@
                     <div class="flex justify-between items-center pt-4 border-t border-gray-100">
                         @if ($index > 0)
                             <button type="button" onclick="prevSoal()"
-                                    class="flex items-center gap-1.5 border border-gray-300 hover:bg-gray-100 text-gray-600 text-sm font-semibold px-4 py-2 rounded-lg transition">
+                                    class="nav-btn flex items-center gap-1.5 border border-gray-300 hover:bg-gray-100 text-gray-600 text-sm font-semibold px-4 py-2 rounded-lg transition">
                                 ← Sebelumnya
                             </button>
                         @else
@@ -123,12 +155,12 @@
 
                         @if ($index < $quiz->soal->count() - 1)
                             <button type="button" onclick="nextSoal()"
-                                    class="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2 rounded-lg shadow transition">
+                                    class="nav-btn flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2 rounded-lg shadow transition">
                                 Selanjutnya →
                             </button>
                         @else
                             <button type="submit"
-                                    class="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-bold px-6 py-2.5 rounded-lg shadow-md transition">
+                                    class="nav-btn flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-bold px-6 py-2.5 rounded-lg shadow-md transition">
                                 🚀 Kumpulkan Jawaban
                             </button>
                         @endif
@@ -145,10 +177,20 @@ const slides = document.querySelectorAll('.soal-slide');
 const totalSoal = slides.length;
 let timerInterval = null;
 let currentSeconds = 60;
+let absoluteTimerInterval = null;
+let absoluteSecondsLeft = null;
+let quizLocked = false;
+
+// Inisialisasi timer absolut dari data-sisa-detik (server-derived)
+const absoluteTimerBox = document.getElementById('absolute-timer-box');
+if (absoluteTimerBox) {
+    absoluteSecondsLeft = parseInt(absoluteTimerBox.getAttribute('data-sisa-detik')) || 0;
+}
 
 // Style answer labels with selected state
 document.querySelectorAll('.answer-label').forEach(label => {
     label.addEventListener('click', () => {
+        if (quizLocked) return;
         const name = label.querySelector('input').name;
         // Reset all in this question
         document.querySelectorAll(`input[name="${name}"]`).forEach(inp => {
@@ -168,15 +210,47 @@ document.querySelectorAll('.answer-label').forEach(label => {
     });
 });
 
+function lockQuizAndSubmit() {
+    if (quizLocked) return;
+    quizLocked = true;
+
+    // Kunci semua input
+    document.querySelectorAll('.answer-radio').forEach(r => r.disabled = true);
+    document.querySelectorAll('.nav-btn').forEach(b => b.disabled = true);
+
+    // Tampilkan overlay
+    const overlay = document.getElementById('waktu-habis-overlay');
+    if (overlay) {
+        overlay.classList.remove('hidden');
+        overlay.classList.add('flex');
+    }
+
+    clearInterval(timerInterval);
+    clearInterval(absoluteTimerInterval);
+
+    // Submit form
+    setTimeout(() => {
+        document.getElementById('quiz-form').submit();
+    }, 500);
+}
+
 function startTimer() {
     clearInterval(timerInterval);
     if (totalSoal === 0) { return; }
 
     const currentSlide = slides[currentIdx];
-    currentSeconds = parseInt(currentSlide.getAttribute('data-timer')) || 60;
+    let perSoalTimer = parseInt(currentSlide.getAttribute('data-timer')) || 60;
+
+    // Untuk posttest, timer per soal tidak boleh melebihi sisa waktu absolut
+    if (absoluteSecondsLeft !== null && perSoalTimer > absoluteSecondsLeft) {
+        perSoalTimer = Math.max(0, absoluteSecondsLeft);
+    }
+
+    currentSeconds = perSoalTimer;
     updateTimerDisplay();
 
     timerInterval = setInterval(() => {
+        if (quizLocked) { clearInterval(timerInterval); return; }
         currentSeconds--;
         updateTimerDisplay();
 
@@ -187,6 +261,24 @@ function startTimer() {
             } else {
                 document.getElementById('quiz-form').submit();
             }
+        }
+    }, 1000);
+}
+
+// Timer absolut posttest
+function startAbsoluteTimer() {
+    if (absoluteSecondsLeft === null) return;
+
+    updateAbsoluteDisplay();
+
+    absoluteTimerInterval = setInterval(() => {
+        if (quizLocked) { clearInterval(absoluteTimerInterval); return; }
+        absoluteSecondsLeft--;
+        updateAbsoluteDisplay();
+
+        if (absoluteSecondsLeft <= 0) {
+            clearInterval(absoluteTimerInterval);
+            lockQuizAndSubmit();
         }
     }, 1000);
 }
@@ -210,6 +302,29 @@ function updateTimerDisplay() {
     }
 }
 
+function updateAbsoluteDisplay() {
+    const el = document.getElementById('absolute-countdown');
+    const box = document.getElementById('absolute-timer-box');
+    if (!el || absoluteSecondsLeft === null) return;
+
+    const s = Math.max(0, absoluteSecondsLeft);
+    const hh = String(Math.floor(s / 3600)).padStart(2, '0');
+    const mm = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+    const ss = String(s % 60).padStart(2, '0');
+    el.innerText = hh + ':' + mm + ':' + ss;
+
+    box.classList.remove('bg-indigo-50', 'border-indigo-200', 'text-indigo-700',
+                         'bg-red-50', 'border-red-200', 'text-red-700',
+                         'bg-amber-50', 'border-amber-200', 'text-amber-700');
+    if (s <= 60) {
+        box.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
+    } else if (s <= 300) {
+        box.classList.add('bg-amber-50', 'border-amber-200', 'text-amber-700');
+    } else {
+        box.classList.add('bg-indigo-50', 'border-indigo-200', 'text-indigo-700');
+    }
+}
+
 function showSlide(index) {
     slides.forEach((s, idx) => {
         s.classList.toggle('hidden', idx !== index);
@@ -222,15 +337,18 @@ function showSlide(index) {
 }
 
 function nextSoal() {
+    if (quizLocked) return;
     if (currentIdx < totalSoal - 1) { showSlide(currentIdx + 1); }
 }
 
 function prevSoal() {
+    if (quizLocked) return;
     if (currentIdx > 0) { showSlide(currentIdx - 1); }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     if (totalSoal > 0) { showSlide(0); }
+    startAbsoluteTimer();
 });
 </script>
 @endsection

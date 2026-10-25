@@ -31,6 +31,14 @@
         </div>
     </div>
 
+    @if(session('errors'))
+        <div class="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-6">
+            @foreach($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+        </div>
+    @endif
+
     @if ($quizzes->isEmpty())
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-12 text-center">
             <div class="text-5xl mb-3">📭</div>
@@ -131,12 +139,20 @@
                         @php
                             $attempted = $attemptedIds->has($quiz->id_quiz);
                             $poin      = $attemptedIds->get($quiz->id_quiz);
+                            $statusJadwal = $quiz->statusJadwal();
                         @endphp
                         <div class="group bg-white rounded-xl border {{ $attempted ? 'border-green-300' : 'border-gray-200' }} shadow-sm hover:shadow-md transition-all duration-200 p-5">
                             <div class="flex items-start justify-between gap-4">
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2 mb-2 flex-wrap">
                                         <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800">Post-Test</span>
+                                        @if($statusJadwal === 'terjadwal')
+                                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">Belum Dimulai</span>
+                                        @elseif($statusJadwal === 'berlangsung')
+                                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800">Sedang berlangsung</span>
+                                        @elseif($statusJadwal === 'selesai')
+                                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600">Selesai</span>
+                                        @endif
                                         @if ($attempted)
                                             <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">✔ Sudah Dikerjakan</span>
                                         @else
@@ -144,14 +160,20 @@
                                         @endif
                                     </div>
 
-                                    <h3 class="text-sm font-semibold text-gray-800 mb-3">
-                                        Quiz Tanggal {{ \Carbon\Carbon::parse($quiz->tanggal)->format('d M Y') }}
+                                    <h3 class="text-sm font-semibold text-gray-800 mb-1">
+                                        Quiz {{ $quiz->materi->judul_materi ?? '' }}
                                     </h3>
+
+                                    @if($quiz->jadwalLengkap())
+                                        <p class="text-xs text-gray-500 mb-3">
+                                            📅 Jadwal: {{ $quiz->waktuMulai()->translatedFormat('l, d M Y') }} · {{ $quiz->waktuMulai()->format('H:i') }} – {{ $quiz->waktuSelesai()->format('H:i') }} WIB
+                                        </p>
+                                    @endif
 
                                     <div class="flex flex-wrap gap-4 text-xs text-gray-500">
                                         <span>📝 {{ $quiz->soal->count() }} Soal</span>
                                         <span>⭐ 100 Poin Total</span>
-                                        <span>⏱ Timer per soal aktif</span>
+                                        <span>⏱ {{ $quiz->timer }} menit</span>
                                         @if($quiz->soal->count() > 0)
                                             <span>🎯 ±{{ round(100 / $quiz->soal->count(), 2) }} Poin/Soal</span>
                                         @endif
@@ -167,11 +189,25 @@
                                 <div class="shrink-0">
                                     @if ($quiz->soal->isEmpty())
                                         <span class="text-xs text-gray-400 italic">Soal belum tersedia</span>
-                                    @else
+                                    @elseif($statusJadwal === 'terjadwal')
+                                        <span class="inline-flex items-center gap-1.5 bg-gray-200 text-gray-500 text-sm font-semibold px-4 py-2 rounded-lg cursor-not-allowed">
+                                            🔒 Belum dapat dikerjakan
+                                        </span>
+                                    @elseif($statusJadwal === 'berlangsung')
                                         <a href="{{ route('portal.quiz.kerjakan', $quiz) }}"
-                                           class="inline-flex items-center gap-1.5 {{ $attempted ? 'bg-amber-500 hover:bg-amber-600' : 'bg-green-600 hover:bg-green-700' }} text-white text-sm font-semibold px-4 py-2 rounded-lg shadow transition-all duration-150">
-                                            {{ $attempted ? '🔄 Kerjakan Ulang' : '▶ Mulai Quiz' }}
+                                           class="inline-flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow transition-all duration-150">
+                                            ▶ Mulai Post-Test
                                         </a>
+                                    @elseif($statusJadwal === 'selesai')
+                                        @if($attempted)
+                                            <span class="inline-flex items-center gap-1.5 bg-gray-200 text-gray-600 text-sm font-semibold px-4 py-2 rounded-lg">
+                                                ✔ Sudah Dikerjakan
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1.5 bg-gray-200 text-gray-500 text-sm font-semibold px-4 py-2 rounded-lg cursor-not-allowed">
+                                                ⏰ Waktu habis
+                                            </span>
+                                        @endif
                                     @endif
                                 </div>
                             </div>
