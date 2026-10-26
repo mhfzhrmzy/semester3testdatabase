@@ -72,7 +72,6 @@ class JadwalPostTestTest extends TestCase
                 'pilihan_c' => 'C',
                 'pilihan_d' => 'D',
                 'jawaban_benar' => 'a',
-                'timer_per_soal' => 60,
             ]);
         }
     }

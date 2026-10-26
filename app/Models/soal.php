@@ -18,7 +18,6 @@ class Soal extends Model
         'pilihan_c',
         'pilihan_d',
         'jawaban_benar',
-        'timer_per_soal',
     ];
 
     public function quiz()

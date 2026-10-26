@@ -93,9 +93,9 @@ class QuizLeaderboardTest extends TestCase
             'tanggal' => now()->toDateString(),
         ]);
 
-        $csvContent = "pertanyaan,pilihan_a,pilihan_b,pilihan_c,pilihan_d,jawaban_benar,timer_per_soal\n".
-                      "Berapa 1+1?,1,2,3,4,b,30\n".
-                      "Apa warna daun?,Hijau,Biru,Merah,Kuning,a,45\n";
+        $csvContent = "pertanyaan,pilihan_a,pilihan_b,pilihan_c,pilihan_d,jawaban_benar\n".
+                      "Berapa 1+1?,1,2,3,4,b\n".
+                      "Apa warna daun?,Hijau,Biru,Merah,Kuning,a\n";
 
         $file = UploadedFile::fake()->createWithContent('soal.csv', $csvContent);
 
@@ -107,7 +107,6 @@ class QuizLeaderboardTest extends TestCase
             'id_quiz' => $quiz->id_quiz,
             'pertanyaan' => 'Berapa 1+1?',
             'jawaban_benar' => 'b',
-            'timer_per_soal' => 30,
         ]);
 
         $response->assertRedirect(route('admin.soal.index', $quiz));

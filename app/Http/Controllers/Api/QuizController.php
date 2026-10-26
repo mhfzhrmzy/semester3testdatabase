@@ -165,7 +165,6 @@ class QuizController extends Controller
                     'c' => $soal->pilihan_c,
                     'd' => $soal->pilihan_d,
                 ],
-                'timer_per_soal' => $soal->timer_per_soal,
             ];
         });
 

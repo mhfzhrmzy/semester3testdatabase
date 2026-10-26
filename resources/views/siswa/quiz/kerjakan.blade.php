@@ -37,16 +37,6 @@
             </div>
 
             <div class="flex items-center gap-3">
-                {{-- Timer per soal --}}
-                <div id="timer-box"
-                     class="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-full font-mono text-sm font-bold shadow-sm transition-colors duration-500">
-                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                    </svg>
-                    <span id="timer-countdown">60</span>
-                    <span class="text-xs font-semibold opacity-70">detik</span>
-                </div>
-
                 {{-- Timer absolut posttest --}}
                 @if(isset($sisaDetik) && $sisaDetik !== null)
                     <div id="absolute-timer-box"
@@ -93,8 +83,7 @@
 
             @foreach ($quiz->soal as $index => $soal)
                 <div class="soal-slide bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-4 {{ $index > 0 ? 'hidden' : '' }}"
-                     data-index="{{ $index }}"
-                     data-timer="{{ $soal->timer_per_soal ?? 60 }}">
+                     data-index="{{ $index }}">
 
                     {{-- Question number + text --}}
                     <div class="mb-5">
@@ -175,8 +164,6 @@
 let currentIdx = 0;
 const slides = document.querySelectorAll('.soal-slide');
 const totalSoal = slides.length;
-let timerInterval = null;
-let currentSeconds = 60;
 let absoluteTimerInterval = null;
 let absoluteSecondsLeft = null;
 let quizLocked = false;
@@ -225,7 +212,6 @@ function lockQuizAndSubmit() {
         overlay.classList.add('flex');
     }
 
-    clearInterval(timerInterval);
     clearInterval(absoluteTimerInterval);
 
     // Submit form
@@ -234,38 +220,7 @@ function lockQuizAndSubmit() {
     }, 500);
 }
 
-function startTimer() {
-    clearInterval(timerInterval);
-    if (totalSoal === 0) { return; }
-
-    const currentSlide = slides[currentIdx];
-    let perSoalTimer = parseInt(currentSlide.getAttribute('data-timer')) || 60;
-
-    // Untuk posttest, timer per soal tidak boleh melebihi sisa waktu absolut
-    if (absoluteSecondsLeft !== null && perSoalTimer > absoluteSecondsLeft) {
-        perSoalTimer = Math.max(0, absoluteSecondsLeft);
-    }
-
-    currentSeconds = perSoalTimer;
-    updateTimerDisplay();
-
-    timerInterval = setInterval(() => {
-        if (quizLocked) { clearInterval(timerInterval); return; }
-        currentSeconds--;
-        updateTimerDisplay();
-
-        if (currentSeconds <= 0) {
-            clearInterval(timerInterval);
-            if (currentIdx < totalSoal - 1) {
-                nextSoal();
-            } else {
-                document.getElementById('quiz-form').submit();
-            }
-        }
-    }, 1000);
-}
-
-// Timer absolut posttest
+// Timer absolut posttest — hitung mundur dari waktu_selesai jadwal
 function startAbsoluteTimer() {
     if (absoluteSecondsLeft === null) return;
 
@@ -281,25 +236,6 @@ function startAbsoluteTimer() {
             lockQuizAndSubmit();
         }
     }, 1000);
-}
-
-function updateTimerDisplay() {
-    const el = document.getElementById('timer-countdown');
-    const box = document.getElementById('timer-box');
-    if (!el) { return; }
-    el.innerText = currentSeconds;
-
-    // Color shift as time runs low
-    box.classList.remove('bg-red-50', 'border-red-200', 'text-red-700',
-                         'bg-amber-50', 'border-amber-200', 'text-amber-700',
-                         'bg-green-50', 'border-green-200', 'text-green-700');
-    if (currentSeconds <= 10) {
-        box.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
-    } else if (currentSeconds <= 20) {
-        box.classList.add('bg-amber-50', 'border-amber-200', 'text-amber-700');
-    } else {
-        box.classList.add('bg-green-50', 'border-green-200', 'text-green-700');
-    }
 }
 
 function updateAbsoluteDisplay() {
@@ -333,7 +269,6 @@ function showSlide(index) {
     const pct = ((index + 1) / totalSoal) * 100;
     document.getElementById('quiz-progress-bar').style.width = pct + '%';
     currentIdx = index;
-    startTimer();
 }
 
 function nextSoal() {

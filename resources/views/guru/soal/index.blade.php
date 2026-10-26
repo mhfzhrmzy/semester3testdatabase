@@ -131,7 +131,6 @@
                 <th class="px-3 py-2">Pertanyaan</th>
                 <th class="px-3 py-2">Pilihan Jawaban</th>
                 <th class="px-3 py-2">Kunci</th>
-                <th class="px-3 py-2">Timer per Soal</th>
                 <th class="px-3 py-2 text-right">Aksi</th>
             </tr>
         </thead>
@@ -147,7 +146,6 @@
                         <div><strong class="{{ $soal->jawaban_benar == 'd' ? 'text-green-600' : '' }}">D:</strong> {{ $soal->pilihan_d }}</div>
                     </td>
                     <td class="px-3 py-2 uppercase font-bold text-blue-600">{{ $soal->jawaban_benar }}</td>
-                    <td class="px-3 py-2 font-semibold text-amber-600">{{ $soal->timer_per_soal }} Detik</td>
                     <td class="px-3 py-2 text-right">
                         <a href="{{ route('admin.soal.edit', $soal) }}" class="text-blue-600 hover:underline mr-3 font-semibold">Edit</a>
                         <form action="{{ route('admin.soal.destroy', $soal) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus soal ini?')">
@@ -157,7 +155,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="6" class="px-3 py-6 text-center text-gray-400">Belum ada soal untuk quiz ini. Silakan buat secara manual atau import CSV.</td></tr>
+                <tr><td colspan="5" class="px-3 py-6 text-center text-gray-400">Belum ada soal untuk quiz ini. Silakan buat secara manual atau import CSV.</td></tr>
             @endforelse
         </tbody>
     </table>
@@ -275,13 +273,6 @@ function tambahSoal() {
             <div class="text-xs text-gray-500 flex items-center gap-1.5">
                 <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
                 <span>Buletan yang dicentang menandakan opsi tersebut <strong>jawaban benar</strong> (lainnya otomatis salah).</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <label class="text-xs font-semibold text-gray-600 whitespace-nowrap">Timer per Soal:</label>
-                <div class="flex items-center gap-1">
-                    <input type="number" name="soals[${i}][timer_per_soal]" value="60" min="5" max="300" required class="w-20 rounded-md border border-gray-300 px-2 py-1 text-sm font-semibold text-center">
-                    <span class="text-xs text-gray-500">Detik</span>
-                </div>
             </div>
         </div>`;
     c.appendChild(div);

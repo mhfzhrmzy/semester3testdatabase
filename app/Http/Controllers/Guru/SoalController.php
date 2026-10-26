@@ -35,10 +35,6 @@ class SoalController extends Controller
             'soals.*.pilihan_c' => ['required', 'string', 'max:500'],
             'soals.*.pilihan_d' => ['required', 'string', 'max:500'],
             'soals.*.jawaban_benar' => ['required', 'in:a,b,c,d,A,B,C,D'],
-            'soals.*.timer_per_soal' => ['nullable', 'integer', 'min:5', 'max:300'],
-        ], [
-            'soals.*.timer_per_soal.min' => 'Timer per soal minimal 5 detik.',
-            'soals.*.timer_per_soal.max' => 'Timer per soal maksimal 300 detik.',
         ]);
 
         // Kumpulkan pertanyaan yang sudah ada untuk cek duplikat
@@ -60,7 +56,6 @@ class SoalController extends Controller
             }
 
             $soalData['jawaban_benar'] = strtolower($soalData['jawaban_benar']);
-            $soalData['timer_per_soal'] = $soalData['timer_per_soal'] ?? 60;
             $quiz->soal()->create($soalData);
             $existingPertanyaans[] = $normalizedPertanyaan;
             $added++;
@@ -126,8 +121,6 @@ class SoalController extends Controller
             $pilihanC = trim($row[3] ?? '');
             $pilihanD = trim($row[4] ?? '');
             $jawabanBenar = strtolower(trim($row[5] ?? 'a'));
-            $timerPerSoal = isset($row[6]) && is_numeric($row[6]) ? (int) $row[6] : 60;
-            $timerPerSoal = max(5, min(300, $timerPerSoal));
 
             if ($pertanyaan !== '' && $pilihanA !== '' && $pilihanB !== '') {
                 if (! in_array($jawabanBenar, ['a', 'b', 'c', 'd'])) {
@@ -141,7 +134,6 @@ class SoalController extends Controller
                     'pilihan_c' => $pilihanC,
                     'pilihan_d' => $pilihanD,
                     'jawaban_benar' => $jawabanBenar,
-                    'timer_per_soal' => $timerPerSoal,
                 ]);
 
                 $importedCount++;
@@ -167,9 +159,9 @@ class SoalController extends Controller
 
         return response()->stream(function () {
             $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['pertanyaan', 'pilihan_a', 'pilihan_b', 'pilihan_c', 'pilihan_d', 'jawaban_benar', 'timer_per_soal']);
-            fputcsv($handle, ['Berapakah hasil dari 5 + 5?', '8', '9', '10', '11', 'c', '60']);
-            fputcsv($handle, ['Apakah ibukota dari Indonesia?', 'Bandung', 'Jakarta', 'Surabaya', 'Medan', 'b', '45']);
+            fputcsv($handle, ['pertanyaan', 'pilihan_a', 'pilihan_b', 'pilihan_c', 'pilihan_d', 'jawaban_benar']);
+            fputcsv($handle, ['Berapakah hasil dari 5 + 5?', '8', '9', '10', '11', 'c']);
+            fputcsv($handle, ['Apakah ibukota dari Indonesia?', 'Bandung', 'Jakarta', 'Surabaya', 'Medan', 'b']);
             fclose($handle);
         }, 200, $headers);
     }
@@ -194,10 +186,6 @@ class SoalController extends Controller
             'pilihan_c' => ['required', 'string', 'max:500'],
             'pilihan_d' => ['required', 'string', 'max:500'],
             'jawaban_benar' => ['required', 'in:a,b,c,d,A,B,C,D'],
-            'timer_per_soal' => ['required', 'integer', 'min:5', 'max:300'],
-        ], [
-            'timer_per_soal.min' => 'Timer per soal minimal 5 detik.',
-            'timer_per_soal.max' => 'Timer per soal maksimal 300 detik.',
         ]);
 
         $validated['jawaban_benar'] = strtolower($validated['jawaban_benar']);
