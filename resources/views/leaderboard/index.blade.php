@@ -8,7 +8,7 @@
         <div>
             <div class="flex items-center gap-2 mb-1">
                 <h1 class="text-2xl font-bold text-gray-800">
-                    Leaderboard &amp; Peringkat Nilai Siswa
+                    Leaderboard dan Peringkat Nilai Siswa
                 </h1>
             </div>
             <p class="text-sm text-gray-600">

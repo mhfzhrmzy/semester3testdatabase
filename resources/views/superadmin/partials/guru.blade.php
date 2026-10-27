@@ -13,7 +13,7 @@
     <!-- TAMBAH GURU FORM -->
     <div class="mb-6 bg-white rounded-2xl p-6 border border-slate-200/70 shadow-sm">
         <h2 class="mb-4 text-base font-bold text-slate-900 flex items-center gap-2">
-            <svg class="w-5 h-5 text-[#4a101d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-[#6D1837]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
             </svg>
             Tambah Akun Guru Baru

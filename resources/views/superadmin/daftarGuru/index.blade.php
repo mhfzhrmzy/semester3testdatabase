@@ -31,7 +31,7 @@
         <h2 class="mb-4 text-base font-bold text-slate-900 flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.42a12.1 12.1 0 01.67 6.48A12 12 0 0112 20.06a12 12 0 01-6.83-3 12.1 12.1 0 01.67-6.48L12 14z"></path>
                 </svg>
             Tambah Akun Guru Baru
         </h2>
@@ -62,7 +62,7 @@
                 <input type="file" name="foto_profile" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
             </div>
             <div class="flex items-center gap-2 md:col-span-2 md:justify-end flex-wrap">
-                <button type="submit" class="w-full md:w-auto rounded-xl bg-[#4a101d] px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-amber-950/20 hover:bg-[#380b15] transition cursor-pointer">
+                <button type="submit" class="w-full md:w-auto rounded-xl bg-[#6D1837] px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-amber-950/20 hover:bg-[#b21a3b] transition cursor-pointer">
                     + Tambah Akun Guru
                 </button>
             </div>

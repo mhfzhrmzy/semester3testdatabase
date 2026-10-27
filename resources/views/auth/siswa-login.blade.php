@@ -1,10 +1,10 @@
 @extends('layouts.app')
 @section('title', 'Login Siswa')
 @section('content')
-<div class="min-h-screen w-full flex flex-col md:flex-row bg-[#0A2342] relative overflow-hidden font-sans">
+<div class="min-h-screen w-full flex flex-col md:flex-row bg-[#6D1837] relative overflow-hidden font-sans">
 
     <!-- LEFT AREA: Deep Blue Branding & Title Section -->
-    <div class="hidden md:flex md:w-[52%] lg:w-[56%] min-h-screen bg-gradient-to-br from-[#0B2A4C] via-[#0A2342] to-[#071930] flex-col justify-center px-12 lg:px-20 text-white relative">
+    <div class="hidden md:flex md:w-[52%] lg:w-[56%] min-h-screen bg-gradient-to-br from-[#7E2043] via-[#6D1837] to-[#551229] flex-col justify-center px-12 lg:px-20 text-white relative">
         <div class="max-w-xl relative z-10">
         </div>
     </div>
@@ -20,13 +20,13 @@
             <div class="my-auto py-8">
                 <!-- Title -->
                 <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Login</h2>
-                    <p class="text-xs text-slate-500 mt-1">Masuk ke Portal Siswa SMKN 2 Jember</p>
+                    <h2 class="text-3xl font-bold text-black tracking-tight">Login</h2>
+                    <p class="text-xs text-slate-700 mt-1">Masuk ke Portal Siswa SMKN 2 Jember</p>
                 </div>
 
                 <!-- Role Selector Buttons -->
                 <div class="p-1 bg-slate-100 flex gap-1 mb-6 border border-slate-200/80">
-                    <a href="{{ route('siswa.login') }}" class="flex-1 py-2.5 px-3 text-xs font-semibold text-center transition bg-white text-[#3B5284] shadow-sm border border-slate-200">
+                    <a href="{{ route('siswa.login') }}" class="flex-1 py-2.5 px-3 text-xs font-semibold text-center transition bg-white text-[#6D1837] shadow-sm border border-slate-200">
                         Siswa (NISN)
                     </a>
                     <a href="{{ route('admin.login') }}" class="flex-1 py-2.5 px-3 text-xs font-semibold text-center transition text-slate-600 hover:text-slate-900">
@@ -55,28 +55,28 @@
                     <div>
                         <label class="block text-xs font-medium text-slate-600 mb-1.5">Nomor Induk Siswa Nasional (NISN)</label>
                         <input type="text" name="nisn" value="{{ old('nisn') }}" maxlength="10" placeholder="Masukkan 10 digit NISN Anda"
-                            class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 focus:bg-white focus:ring-2 focus:ring-[#3B5284] focus:border-[#3B5284] outline-none transition text-slate-800 placeholder-slate-400" required>
+                            class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 focus:bg-white focus:ring-2 focus:ring-[#6D1837] focus:border-[#6D1837] outline-none transition text-slate-800 placeholder-slate-400" required>
                     </div>
 
                     <div>
                         <label class="block text-xs font-medium text-slate-600 mb-1.5">Kata Sandi</label>
                         <input type="password" name="password" placeholder="Masukkan Kata Sandi"
-                            class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 focus:bg-white focus:ring-2 focus:ring-[#3B5284] focus:border-[#3B5284] outline-none transition text-slate-800 placeholder-slate-400" required>
+                            class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 focus:bg-white focus:ring-2 focus:ring-[#6D1837] focus:border-[#6D1837] outline-none transition text-slate-800 placeholder-slate-400" required>
                     </div>
 
-                    <button type="submit" class="w-full mt-2 bg-[#0A2342] hover:bg-[#061529] active:scale-[0.99] text-white font-semibold py-3.5 px-4 shadow-md transition text-sm cursor-pointer">
+                    <button type="submit" class="w-full mt-2 bg-[#6D1837] hover:bg-[#57122B] active:scale-[0.99] text-white font-semibold py-3.5 px-4 shadow-md transition text-sm cursor-pointer">
                         Login
                     </button>
                 </form>
 
                 <!-- Notice -->
                 <div class="mt-6 text-center text-xs text-slate-500">
-                    Akun siswa dibuat oleh Superadmin. Silakan hubungi Administrator jika belum memiliki akun.
+                    Akun siswa dibuat oleh Sekolah. Silakan hubungi Administrator jika belum memiliki akun.
                 </div>
             </div>
 
             <!-- Footer -->
-            <div class="text-xs text-slate-400 border-t border-slate-100 pt-4">
+            <div class="text-xs text-slate-400 border-t border-slate-100 pt-4 text-center">
                 <span>&copy; 2026 SMKN 2 Jember</span>
             </div>
         </div>
