@@ -85,9 +85,9 @@
                     @enderror
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Estimasi Ditutup</label>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Estimasi Post-test Ditutup</label>
                     <input type="text" id="input-estimasi-tutup" readonly disabled class="w-full rounded-md border border-gray-200 px-3 py-2 text-sm font-semibold bg-gray-100 text-gray-500 cursor-not-allowed" placeholder="—">
-                    <p class="text-xs text-gray-400 mt-1">Dihitung otomatis dari Tanggal + Jam Mulai + Timer</p>
+                    <p class="text-xs text-gray-400 mt-1"></p>
                 </div>
             </div>
 
@@ -220,7 +220,7 @@
                     <input type="number" name="timer" id="modal-timer" min="1" max="120" required class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Estimasi Ditutup</label>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Estimasi Quiz Ditutup</label>
                     <input type="text" id="modal-estimasi-tutup" readonly disabled class="w-full rounded-md border border-gray-200 px-3 py-2 text-sm font-semibold bg-gray-100 text-gray-500 cursor-not-allowed" placeholder="—">
                 </div>
             </div>
@@ -298,7 +298,7 @@
             if (!inputTanggal.value || inputTanggal.value < todayStr) {
                 inputTanggal.value = todayStr;
             }
-            tanggalHelp.textContent = 'Pilih tanggal post-test (hari ini atau ke depan)';
+            tanggalHelp.textContent = 'Pilih tanggal post-test dilaksnakan';
             timerHelp.textContent = 'Maks. 120 menit';
             syncJamMulai();
         } else {
