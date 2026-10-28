@@ -127,10 +127,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const pad = n => String(n).padStart(2, '0');
     const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
 
-    const terapkan = (start, end) => {
+        const terapkan = (start, end) => {
         dari.value = iso(start);
         sampai.value = iso(end);
-        form.submit();
     };
 
     // Pintasan cepat
@@ -157,16 +156,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Pilih bulan + tahun -> isi rentang otomatis
+        // Pilih bulan + tahun (tanpa submit, tunggu klik Terapkan)
     const dariBulanTahun = () => {
         if (!tahun.value) return;
         const y = parseInt(tahun.value, 10);
 
         if (bulan.value) {
             const m = parseInt(bulan.value, 10) - 1;
-            terapkan(new Date(y, m, 1), new Date(y, m + 1, 0));
+            dari.value = iso(new Date(y, m, 1));
+            sampai.value = iso(new Date(y, m + 1, 0));
         } else {
-            terapkan(new Date(y, 0, 1), new Date(y, 11, 31));
+            dari.value = iso(new Date(y, 0, 1));
+            sampai.value = iso(new Date(y, 11, 31));
         }
     };
 
