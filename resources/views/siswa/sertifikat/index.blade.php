@@ -5,23 +5,30 @@
     <div class="max-w-4xl mx-auto">
         
         <div class="flex items-center justify-between mb-6">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-900">Daftar Sertifikat & Portofolio</h2>
-                <p class="text-sm text-gray-500 mt-1">Koleksi sertifikat kelulusan modul dan sertifikat mandiri Anda.</p>
-            </div>
-            <a 
-                href="{{ route('siswa.sertifikat.create') }}" 
-                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-sm transition"
-            >
-                + Upload Sertifikat Baru
-            </a>
-        </div>
+    <div>
+        <h2 class="text-2xl font-bold text-gray-900">Daftar Sertifikat & Portofolio</h2>
+        <p class="text-sm text-gray-500 mt-1">Koleksi sertifikat kelulusan modul dan sertifikat mandiri Anda.</p>
+    </div>
+    <div class="flex items-center gap-3">
+        
+        <a
+            href="{{ route('siswa.sertifikat.create') }}"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-sm transition"
+        >
+            + Upload Sertifikat Baru
+        </a>
+    </div>
+</div>
 
         @if (session('success'))
             <div class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-medium">
                 {{ session('success') }}
             </div>
         @endif
+
+        <div class="mb-4">
+            @include('siswa.sertifikat._filter')
+        </div>
 
         {{-- Grid Kartu Sertifikat --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -57,12 +64,15 @@
                     </div>
                 </div>
             @empty
-                <div class="col-span-full bg-white p-8 text-center text-sm text-gray-500 rounded-xl border border-dashed border-gray-300">
-                    Belum ada sertifikat yang diunggah. Klik tombol <b>+ Upload Sertifikat Baru</b> di atas untuk menambahkan berkas.
-                </div>
+            <div class="col-span-full bg-white p-8 text-center text-sm text-gray-500 rounded-xl border border-dashed border-gray-300">
+                @if ($filterAktif)
+                Tidak ada sertifikat pada rentang tanggal ini.
+                @else
+                Belum ada sertifikat yang diunggah. Klik tombol <b>+ Upload Sertifikat Baru</b> di atas untuk menambahkan berkas.
+                @endif
+            </div>
             @endforelse
         </div>
-
     </div>
 </div>
 @endsection
